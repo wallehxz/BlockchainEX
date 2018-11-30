@@ -3,6 +3,7 @@ source 'https://gems.ruby-china.com/'  #Ruby-China源
 
 gem 'rails', '4.2.7'
 gem 'pg', '0.20.0'
+gem 'mysql2', '0.4.5' # Use mysql as the database for Active Record
 gem 'sass-rails', '5.0.6' # Use SCSS for stylesheets
 gem 'uglifier', '3.0.2' # Use Uglifier as compressor for JavaScript assets
 gem 'coffee-rails', '4.2.1' # Use CoffeeScript for .coffee assets and views
