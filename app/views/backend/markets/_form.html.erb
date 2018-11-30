@@ -26,7 +26,7 @@
         <div class="input-group-addon">
           <i class="fa fa-money"></i>
         </div>
-        <%= f.select(:base_unit, [['美元','USDT'],['比特币','BTC'],['以太币','ETH'],['币安币','BNB']], {prompt:'基准货币'},{:class => 'form-control'}) %>
+        <%= f.text_field :base_unit, class:'form-control', placeholder:'（必填* 基准货币）' %>
       </div>
       <%= model_errors(@market,'quote_unit') %>
     </div>

@@ -7,7 +7,7 @@
 #  h         :float
 #  l         :float
 #  o         :float
-#  t         :string
+#  t         :float
 #  v         :float
 #  market_id :integer
 #

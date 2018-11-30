@@ -28,12 +28,12 @@
             <tbody>
             <% @candles.each do |item| %>
               <tr style="text-align: center">
+                <td><%= item.t %></td>
                 <td><%= item.o %></td>
                 <td><%= item.h %></td>
                 <td><%= item.l %></td>
                 <td><%= item.c %></td>
                 <td><%= item.v %></td>
-                <td><%= item.t %></td>
                 <td>
                   <a href="<%= backend_market_candle_path(item.market_id,item) %>" class="btn bg-red btn-flat" data-method="delete" data-confirm="确定删除该条轮播吗？">
                     <i class="glyphicon glyphicon-trash"></i>
