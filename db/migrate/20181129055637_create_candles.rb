@@ -7,7 +7,8 @@ class CreateCandles < ActiveRecord::Migration
       t.float   :l
       t.float   :c
       t.float   :v
-      t.float   :t
+      t.string  :t
+      t.datetime :ts
     end
   end
 end

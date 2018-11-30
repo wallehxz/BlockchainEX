@@ -17,13 +17,14 @@ ActiveRecord::Schema.define(version: 20181129055637) do
   enable_extension "plpgsql"
 
   create_table "candles", force: :cascade do |t|
-    t.integer "market_id"
-    t.float   "o"
-    t.float   "h"
-    t.float   "l"
-    t.float   "c"
-    t.float   "v"
-    t.float   "t"
+    t.integer  "market_id"
+    t.float    "o"
+    t.float    "h"
+    t.float    "l"
+    t.float    "c"
+    t.float    "v"
+    t.string   "t"
+    t.datetime "ts"
   end
 
   create_table "markets", force: :cascade do |t|
