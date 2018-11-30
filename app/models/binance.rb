@@ -14,6 +14,7 @@
 
 class Binance < Market
   def generate_quote
+    return batch_quote if candles.count.positive
     t = latest_ticker('15m',120)
     ticker = {}
     ticker[:o] = t[1]
@@ -24,6 +25,21 @@ class Binance < Market
     ticker[:t] = Time.now.to_i
     ticker
     candles.create(ticker)
+  end
+
+  def batch_quote
+    t_100 = get_ticker('15m',100)
+    t_100.each do |t|
+      ticker = {}
+      ticker[:o] = t[1]
+      ticker[:h] = t[2]
+      ticker[:l] = t[3]
+      ticker[:c] = t[4]
+      ticker[:v] = t[9]
+      ticker[:t] = (t[0] /1000) + 900
+      ticker
+      candles.create(ticker)
+    end
   end
 
   def latest_ticker(interval,timeout)
