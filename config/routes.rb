@@ -11,7 +11,14 @@ Rails.application.routes.draw do
     get 'reset_password',to:'users/passwords#edit'
     put 'reset_password',to:'users/passwords#update'
   end
+
   root 'welcome#index'
+  get '/markets/:symbol', to: "welcome#trends", as: :market_quote
+
+  get '/trending/config', to: "trending#trading_config"
+  get '/trending/symbols', to: "trending#symbols"
+  get '/trending/history', to: "trending#history"
+  get '/trending/time', to: "trending#time"
 
   namespace :backend do
     get 'quote', to:'dashboard#index', as: :quote

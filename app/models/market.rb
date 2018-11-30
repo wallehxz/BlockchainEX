@@ -31,4 +31,14 @@ class Market < ActiveRecord::Base
   def full_name
     "#{type}[#{base_unit}-#{quote_unit}]"
   end
+
+  def symbols
+    "#{base_unit}-#{quote_unit}"
+  end
+
+  def self.market_list
+    market_hash = {}
+    Market.seq.map {|x| market_hash[x.symbols] = x.id }
+    market_hash
+  end
 end
