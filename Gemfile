@@ -2,7 +2,6 @@ source 'https://gems.ruby-china.com/'  #Ruby-China源
 # source 'https://rubygems.org/'  #官方源
 
 gem 'rails', '4.2.7'
-gem 'pg', '0.20.0'
 gem 'mysql2', '0.4.5' # Use mysql as the database for Active Record
 gem 'sass-rails', '5.0.6' # Use SCSS for stylesheets
 gem 'uglifier', '3.0.2' # Use Uglifier as compressor for JavaScript assets
@@ -26,6 +25,7 @@ gem 'enumerize', '2.2.2' # 多标签选项
 gem 'aasm', '5.0.1' #状态管理
 
 group :development do
+  gem 'pg', '0.20.0'
   gem 'annotate' # 数据表字段注释
   gem 'spring', '2.0.0' # bin/bundle exec spring binstub --all
   gem 'capsum', '1.0.4', require: false #collect gems and recipes for capistrano
