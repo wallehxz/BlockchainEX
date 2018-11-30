@@ -1,0 +1,59 @@
+<a href="/" class="logo">
+  <span class="logo-mini"><b style="font-size: 35px"><i class="fa fa-btc"></i></b></span>
+  <span class="logo-lg"><b>Exchange</b></span>
+</a>
+<nav class="navbar navbar-static-top">
+  <!-- Sidebar toggle button-->
+  <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+    <span class="sr-only">Toggle navigation</span>
+  </a>
+
+  <div class="navbar-custom-menu">
+    <ul class="nav navbar-nav">
+      <!-- User Account: style can be found in dropdown.less -->
+      <li class="dropdown user user-menu">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          <img src="<%= image_path('favicon.png')%>" class="user-image" alt="User Image">
+          <span class="hidden-xs"><%= current_user.email.split('@')[0] %></span>
+        </a>
+        <ul class="dropdown-menu">
+          <!-- User image -->
+          <li class="user-header">
+            <img src="<%= image_path('favicon.png')%>" class="img-circle" alt="User Image">
+            <p>
+              <%= current_user.email.split('@')[0] %> - Web Developer
+              <small><%= Time.now.strftime('%Y-%m-%d') %></small>
+            </p>
+          </li>
+          <!-- Menu Body -->
+          <li class="user-body">
+            <div class="row">
+              <div class="col-xs-4 text-center">
+                <a href="#">Followers</a>
+              </div>
+              <div class="col-xs-4 text-center">
+                <a href="#">Sales</a>
+              </div>
+              <div class="col-xs-4 text-center">
+                <a href="#">Friends</a>
+              </div>
+            </div>
+            <!-- /.row -->
+          </li>
+          <!-- Menu Footer-->
+          <li class="user-footer">
+            <div class="pull-left">
+              <a href="#" class="btn btn-default btn-flat">简介</a>
+            </div>
+            <div class="pull-right">
+              <a href="<%= sign_out_path %>" class="btn btn-default btn-flat">登出</a>
+            </div>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+      </li>
+    </ul>
+  </div>
+</nav>

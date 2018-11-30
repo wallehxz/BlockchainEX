@@ -1,0 +1,78 @@
+<%= content_for(:title,  '交易市场 | Exchange') %>
+<section class="content-header">
+  <h1>
+    市场 <small>信息预览</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+    <li class="active"><i class="fa fa-exchange"></i> 市场列表</li>
+  </ol>
+</section>
+<section class="content">
+  <div class="box box-primary">
+    <div class="box-header">
+      <a href="<%= new_backend_market_path %>" class="btn bg-primary btn-flat"><i class="ion-plus"></i> 添加市场</a>
+    </div>
+    <div class="box-body">
+      <div class="row">
+        <div class="col-sm-12">
+          <table id="example1" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="example1_info">
+            <thead>
+            <tr>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">报价</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">基准</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">来源</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center;width: 240px">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @markets.each do |item| %>
+              <tr style="text-align: center">
+                <td>
+                  <label class="btn bg-black btn-flat" style="font-size: 16px">
+                    <i class="fa fa-btc"></i>
+                    <%= item.quote_unit %>
+                  </label>
+                </td>
+                <td>
+                  <label class="btn bg-black btn-flat" style="font-size: 16px">
+                    <i class="fa fa-money"></i>
+                    <%= item.base_unit %>
+                  </label>
+                </td>
+                <td>
+                  <label class="btn bg-black btn-flat" style="font-size: 16px">
+                    <i class="fa fa-cc-mastercard"></i>
+                    <%= item.source %>
+                  </label>
+                </td>
+                <td>
+                  <a href="<%= backend_market_candles_path(item) %>" class="btn bg-green btn-flat">
+                    <i class="fa fa-area-chart"></i>
+                  </a>
+                  <a href="<%= edit_backend_market_path(item) %>" class="btn bg-orange btn-flat">
+                    <i class="glyphicon glyphicon-edit"></i>
+                  </a>
+                  <a href="<%= backend_market_path(item) %>" class="btn bg-red btn-flat" data-method="delete" data-confirm="确定删除该条轮播吗？">
+                    <i class="glyphicon glyphicon-trash"></i>
+                  </a>
+                </td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-5">
+          <div class="dataTables_info" id="example1_info" role="status" aria-live="polite"><h5>总计：「<%= @markets.count %>」</h5></div>
+        </div>
+        <div class="col-sm-12">
+          <div class="dataTables_paginate paging_simple_numbers">
+          <%= will_paginate @markets, :class=>'apple_pagination' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

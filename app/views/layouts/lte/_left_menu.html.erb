@@ -1,0 +1,40 @@
+<section class="sidebar">
+  <div class="user-panel">
+    <div class="pull-left image">
+      <img src="<%= image_path('favicon.png')%>" class="img-circle" alt="User Image">
+    </div>
+    <div class="pull-left info">
+      <p><%= current_user.email.split('@')[0] %></p>
+      <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+    </div>
+  </div>
+  <form action="#" method="get" class="sidebar-form">
+    <div class="input-group">
+      <input type="text" name="q" class="form-control" placeholder="Search...">
+      <span class="input-group-btn">
+        <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+        </button>
+      </span>
+    </div>
+  </form>
+  <ul class="sidebar-menu">
+    <li class="header">功能导航</li>
+    <li class="treeview <%= 'active' if controller_name == 'dashboard' %>">
+      <a href="<%= backend_quote_path %>" target="_self">
+        <i class="fa fa-line-chart"></i> <span> 行情趋势</span>
+      </a>
+    </li>
+    <li class="treeview <%= 'active' if controller_name == 'markets' %>">
+      <a href="<%= backend_markets_path %>" target="_self">
+        <i class="fa fa-exchange"></i> <span> 交易市场</span>
+      </a>
+    </li>
+    <% if controller_name == 'candles' %>
+      <li class="treeview <%= 'active' if controller_name =='candles' %>">
+        <a href="<%= backend_market_candles_path(params[:market_id]) %>" target="_self">
+          <i class="fa fa-bar-chart"></i> <span> 历史行情</span>
+        </a>
+      </li>
+    <% end %>
+  </ul>
+</section>

@@ -1,0 +1,13 @@
+<p class="login-box-msg">找回密码</p>
+<%= form_for(resource, as: resource_name, url: forgot_password_path, html: { method: :post }) do |f| %>
+  <div class="form-group has-feedback">
+    <%= f.email_field :email, autofocus: true ,class:'form-control',placeholder:model_errors(resource,'email') || 'Email' %>
+    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <%= f.submit "发送确认邮件",class:'btn btn-danger btn-block btn-flat' %>
+    </div>
+  </div>
+<% end %>
+<%= render :partial=>'users/shared' %>

@@ -1,0 +1,43 @@
+<div class="banner-content" id="content">
+  <div class="page-banner">
+    <div class="demo-cont">
+      <div class="fnc-slider example-slider">
+        <div class="fnc-slider__slides">
+          <div class="fnc-slide m--blend-green m--active-slide">
+            <a href="/" target="_blank">
+              <img src="<%= image_path('A.jpg') %>" class="fnc-slide__inner_banner">
+            </a>
+          </div>
+          <div class="fnc-slide m--blend-green">
+            <a href="/" target="_blank">
+              <img src="<%= image_path('B.jpg') %>" class="fnc-slide__inner_banner">
+            </a>
+          </div>
+        </div>
+        <nav class="fnc-nav">
+
+          <div class="fnc-nav__bgs">
+            <div class="fnc-nav__bg m--navbg-green m--active-nav-bg"></div>
+            <% 1.times do |i| %>
+              <div class="fnc-nav__bg m--navbg-dark"></div>
+            <% end %>
+          </div>
+
+          <div class="fnc-nav__controls">
+            <% 2.times do |i| %>
+              <div class="fnc-nav__control">
+                <span class="fnc-nav__control-progress"></span>
+              </div>
+            <% end %>
+          </div>
+        </nav>
+        <div class="dot-right dot-commonRight">
+          <img src="<%= image_path('dotRight.png') %>">
+        </div>
+        <div class="dot-left dot-commonLift">
+          <img src="<%= image_path('dotLeft.png') %>">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

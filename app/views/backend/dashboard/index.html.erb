@@ -1,0 +1,59 @@
+<%= content_for(:title,  '行情趋势 | Exchange') %>
+<section class="content-header">
+  <h1>
+    <%= @market.full_name %>行情  <small>信息预览</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+    <li class="active"><i class="fa fa-line-chart"></i> 每刻行情 </li>
+  </ol>
+</section>
+<section class="content">
+  <div class="box box-primary">
+    <div class="box-header">
+      <div class="row">
+        <div class="col-sm-2">
+          <select onchange="javascript:location.href = this.value;" class="form-control" style="display: inline;">
+            <option value="?">请选择市场</option>
+            <% Market.all.each do |item|%>
+              <option value="?market=<%= item.id %>&start=<%= params[:start] || (Date.current - 1.days).to_s %>" <%= 'selected' if params[:market].to_i == item.id || (!params[:market].present? && item.id == Market.seq.first.id)%>><%= item.full_name %></option>
+            <% end %>
+          </select>
+        </div>
+        <div class="col-sm-9">
+          <form action="<%= backend_quote_path %>" method="get">
+            <div class="col-sm-3">
+              <div class="form-group has-feedback">
+                <div class="input-group">
+                  <input id='start' type="text" name="start" value="<%= params[:start] || (Date.current - 1.days).to_s %>" class="form-control" placeholder="起始日期">
+                  <input type="hidden" name="block" value="<%= params[:market] || Market.seq.first.id %>">
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="box-body">
+      <div class="row">
+        <div class="col-sm-12">
+          <!-- <canvas id="price-chart" width="100%" height="650"></canvas> -->
+          <div id="price-chart" class="chart-container"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<%= content_for :script_footer do %>
+  <%= javascript_include_tag 'highcharts','bignumber','price-charts', 'data-turbolinks-track' => true %>
+  <script type="text/javascript">
+    Highcharts.setOptions({
+      global:{
+        timezoneOffset: -8 * 60
+      }
+    })
+    $( document ).ready(function() {
+      drawPrice(<%= raw @price_array %>, "<%= @market.full_name %>");
+    });
+  </script>
+<% end %>

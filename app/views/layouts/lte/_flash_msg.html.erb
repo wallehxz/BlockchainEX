@@ -1,0 +1,62 @@
+<div class="row">
+  <% if flash[:success] %>
+    <div class="col-md-12">
+      <div class="box box-success box-solid">
+        <div class="box-header with-border">
+          <h3 class="box-title">成功信息</h3>
+          <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+          </div>
+        </div>
+        <div class="box-body">
+          <%= flash[:success] %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <% if flash[:notice] %>
+    <div class="col-md-12">
+      <div class="box box-info box-solid">
+        <div class="box-header with-border">
+          <h3 class="box-title">提示信息</h3>
+          <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+          </div>
+        </div>
+        <div class="box-body">
+          <%= flash[:notice] %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <% if flash[:warn] %>
+    <div class="col-md-12">
+      <div class="box box-warning box-solid">
+        <div class="box-header with-border">
+          <h3 class="box-title">警告信息</h3>
+          <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+          </div>
+        </div>
+        <div class="box-body">
+          <%= flash[:warn] %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <% if flash[:error] %>
+    <div class="col-md-12">
+      <div class="box box-danger box-solid">
+        <div class="box-header with-border">
+          <h3 class="box-title">错误信息</h3>
+          <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+          </div>
+        </div>
+        <div class="box-body">
+          <%= flash[:error] %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

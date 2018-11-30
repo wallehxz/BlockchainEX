@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= content_for?(:title) ? yield(:title) : 'Index | Bittrex' %></title>
+  <%= content_for?(:meta)? yield(:meta) :'' %>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <%= stylesheet_link_tag 'web', media: 'all','data-turbolinks-track'=>true %>
+  <%= favicon_link_tag 'favicon.png', :rel => 'shortcut icon' %>
+</head>
+<body>
+  <%= render :partial=>'shared/header'%>
+  <%= yield %>
+  <%= render :partial=>'shared/footer'%>
+</body>
+<%= javascript_include_tag 'web','data-turbolinks-track'=>true %>
+</html>

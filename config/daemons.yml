@@ -1,0 +1,7 @@
+dir_mode: script
+dir: ../../tmp/logs
+multiple: false
+backtrace: false
+monitor: false
+ontop: false
+log_output: true

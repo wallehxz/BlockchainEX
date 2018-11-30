@@ -1,0 +1,18 @@
+<p class="login-box-msg">重置密码</p>
+<%= form_for(resource, as: resource_name, url: reset_password_path, html: { method: :put }) do |f| %>
+  <%= f.hidden_field :reset_password_token %>
+  <div class="form-group has-feedback">
+    <%= f.password_field :password, autocomplete: "off",class:'form-control',placeholder:model_errors(resource,'password') || 'Password' %>
+    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+  </div>
+  <div class="form-group has-feedback">
+    <%= f.password_field :password_confirmation, autocomplete: "off",class:'form-control',placeholder:model_errors(resource,'password_confirmation') || 'Password Confirmation' %>
+    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <%= f.submit "重置密码",class:'btn btn-success btn-block btn-flat' %>
+    </div>
+  </div>
+<% end %>
+<%= render :partial=>'users/shared' %>

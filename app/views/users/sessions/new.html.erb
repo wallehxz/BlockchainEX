@@ -1,0 +1,26 @@
+<p class="login-box-msg">登录账号</p>
+<%= form_for(resource, as: resource_name, url: sign_in_path) do |f| %>
+  <div class="form-group has-feedback">
+    <%= f.email_field :email, autofocus: true ,class:'form-control',placeholder: model_errors(resource,'email') || 'Email' %>
+    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+  </div>
+  <div class="form-group has-feedback">
+    <%= f.password_field :password, autocomplete: "off",class:'form-control',placeholder:model_errors(resource,'password') || 'Password' %>
+    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+  </div>
+  <div class="row">
+    <% if devise_mapping.rememberable? %>
+      <div class="col-xs-6">
+        <div class="checkbox icheck">
+          <label>
+            <%= f.check_box :remember_me %> 记住账户
+          </label>
+        </div>
+      </div>
+    <% end %>
+    <div class="col-xs-6">
+      <%= f.submit "登录",class:'btn btn-primary btn-block btn-flat' %>
+    </div>
+  </div>
+<% end %>
+<%= render :partial=>'users/shared' %>

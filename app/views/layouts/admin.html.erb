@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title><%= content_for?(:title) ? yield(:title) : 'Dashboard | Bittrex' %></title>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <%= stylesheet_link_tag 'lte/application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= content_for :script %>
+  <%= csrf_meta_tags %>
+  <%= favicon_link_tag 'favicon.png' %>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+  <header class="main-header">
+    <%= render :partial=>'layouts/lte/header' %>
+  </header>
+  <aside class="main-sidebar">
+    <%= render :partial=>'layouts/lte/left_menu' %>
+  </aside>
+  <div class="content-wrapper" style="min-height: 1200px">
+    <%= render :partial=>'layouts/lte/flash_msg' %>
+    <%= yield %>
+  </div>
+  <%= render :partial=>'layouts/lte/footer' %>
+  <aside class="control-sidebar control-sidebar-dark">
+    <%= render :partial=>'layouts/lte/right_menu' %>
+  </aside>
+  <div class="control-sidebar-bg"></div>
+</div>
+</body>
+<%= javascript_include_tag 'lte/application', 'data-turbolinks-track' => true %>
+<%= content_for :script_footer %>
+</html>
