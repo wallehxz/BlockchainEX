@@ -41,4 +41,16 @@ class Market < ActiveRecord::Base
     Market.seq.map {|x| market_hash[x.symbols] = x.id }
     market_hash
   end
+
+  def self.calc_decimal(number = 0)
+    if number > 100
+      return 1
+    elsif number < 1
+      return 2
+    elsif number < 0.01
+      return 4
+    elsif number < 0.0001
+      return 6
+    end
+  end
 end

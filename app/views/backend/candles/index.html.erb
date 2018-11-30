@@ -22,23 +22,17 @@
               <th tabindex="0" aria-controls="example1" style="text-align: center">低</th>
               <th tabindex="0" aria-controls="example1" style="text-align: center">收</th>
               <th tabindex="0" aria-controls="example1" style="text-align: center">成交量</th>
-              <th tabindex="0" aria-controls="example1" style="text-align: center;width: 240px">操作</th>
             </tr>
             </thead>
             <tbody>
             <% @candles.each do |item| %>
               <tr style="text-align: center">
-                <td><%= item.t %></td>
+                <td><%= item.int_t %></td>
                 <td><%= item.o %></td>
                 <td><%= item.h %></td>
                 <td><%= item.l %></td>
                 <td><%= item.c %></td>
                 <td><%= item.v %></td>
-                <td>
-                  <a href="<%= backend_market_candle_path(item.market_id,item) %>" class="btn bg-red btn-flat" data-method="delete" data-confirm="确定删除该条轮播吗？">
-                    <i class="glyphicon glyphicon-trash"></i>
-                  </a>
-                </td>
               </tr>
             <% end %>
             </tbody>

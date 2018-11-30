@@ -1,6 +1,6 @@
 
-function drawPrice(data, ticker) {
-  var valueDecimals = ticker == 'usdt' ? 4 : 8;
+function drawPrice(data, ticker, decimal) {
+  var valueDecimals = decimal;
   $('#price-chart').highcharts({
     chart: { backgroundColor: null, height: 500 },
     tooltip: {backgroundColor: "#e2e2e2", borderColor: '#fff', style: {"color": "#2f2f2f"}},
@@ -21,11 +21,7 @@ function drawPrice(data, ticker) {
         gridLineColor: '#fff',
         labels: {style: {color: '#9aa2a9', fill: '#9aa2a9'},
             formatter: function() {
-                if (this.value > 1 || this.value < -1 || this.value == 0) {
-                    return BigNumber(this.value).round(2, BigNumber.ROUND_DOWN).toF(2);
-                } else if (this.value < 1 && this.value > 0){
-                    return BigNumber(this.value).round(4, BigNumber.ROUND_DOWN).toF(4);
-                }
+                return BigNumber(this.value).round(decimal, BigNumber.ROUND_DOWN).toF(decimal);
             }
         }
     },

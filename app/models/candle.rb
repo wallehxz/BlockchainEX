@@ -19,4 +19,8 @@ class Candle < ActiveRecord::Base
   def ms_t
     t.to_i * 1000
   end
+
+  def int_t
+    t.to_i
+  end
 end

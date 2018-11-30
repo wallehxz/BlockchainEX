@@ -53,7 +53,7 @@
       }
     })
     $( document ).ready(function() {
-      drawPrice(<%= raw @price_array %>, "<%= @market.full_name %>");
+      drawPrice(<%= raw @price_array %>, "<%= @market.full_name %>", <%= @decimal %>);
     });
   </script>
 <% end %>
