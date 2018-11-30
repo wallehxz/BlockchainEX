@@ -16,7 +16,7 @@ end
 
 while $running
   start_at = Time.now
-  Market.all.each do |item|
+  Market.seq.each do |item|
     item.generate_quote rescue nil
   end
   consume = Time.now - start_at

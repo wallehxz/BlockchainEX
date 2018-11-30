@@ -43,14 +43,13 @@ class Market < ActiveRecord::Base
   end
 
   def self.calc_decimal(number = 0)
-    if number > 100
-      return 1
-    elsif number < 1
-      return 2
+    if number < 0.0001
+      return 6
     elsif number < 0.01
       return 4
-    elsif number < 0.0001
-      return 6
+    elsif number > 100
+      return 1
     end
+    2
   end
 end
