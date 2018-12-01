@@ -14,7 +14,6 @@
 
 class Binance < Market
   def generate_quote
-    return batch_quote if candles.count.negative?
     t = latest_ticker('15m',120)
     ticker = {}
     ticker[:o] = t[1]
