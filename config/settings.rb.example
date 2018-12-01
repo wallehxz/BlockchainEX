@@ -4,9 +4,15 @@ settings.email_account = '*****@qq.com'
 settings.email_password = '*****'
 settings.email_stmp_address = 'smtp.xx.com'
 settings.email_stmp_port = '587'
-settings.sms_username = '*****'  #如需接入短信，请到云片申请
-settings.sms_password = '*****'
-settings.yunpian_key = 'xxxxxx'
+#消息通知
+settings.default_mobile = '13812345678'
+#http://pushbear.ftqq.com
+settings.wechat_group_key = 'xxxxxxxx'
+#https://open-doc.dingtalk.com/docs/doc.htm?treeId=257&articleId=105735&docType=1
+settings.dingding_bot = 'xxxxxxxx'
+settings.yunpian_key = 'xxxxxxxx'
+settings.yunpian_tpl = '123456'
+#交易所接口
 settings.bittrex_key = 'xxxxxxxxxxxxxx' # 需要去 Bittrex 申请 API
 settings.bittrex_secret = 'xxxxxxxxxxxxxx'
 settings.binance_key = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxx' # 需要去 Binance 申请 API
