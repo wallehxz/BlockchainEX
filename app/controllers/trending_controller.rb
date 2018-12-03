@@ -33,13 +33,13 @@ class TrendingController < ApplicationController
     tickers = Candle.where(market_id: market_lists[params[:symbol]]).where("t >= ? and t < ?",params[:from],params[:to])
     markets_body = {}
     tickers.each do |ticker|
-      markets_body[:t] << ticker.ms_t
-      markets_body[:o] << ticker.o
-      markets_body[:h] << ticker.h
-      markets_body[:l] << ticker.l
-      markets_body[:c] << ticker.c
-      markets_body[:v] << ticker.v
-    end rescue []
+      markets_body[:t] << ticker.ms_t rescue markets_body[:t] = [ticker.ms_t]
+      markets_body[:o] << ticker.o    rescue markets_body[:o] = [ticker.o]
+      markets_body[:h] << ticker.h    rescue markets_body[:h] = [ticker.h]
+      markets_body[:l] << ticker.l    rescue markets_body[:l] = [ticker.l]
+      markets_body[:c] << ticker.c    rescue markets_body[:c] = [ticker.c]
+      markets_body[:v] << ticker.v    rescue markets_body[:v] = [ticker.v]
+    end
     markets_body[:t] ? markets_body[:s] = 'ok' : markets_body[:s] = 'no_data'
     render json: markets_body
   end

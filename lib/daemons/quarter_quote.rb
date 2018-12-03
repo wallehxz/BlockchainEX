@@ -15,10 +15,11 @@ Signal.trap("TERM") do
 end
 
 while $running
-  start_at = Time.now
+  starting = Time.now
   Market.seq.each do |item|
     item.generate_quote rescue nil
   end
-  consume = Time.now - start_at
-  sleep (900 - consume)
+  consume = Time.now - starting
+  offset_second = Time.now.strftime("%S").to_i + 3 - consume
+  sleep (900 - offset_second)
 end

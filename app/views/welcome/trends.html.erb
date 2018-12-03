@@ -46,31 +46,31 @@
       toolbar_bg: '#2F3D45',
       overrides: {
         "mainSeriesProperties.style": 8,
-        "paneProperties.background": "#151515", //设置背景颜色
-        "paneProperties.vertGridProperties.color": "#151515", //设置背景横格颜色
-        "paneProperties.horzGridProperties.color": "#151515", //设置背景竖格颜色
+        "paneProperties.background": "rgb(35,46,54)", //设置背景颜色
+        "paneProperties.vertGridProperties.color": "rgb(35,46,54)", //设置背景横格颜色
+        "paneProperties.horzGridProperties.color": "rgb(35,46,54)", //设置背景竖格颜色
         // "scalesProperties.textColor": "rgb(114, 145, 161)", //设置字体颜色
         "scalesProperties.textColor": "#ffffff", //设置字体颜色
         "scalesProperties.fontSize": 13, //设置价格样式大小
         "mainSeriesProperties.haStyle.upColor": "#34D5A7", // 设置蜡烛线上扬颜色
         "mainSeriesProperties.haStyle.downColor": "#E2517E", //设置蜡烛线下俯颜色
         "paneProperties.bottomMargin": 5, //设置面板数据的底部间距
-        "paneProperties.legendProperties.showStudyArguments": false, //是否显示指标的相关参数
-        'paneProperties.legendProperties.showLegend': false,  //是否显示指标名称
-        "scalesProperties.scaleSeriesOnly": true,
-        "volumePaneSize": "small" //成交量规格
+        "paneProperties.legendProperties.showStudyArguments": true, //是否显示指标的相关参数
+        'paneProperties.legendProperties.showLegend': true,  //是否显示指标名称
+        "volumePaneSize": "small", //成交量规格
+        "scalesProperties.scaleSeriesOnly": true
       },
       studies_overrides: {
         "volume.volume.color.0": "#E2517E", //设置成交量下跌色
         "volume.volume.color.1": "#34D5A7", //设置成交量上涨色
-        "volume.volume.linewidth": 4, // 设置成交量线宽
+        "volume.volume.linewidth": 3, // 设置成交量线宽
         "volume.volume.transparency": 100,
         "bollinger bands.median.color": "#33FF88",
         "bollinger bands.upper.linewidth": 7,
         "macd.histogram.color": '#ffffff',
         "macd.macd.color": '#34D5A7',
         "macd.signal.color": '#E2517E',
-        "macd.histogram.linewidth": 4, //设置 MACD 的线宽度
+        "macd.histogram.linewidth": 3, //设置 MACD 的线宽度
         "macd.macd.linewidth": 3,
         "macd.signal.linewidth": 3,
         "macd.precision": 2
@@ -87,7 +87,9 @@
       widget.createButton().on('click', function(e){ widget.chart().setResolution('1440')}).append('D1');
       widget.createButton().on('click', function(e){ widget.chart().executeActionById('insertIndicator')}).append('<span>技术指标</span>');
       widget.createButton().on('click', function(e){ widget.chart().executeActionById('chartProperties')}).append('<span>设置</span>');
-      widget.chart().createStudy("MACD",false,false,[3,8,'open',5],null,{"precision":2,'histogram.linewidth':4,'macd.linewidth':3,'signal.linewidth':3}); //添加自定义指标
+      widget.chart().createStudy("Moving Average",true,false,[7,'close'],null,{ "plot.color": '#07A0C3', 'plot.linewidth': 2 }); //添加 MA7 指标
+      widget.chart().createStudy("Moving Average",true,false,[25,'close'],null,{ "plot.color": '#FFBA14', 'plot.linewidth': 2 }); //添加 MA 25 指标
+      widget.chart().createStudy("MACD",false,false,[3,8,'close',5],null,{"precision":2,'histogram.linewidth':2,'macd.linewidth':2,'signal.linewidth':2}); //添加 MACD 指标
     });
   });
 </script>
