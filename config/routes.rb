@@ -25,6 +25,7 @@ Rails.application.routes.draw do
     resources :markets do
       resources :candles
     end
+    resources :regulates
 
     Market.exchanges.each do |exchange|
       patch "/#{exchange.pluralize}/:id", to: "markets#update", as: exchange.to_sym

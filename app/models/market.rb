@@ -16,6 +16,8 @@ class Market < ActiveRecord::Base
   extend Enumerize
 
   self.per_page = 10
+
+  has_one :regulate
   has_many :candles, dependent: :destroy
   enumerize :source, in: ['bittrex', 'binance']
   scope :seq, -> { order('sequence') }

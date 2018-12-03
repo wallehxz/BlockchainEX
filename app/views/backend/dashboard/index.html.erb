@@ -15,7 +15,7 @@
         <div class="col-sm-2">
           <select onchange="javascript:location.href = this.value;" class="form-control" style="display: inline;">
             <option value="?">请选择市场</option>
-            <% Market.all.each do |item|%>
+            <% Market.seq.each do |item|%>
               <option value="?market=<%= item.id %>&start=<%= params[:start] || (Date.current - 1.days).to_s %>" <%= 'selected' if params[:market].to_i == item.id || (!params[:market].present? && item.id == Market.seq.first.id)%>><%= item.full_name %></option>
             <% end %>
           </select>

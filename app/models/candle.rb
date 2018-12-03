@@ -3,13 +3,14 @@
 # Table name: candles
 #
 #  id        :integer          not null, primary key
-#  c         :float
+#  market_id :integer
+#  o         :float
 #  h         :float
 #  l         :float
-#  o         :float
-#  t         :float
+#  c         :float
 #  v         :float
-#  market_id :integer
+#  t         :string
+#  ts        :datetime
 #
 
 class Candle < ActiveRecord::Base

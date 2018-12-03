@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181129055637) do
+ActiveRecord::Schema.define(version: 20181203104845) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,6 +33,18 @@ ActiveRecord::Schema.define(version: 20181129055637) do
     t.string   "quote_unit"
     t.string   "source"
     t.string   "type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "regulates", force: :cascade do |t|
+    t.integer  "market_id"
+    t.float    "amplitude"
+    t.float    "retain"
+    t.float    "cost"
+    t.boolean  "notify_wx"
+    t.boolean  "notify_sms"
+    t.boolean  "notify_dd"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

@@ -1,44 +1,41 @@
-<%= form_for(['backend', @market]) do |f| %>
+<%= form_for(['backend',@regulate]) do |f| %>
 <div class="box-body">
   <div class="col-md-5">
     <div class="form-group has-success">
-      <label>排序</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-sort-numeric-asc"></i>
-        </div>
-        <%= f.text_field :sequence, class:'form-control', placeholder:'（必填* 展示排列顺序）' %>
-      </div>
-    </div>
-    <div class="form-group has-success">
-      <label>对标</label>
+      <label>货币市场</label>
       <div class="input-group">
         <div class="input-group-addon">
           <i class="fa fa-btc"></i>
         </div>
-        <%= f.text_field :quote_unit, class:'form-control', placeholder:'（必填* 对标报价币种）' %>
+        <%= f.select(:market_id, Market.all.map{|x| [x.full_name,x.id]}, {prompt:'请选择市场'},{:class => 'form-control'}) %>
       </div>
-      <%= model_errors(@market,'quote_unit') %>
     </div>
     <div class="form-group has-success">
-      <label>基准</label>
+      <label>行情浮动</label>
+      <div class="input-group">
+        <div class="input-group-addon">
+          <i class="fa fa-thermometer-half"></i>
+        </div>
+        <%= f.text_field :amplitude, class:'form-control', placeholder:'（必填* 涨跌变化幅度）' %>
+      </div>
+    </div>
+    <div class="form-group has-success">
+      <label>保留余量</label>
+      <div class="input-group">
+        <div class="input-group-addon">
+          <i class="fa fa-battery-1"></i>
+        </div>
+        <%= f.text_field :retain, class:'form-control', placeholder:'（必填* 需要保留的数量）' %>
+      </div>
+    </div>
+    <div class="form-group has-success">
+      <label>可用本金</label>
       <div class="input-group">
         <div class="input-group-addon">
           <i class="fa fa-money"></i>
         </div>
-        <%= f.text_field :base_unit, class:'form-control', placeholder:'（必填* 基准货币）' %>
+        <%= f.text_field :cost, class:'form-control', placeholder:'（必填* 交易分配的资金）' %>
       </div>
-      <%= model_errors(@market,'quote_unit') %>
-    </div>
-    <div class="form-group has-success">
-      <label>交易所</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-cube"></i>
-        </div>
-        <%= f.select(:source, [['比特交易所','bittrex'],['币安交易所','binance']], {prompt:'交易所'},{:class => 'form-control'}) %>
-      </div>
-      <%= model_errors(@market,'source') %>
     </div>
   </div>
   <div class="col-md-12">

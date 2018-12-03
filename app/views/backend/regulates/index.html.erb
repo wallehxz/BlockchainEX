@@ -1,0 +1,79 @@
+<%= content_for(:title,  '行情监管 | BLOCK') %>
+<section class="content-header">
+  <h1>
+    行情监管 <small>预览</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-btc"></i> Dashboard</a></li>
+    <li class="active"><i class="fa fa-balance-scale"></i> 行情监管</li>
+  </ol>
+</section>
+<section class="content">
+  <div class="box box-primary">
+    <div class="box-header">
+      <a href="<%= new_backend_regulate_path %>" class="btn bg-primary btn-flat"><i class="ion-plus"></i> 添加监管</a>
+    </div>
+    <div class="box-body">
+      <div class="row">
+        <div class="col-sm-12">
+          <table id="example1" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="example1_info">
+            <thead>
+            <tr>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">市场</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">幅度</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">保留</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">本金</th>
+<!--               <th tabindex="0" aria-controls="example1" style="text-align: center">钉钉</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">微信</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">短信</th> -->
+              <th tabindex="0" aria-controls="example1" style="text-align: center">通知</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center;">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @regulates.each do |item| %>
+              <tr style="text-align: center">
+                <td><%= item.market.full_name %></td>
+                <td><%= item.amplitude %></td>
+                <td><%= item.retain %></td>
+                <td><%= item.cost %></td>
+                <td>
+                  钉钉：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_dd %> onchange='switch_state(<%= item.id %>)'></br>
+                  微信：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_wx %> onchange='switch_state(<%= item.id %>)'></br>
+                  短信：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_sms %> onchange='switch_state(<%= item.id %>)'>
+                </td>
+                <td>
+                  <a href="<%= edit_backend_regulate_path(item) %>" class="btn bg-orange btn-flat">
+                    <i class="glyphicon glyphicon-edit"></i>
+                  </a>
+                  <a href="<%= backend_regulate_path(item) %>" class="btn bg-red btn-flat" data-method="delete" data-confirm="确定删除事务焦点吗？">
+                    <i class="glyphicon glyphicon-trash"></i>
+                  </a>
+                </td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-5">
+          <div class="dataTables_info" id="example1_info" role="status" aria-live="polite"><h5>总计：「<%= @regulates.count %>」</h5></div>
+        </div>
+        <div class="col-sm-12">
+          <div class="dataTables_paginate paging_simple_numbers">
+          <%= will_paginate @regulates, :class=>'apple_pagination' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<% content_for :script_footer do %>
+  <script type="text/javascript">
+    function switch_state(item) {
+      $.get('/blocks/regulates/' + item +'/change_state');
+    }
+    $("[name='my-state']").bootstrapSwitch({onColor:'success',offColor:'danger'});
+  </script>
+<% end %>
