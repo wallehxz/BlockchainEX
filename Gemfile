@@ -23,6 +23,7 @@ gem 'nokogiri', '1.8.0' # HTML 解析
 gem 'daemons-rails', '1.2.1' #进程管理
 gem 'enumerize', '2.2.2' # 多标签选项
 gem 'aasm', '5.0.1' #状态管理
+# gem 'descendants_tracker' # Track descendants of a class
 
 group :development do
   gem 'pg', '0.20.0'

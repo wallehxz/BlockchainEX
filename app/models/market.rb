@@ -14,8 +14,9 @@
 
 class Market < ActiveRecord::Base
   extend Enumerize
+
   self.per_page = 10
-  has_many :candles
+  has_many :candles, dependent: :destroy
   enumerize :source, in: ['bittrex', 'binance']
   scope :seq, -> { order('sequence') }
   before_save :set_type_of_source
@@ -51,5 +52,24 @@ class Market < ActiveRecord::Base
       return 1
     end
     2
+  end
+
+  def self.exchanges
+    # Market.select(:type).distinct.map { |x| x.type.underscore.pluralize }
+    ['bittrex', 'binance']
+  end
+
+  def method_missing(method, *args)
+    m_string = method.to_s
+    if m_string.include?('ma_')
+      return ma_value(m_string.delete('ma_').to_i)
+    end
+  rescue Exception => e
+    raise e
+  end
+
+  def ma_value(amount)
+    all_p = candles.limit(amount).map {|x| x.c }
+    all_p.sum / amount
   end
 end

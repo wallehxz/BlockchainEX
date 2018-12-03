@@ -13,7 +13,6 @@
 #
 
 class Bittrex < Market
-
   def get_ticker
     ticker_url = 'https://bittrex.com/api/v1.1/public/getticker'
     res = Faraday.get do |req|
@@ -57,5 +56,4 @@ class Bittrex < Market
     ticker
     candles.create(ticker)
   end
-
 end

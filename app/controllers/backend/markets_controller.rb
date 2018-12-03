@@ -20,7 +20,7 @@ class Backend::MarketsController < Backend::BaseController
   end
 
   def update
-    if @market.update(market_params)
+    if @market.update(exchange_params)
       redirect_to backend_markets_path, notice: '交易市场更新成功'
     else
       flash[:warn] = "请完善表单信息"
@@ -38,5 +38,11 @@ private
 
   def market_params
     params.require(:market).permit(:sequence, :quote_unit, :base_unit, :source)
+  end
+
+  def exchange_params
+    Market.exchanges.each do |ex|
+      return params.require(ex.to_sym).permit(:sequence, :quote_unit, :base_unit, :source) if params[ex.to_sym]
+    end
   end
 end
