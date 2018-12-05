@@ -13,6 +13,11 @@
 #
 
 class Binance < Market
+
+  def get_price
+    t = get_ticker('1m',1)[0]
+    { last: t[4].to_f, ask: t[2].to_f, bid: t[3].to_f }
+  end
   def generate_quote
     t = latest_ticker('15m',120)
     ticker = {}

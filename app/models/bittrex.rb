@@ -13,6 +13,12 @@
 #
 
 class Bittrex < Market
+
+  def get_price
+    t = get_ticker
+    { last: t['Last'], ask: t['Ask'], bid: t['Bid'] }
+  end
+
   def get_ticker
     ticker_url = 'https://bittrex.com/api/v1.1/public/getticker'
     res = Faraday.get do |req|
@@ -48,8 +54,8 @@ class Bittrex < Market
     t = get_ticker
     ticker = {}
     ticker[:o] = last_quote&.c || t['Last']
-    ticker[:h] = t['Ask']
-    ticker[:l] = t['Bid']
+    ticker[:h] = t['Last'] * 1.005
+    ticker[:l] = t['Last'] * 0.995
     ticker[:c] = t['Last']
     ticker[:v] = (rand * 50).to_d.round(4)
     ticker[:t] = Time.now.to_i

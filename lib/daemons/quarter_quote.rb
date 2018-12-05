@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 
-# You might want to change this
+# You might want to change this [development,production]
 ENV["RAILS_ENV"] ||= "development"
 
 root = File.expand_path(__dir__)
-root = File.dirname(root) until File.exists?(File.join(root, 'config'))
+root = File.dirname(root) until File.exist?(File.join(root, 'config'))
 Dir.chdir(root)
 
 require File.join(root, "config", "environment")

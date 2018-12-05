@@ -15,9 +15,8 @@
 #
 
 class Regulate < ActiveRecord::Base
+  validates_uniqueness_of :market_id
   belongs_to :market
 
   self.per_page = 10
-
-
 end

@@ -14,7 +14,6 @@
 
 class Market < ActiveRecord::Base
   extend Enumerize
-
   self.per_page = 10
 
   has_one :regulate
@@ -56,22 +55,33 @@ class Market < ActiveRecord::Base
     2
   end
 
+  # Market.select(:type).distinct.map { |x| x.type.underscore.pluralize }
   def self.exchanges
-    # Market.select(:type).distinct.map { |x| x.type.underscore.pluralize }
     ['bittrex', 'binance']
   end
 
   def method_missing(method, *args)
     m_string = method.to_s
-    if m_string.include?('ma_')
-      return ma_value(m_string.delete('ma_').to_i)
-    end
-  rescue Exception => e
-    raise e
+    return recent_max_min('min',m_string.delete('min_')) if m_string.include?('min_')
+    return recent_max_min('max',m_string.delete('max_')) if m_string.include?('max_')
+    return ma_value(m_string.delete('ma_')) if m_string.include?('ma_')
   end
 
   def ma_value(amount)
-    all_p = candles.limit(amount).map {|x| x.c }
-    all_p.sum / amount
+    candles.last(amount.to_i).map {|x| x.c }.sum / amount.to_i
+  end
+
+  def recent_max_min(side,amount)
+    eval "candles.last(#{amount.to_i}).map {|x| x.c }.#{side}"
+  end
+
+  def tip?
+    regulate.present?
+  end
+
+  def quote_notice(content)
+    Notice.sms(content) if regulate.notify_sms
+    Notice.wechat(content) if regulate.notify_wx
+    Notice.dingding(content) if regulate.notify_dd
   end
 end
