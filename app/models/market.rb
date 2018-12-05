@@ -88,10 +88,10 @@ class Market < ActiveRecord::Base
 
   def extreme_report
     if min_48 == last_quote.c
-      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 12H 最高报价 #{last_quote.c}"
+      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 12H 最低报价 #{last_quote.c}"
       quote_notice(tip)
     elsif max_48 == last_quote.c
-      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 12H 最低报价 #{last_quote.c}"
+      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 12H 最高报价 #{last_quote.c}"
       quote_notice(tip)
     end
   end
