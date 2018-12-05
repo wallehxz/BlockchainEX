@@ -81,9 +81,9 @@ class Market < ActiveRecord::Base
   end
 
   def quote_notice(content)
-    Notice.sms(content) if regulate.notify_sms
-    Notice.wechat(content) if regulate.notify_wx
-    Notice.dingding(content) if regulate.notify_dd
+    Notice.sms(content) if regulate&.notify_sms
+    Notice.wechat(content) if regulate&.notify_wx
+    Notice.dingding(content) if regulate&.notify_dd
   end
 
   def extreme_report
