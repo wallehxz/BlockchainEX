@@ -19,6 +19,7 @@ while $running
   starting = Time.now
   Market.seq.each do |item|
     item.generate_quote rescue nil
+    item.extreme_report
   end
   consume = Time.now - starting
   offset_second = Time.now.strftime("%S").to_i + 3 - consume

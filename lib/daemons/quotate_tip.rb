@@ -25,8 +25,7 @@ end
 
 def low_to_up
   if $c_market.tip? && lowest?
-    $c_market.get_price[:last] > $c_market.last_quote.c
-    tip = "#{$c_market.full_name} 回升，#{$c_market.last_quote.c} => #{$c_market.get_price[:last]}"
+    tip = "#{$c_market.full_name} 下跌盘点，#{$c_market.last_quote.c} => #{$c_market.get_price[:last]}"
     $c_market.quote_notice tip
     puts "[ #{Time.now.httpdate} ] #{tip}"
   end
@@ -34,8 +33,7 @@ end
 
 def up_to_low
   if $c_market.tip? && highest?
-    $c_market.get_price[:last] < $c_market.last_quote.c
-    tip = "#{$c_market.full_name} 回落，#{$c_market.last_quote.c} => #{$c_market.get_price[:last]}"
+    tip = "#{$c_market.full_name} 上升盘点，#{$c_market.last_quote.c} => #{$c_market.get_price[:last]}"
     $c_market.quote_notice tip
     puts "[ #{Time.now.httpdate} ] #{tip}"
   end
@@ -45,9 +43,9 @@ while $running
   starting = Time.now
   Market.seq.each do |item|
     $c_market = item
-    low_to_up
-    up_to_low
-  end rescue nil
+    low_to_up rescue nil
+    up_to_low rescue nil
+  end
   consume = Time.now - starting
   offset_second = Time.now.strftime("%S").to_i + 3 - consume
   sleep (300 - offset_second)

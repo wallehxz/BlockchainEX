@@ -95,4 +95,5 @@ class Market < ActiveRecord::Base
       quote_notice(tip)
     end
   end
+
 end
