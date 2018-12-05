@@ -21,6 +21,7 @@ class Market < ActiveRecord::Base
   enumerize :source, in: ['bittrex', 'binance']
   scope :seq, -> { order('sequence') }
   before_save :set_type_of_source
+  after_create :extreme_report
 
   def set_type_of_source
     self.type = self.source.capitalize if self.source
@@ -83,5 +84,15 @@ class Market < ActiveRecord::Base
     Notice.sms(content) if regulate.notify_sms
     Notice.wechat(content) if regulate.notify_wx
     Notice.dingding(content) if regulate.notify_dd
+  end
+
+  def extreme_report
+    if min_48 == last_quote.c
+      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 12H 最高报价 #{last_quote.c}"
+      quote_notice(tip)
+    elsif max_48 == last_quote.c
+      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 12H 最低报价 #{last_quote.c}"
+      quote_notice(tip)
+    end
   end
 end
