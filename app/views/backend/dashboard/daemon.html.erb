@@ -1,0 +1,61 @@
+<%= content_for(:title,  '任务进程 | Exchange') %>
+<section class="content-header">
+  <h1>
+    系统任务进程
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+    <li class="active"><i class="fa fa-assistive-listening-systems"></i> 任务进程</li>
+  </ol>
+</section>
+<section class="content">
+  <div class="box box-info">
+    <div class="box-body">
+      <div class="row">
+        <div class="col-sm-12">
+          <table id="example1" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="example1_info">
+            <thead>
+            <tr>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">名称</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">状态</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% daemons = Daemons::Rails::Monitoring.statuses%>
+            <% daemons.each do |name,status| %>
+              <tr  style="text-align: center">
+                <td>
+                  <label class="btn bg-black btn-flat" style="font-size: 16px;width: 180px;">
+                    <i style="float: left" class="fa fa-cube"></i>
+                    <%= name.chomp('.rb') %>
+                  </label>
+                </td>
+                <td>
+                  <label class="btn bg-<%= status.to_s.include?('run') ? 'green' : 'red' %> btn-flat" style="font-size: 16px;width: 180px;">
+                    <i style="float: left" class="fa fa-<%= status.to_s.include?('run') ? 'send-o' : 'send' %>"></i>
+                    <%= status %>
+                  </label>
+                </td>
+                <td>
+                  <a href="/backend/daemon_operate?daemon=<%= name.chomp('.rb') %>&operate=on" class="btn bg-green btn-flat" data-confirm="是否开启该进程！">
+                    <i class="fa fa-rocket"></i>
+                  </a>
+                  <a href="/backend/daemon_operate?daemon=<%= name.chomp('.rb') %>&operate=off" class="btn bg-red btn-flat" data-confirm="是否关闭该进程！">
+                    <i class="fa fa-power-off"></i>
+                  </a>
+                </td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-5">
+          <div class="dataTables_info" id="example1_info" role="status" aria-live="polite"><h4>总任务：<%= daemons.keys.count %></h4></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 # You might want to change this [development,production]
+#bundle exec rake daemon:quarter_quote:start RAILS_ENV=production
 ENV["RAILS_ENV"] ||= "development"
 
 root = File.expand_path(__dir__)
@@ -16,12 +17,16 @@ Signal.trap("TERM") do
 end
 
 while $running
-  starting = Time.now
-  Market.seq.each do |item|
-    item.generate_quote rescue nil
-    item.extreme_report
+  begin
+    starting = Time.now
+    Market.seq.each do |item|
+      item.generate_quote rescue nil
+      item.extreme_report
+    end
+    consume = Time.now - starting
+    sleep (900 - consume)
+  rescue => detail
+    print detail.backtrace.join("\n")
+    sleep 900
   end
-  consume = Time.now - starting
-  offset_second = Time.now.strftime("%S").to_i + 3 - consume
-  sleep (900 - offset_second)
 end

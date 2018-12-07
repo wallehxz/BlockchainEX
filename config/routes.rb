@@ -22,10 +22,14 @@ Rails.application.routes.draw do
 
   namespace :backend do
     get 'quote', to:'dashboard#index', as: :quote
+    get 'daemon', to: 'dashboard#daemon', as: :daemon
+    get 'daemon_operate', to: 'dashboard#daemon_operate'
     resources :markets do
       resources :candles
     end
-    resources :regulates
+    resources :regulates do
+      get :change_state, on: :member
+    end
 
     Market.exchanges.each do |exchange|
       patch "/#{exchange.pluralize}/:id", to: "markets#update", as: exchange.to_sym

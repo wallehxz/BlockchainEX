@@ -38,9 +38,9 @@
                 <td><%= item.retain %></td>
                 <td><%= item.cost %></td>
                 <td>
-                  钉钉：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_dd %> onchange='switch_state(<%= item.id %>)'></br>
-                  微信：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_wx %> onchange='switch_state(<%= item.id %>)'></br>
-                  短信：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_sms %> onchange='switch_state(<%= item.id %>)'>
+                  钉钉：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_dd %> onchange='switch_state(<%= item.id %>, "dd")'></br>
+                  微信：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_wx %> onchange='switch_state(<%= item.id %>, "wx")'></br>
+                  短信：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_sms %> onchange='switch_state(<%= item.id %>,"sms")'>
                 </td>
                 <td>
                   <a href="<%= edit_backend_regulate_path(item) %>" class="btn bg-orange btn-flat">
@@ -71,8 +71,8 @@
 </section>
 <% content_for :script_footer do %>
   <script type="text/javascript">
-    function switch_state(item) {
-      $.get('/blocks/regulates/' + item +'/change_state');
+    function switch_state(id,kind) {
+      $.get('/backend/regulates/' + id +'/change_state?kind=' + kind);
     }
     $("[name='my-state']").bootstrapSwitch({onColor:'success',offColor:'danger'});
   </script>

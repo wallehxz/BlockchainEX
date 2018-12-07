@@ -1,7 +1,7 @@
 class Backend::RegulatesController < Backend::BaseController
 
   def index
-    @regulates = Regulate.paginate(page:params[:page])
+    @regulates = Regulate.order('market_id').paginate(page:params[:page])
   end
 
   def new
@@ -33,6 +33,17 @@ class Backend::RegulatesController < Backend::BaseController
     @regulate.destroy
     flash[:notice] = "删除行情监管"
     redirect_to :back
+  end
+
+  def change_state
+    if params[:kind] == 'sms'
+      @regulate.update(notify_sms: !@regulate.notify_sms)
+    elsif params[:kind] == 'wx'
+      @regulate.update(notify_wx: !@regulate.notify_wx)
+    elsif params[:kind] == 'dd'
+      @regulate.update(notify_dd: !@regulate.notify_dd)
+    end
+    render json: { message: 'Success'}
   end
 
 private

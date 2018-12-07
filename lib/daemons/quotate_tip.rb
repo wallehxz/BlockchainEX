@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 # You might want to change this [development,production]
+# bundle exec rake daemon:quotate_tip:start RAILS_ENV=production
 ENV["RAILS_ENV"] ||= "development"
 
 root = File.expand_path(__dir__)
@@ -24,7 +25,7 @@ def lowest?
 end
 
 def low_to_up
-  if $c_market.tip? && lowest?
+  if $c_market.tip? && lowest? && $c_market.last_quote.c < $c_market.get_price[:last]
     tip = "#{$c_market.full_name} 下跌盘点，#{$c_market.last_quote.c} => #{$c_market.get_price[:last]}"
     $c_market.quote_notice tip
     puts "[ #{Time.now.httpdate} ] #{tip}"
@@ -32,7 +33,7 @@ def low_to_up
 end
 
 def up_to_low
-  if $c_market.tip? && highest?
+  if $c_market.tip? && highest? && $c_market.last_quote.c > $c_market.get_price[:last]
     tip = "#{$c_market.full_name} 上升盘点，#{$c_market.last_quote.c} => #{$c_market.get_price[:last]}"
     $c_market.quote_notice tip
     puts "[ #{Time.now.httpdate} ] #{tip}"
@@ -40,13 +41,17 @@ def up_to_low
 end
 
 while $running
-  starting = Time.now
-  Market.seq.each do |item|
-    $c_market = item
-    low_to_up rescue nil
-    up_to_low rescue nil
+  begin
+    starting = Time.now
+    Market.seq.each do |item|
+      $c_market = item
+      low_to_up rescue nil
+      up_to_low rescue nil
+    end
+    consume = Time.now - starting
+    sleep (300 - consume)
+  rescue => detail
+    print detail.backtrace.join("\n")
+    sleep 300
   end
-  consume = Time.now - starting
-  offset_second = Time.now.strftime("%S").to_i + 3 - consume
-  sleep (300 - offset_second)
 end

@@ -9,4 +9,16 @@ class Backend::DashboardController < Backend::BaseController
     @price_array = tickers.map {|x| [x.ms_t,x.c] }
     @decimal = Market.calc_decimal tickers.last.c rescue 2
   end
+
+  def daemon
+  end
+
+  def daemon_operate
+    status = {'on': '开启', 'off': '关闭'}
+    operate = params[:operate]
+    Daemons::Rails::Monitoring.start("#{params[:daemon]}.rb") if operate == 'on'
+    Daemons::Rails::Monitoring.stop("#{params[:daemon]}.rb") if operate == 'off'
+    flash[:notice] = "任务 [ #{params[:daemon] }] 已#{status[operate.to_sym]}"
+    redirect_to backend_daemon_path
+  end
 end

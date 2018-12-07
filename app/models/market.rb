@@ -21,7 +21,6 @@ class Market < ActiveRecord::Base
   enumerize :source, in: ['bittrex', 'binance']
   scope :seq, -> { order('sequence') }
   before_save :set_type_of_source
-  after_create :extreme_report
 
   def set_type_of_source
     self.type = self.source.capitalize if self.source

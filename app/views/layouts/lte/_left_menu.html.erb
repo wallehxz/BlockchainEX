@@ -41,5 +41,10 @@
         <i class="fa fa-balance-scale"></i> <span> 行情监管</span>
       </a>
     </li>
+    <li class="treeview <%= 'active' if controller_name == 'dashboard' && action_name == 'daemon' %>">
+      <a href="<%= backend_daemon_path %>" target="_self">
+        <i class="fa fa-assistive-listening-systems"></i> <span>  任务进程</span>
+      </a>
+    </li>
   </ul>
 </section>
