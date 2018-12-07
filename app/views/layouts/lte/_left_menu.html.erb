@@ -19,7 +19,7 @@
   </form>
   <ul class="sidebar-menu">
     <li class="header">功能导航</li>
-    <li class="treeview <%= 'active' if controller_name == 'dashboard' %>">
+    <li class="treeview <%= 'active' if controller_name == 'dashboard' && action_name == 'index' %>">
       <a href="<%= backend_quote_path %>" target="_self">
         <i class="fa fa-line-chart"></i> <span> 行情趋势</span>
       </a>
