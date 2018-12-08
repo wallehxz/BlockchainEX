@@ -1,3 +1,5 @@
+#[development,production]
+settings.env = 'development'
 settings.host = 'http://tt.tt'
 settings.receive_email = '*****@qq.com'
 settings.email_account = '*****@qq.com'
