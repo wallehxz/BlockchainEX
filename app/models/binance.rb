@@ -94,4 +94,20 @@ class Binance < Market
     digest = OpenSSL::Digest.new('sha256')
     return OpenSSL::HMAC.hexdigest(digest, key, data)
   end
+
+  def sync_fund
+    remote =Account.binace_sync(quote_unit)
+    locale = fund || build_fund
+    locale.balance = remote['free'].to_f
+    locale.freezing = remote['locked'].to_f
+    locale.save
+  end
+
+  def sync_cash
+    remote = Account.binace_sync(base_unit)
+    locale = cash || build_cash
+    locale.balance = remote['free'].to_f
+    locale.freezing = remote['locked'].to_f
+    locale.save
+  end
 end

@@ -34,6 +34,13 @@ class Backend::MarketsController < Backend::BaseController
     redirect_to :back
   end
 
+  def sync_balance
+    @market.sync_fund rescue nil
+    @market.sync_cash rescue nil
+    flash[:notice] = "账户资金数量同步成功"
+    redirect_to :back
+  end
+
 private
 
   def market_params

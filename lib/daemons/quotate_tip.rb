@@ -17,11 +17,11 @@ Signal.trap("TERM") do
 end
 
 def highest?
-  $c_market.max_24 == $c_market.last_quote.c
+  $c_market.max_36 == $c_market.last_quote.c
 end
 
 def lowest?
-  $c_market.min_24 == $c_market.last_quote.c
+  $c_market.min_36 == $c_market.last_quote.c
 end
 
 def low_to_up

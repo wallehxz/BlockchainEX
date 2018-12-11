@@ -25,11 +25,13 @@ Rails.application.routes.draw do
     get 'daemon', to: 'dashboard#daemon', as: :daemon
     get 'daemon_operate', to: 'dashboard#daemon_operate'
     resources :markets do
+      get :sync_balance, on: :member
       resources :candles
     end
     resources :regulates do
       get :change_state, on: :member
     end
+    resources :accounts
 
     Market.exchanges.each do |exchange|
       patch "/#{exchange.pluralize}/:id", to: "markets#update", as: exchange.to_sym

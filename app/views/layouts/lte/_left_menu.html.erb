@@ -18,7 +18,7 @@
     </div>
   </form>
   <ul class="sidebar-menu">
-    <li class="header">功能导航</li>
+    <li class="header">菜单导航</li>
     <li class="treeview <%= 'active' if controller_name == 'dashboard' && action_name == 'index' %>">
       <a href="<%= backend_quote_path %>" target="_self">
         <i class="fa fa-line-chart"></i> <span> 行情趋势</span>
@@ -41,6 +41,12 @@
         <i class="fa fa-balance-scale"></i> <span> 行情监管</span>
       </a>
     </li>
+    <li class="treeview <%= 'active' if controller_name == 'accounts' %>">
+      <a href="<%= backend_accounts_path %>" target="_self">
+        <i class="fa fa-money"></i> <span>  货币资金</span>
+      </a>
+    </li>
+    <li class="header">设置管理</li>
     <li class="treeview <%= 'active' if controller_name == 'dashboard' && action_name == 'daemon' %>">
       <a href="<%= backend_daemon_path %>" target="_self">
         <i class="fa fa-assistive-listening-systems"></i> <span>  任务进程</span>

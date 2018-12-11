@@ -17,6 +17,8 @@ class Market < ActiveRecord::Base
   self.per_page = 10
 
   has_one :regulate, dependent: :destroy
+  has_one :cash, ->(curr) { where(exchange: curr.type) }, class_name: 'Account', primary_key: 'base_unit', foreign_key: 'currency'
+  has_one :fund, ->(curr) { where(exchange: curr.type) }, class_name: 'Account', primary_key: 'quote_unit', foreign_key: 'currency'
   has_many :candles, dependent: :destroy
   enumerize :source, in: ['bittrex', 'binance']
   scope :seq, -> { order('sequence') }
@@ -86,13 +88,12 @@ class Market < ActiveRecord::Base
   end
 
   def extreme_report
-    if min_48 == last_quote.c
-      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 12H 最低报价 #{last_quote.c}"
+    if min_60 == last_quote.c
+      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 15H 最低报价 #{last_quote.c}"
       quote_notice(tip)
-    elsif max_48 == last_quote.c
-      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 12H 最高报价 #{last_quote.c}"
+    elsif max_72 == last_quote.c
+      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 18H 最高报价 #{last_quote.c}"
       quote_notice(tip)
     end
   end
-
 end

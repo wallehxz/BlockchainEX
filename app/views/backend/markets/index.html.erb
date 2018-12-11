@@ -29,14 +29,14 @@
             <% @markets.each do |item| %>
               <tr style="text-align: center">
                 <td>
-                  <label class="btn bg-black btn-flat" style="font-size: 16px">
-                    <i class="fa fa-btc"></i>
+                  <label class="btn bg-black btn-flat" style="font-size: 16px;min-width: 100px">
+                    <i class="fa fa-dot-circle-o" style="float: left;"></i>
                     <%= item.quote_unit %>
                   </label>
                 </td>
                 <td>
-                  <label class="btn bg-black btn-flat" style="font-size: 16px">
-                    <i class="fa fa-money"></i>
+                  <label class="btn bg-black btn-flat" style="font-size: 16px;min-width: 100px">
+                    <i class="fa fa-circle" style="float: left;"></i>
                     <%= item.base_unit %>
                   </label>
                 </td>
@@ -49,6 +49,9 @@
                 <td>
                   <a href="<%= backend_market_candles_path(item) %>" class="btn bg-green btn-flat">
                     <i class="fa fa-area-chart"></i>
+                  </a>
+                  <a href="<%= sync_balance_backend_market_path(item) %>" class="btn bg-yellow btn-flat" title="同步资金">
+                    <i class="fa fa-handshake-o"></i>
                   </a>
                   <a href="<%= edit_backend_market_path(item) %>" class="btn bg-orange btn-flat">
                     <i class="glyphicon glyphicon-edit"></i>
