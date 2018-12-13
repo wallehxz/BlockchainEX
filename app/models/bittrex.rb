@@ -19,6 +19,10 @@ class Bittrex < Market
     { last: t['Last'], ask: t['Ask'], bid: t['Bid'] }
   end
 
+  def symbol
+    "#{base_unit}-#{quote_unit}"
+  end
+
   def get_ticker
     ticker_url = 'https://bittrex.com/api/v1.1/public/getticker'
     res = Faraday.get do |req|
@@ -77,5 +81,27 @@ class Bittrex < Market
     locale.balance = remote['Balance'].to_f
     locale.freezing = remote['Pending'].to_f
     locale.save
+  end
+
+  def sync_remote_order(side, amount, price)
+    order_url = { 'bid': 'https://bittrex.com/api/v1.1/market/buylimit', 'ask': 'https://bittrex.com/api/v1.1/market/selllimit' }[side]
+    timetamp = Time.now.to_i
+    sign_url = "#{order_url}?#{sign_query(timetamp, amount, price)}"
+    res = Faraday.get do |req|
+      req.url order_url
+      req.headers['apisign'] = Account.bittrex_hamc_digest(sign_url)
+      req.params['apikey'] = Settings.bittrex_key
+      req.params['market'] = symbol
+      req.params['nonce'] = timetamp
+      req.params['quantity'] = amount
+      req.params['rate'] = price
+    end
+    result = JSON.parse(res.body)
+    result['success'] ? { 'state'=> 200 } : { 'state'=> 500 }
+  end
+
+  def sign_query(timetamp, amount, price)
+    query_arry = ["apikey=#{Settings.bittrex_key}","market=#{symbol}","nonce=#{timetamp}","quantity=#{amount}","rate=#{price}"]
+    query_arry.sort.join('&')
   end
 end

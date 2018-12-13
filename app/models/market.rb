@@ -23,6 +23,8 @@ class Market < ActiveRecord::Base
   enumerize :source, in: ['bittrex', 'binance']
   scope :seq, -> { order('sequence') }
   before_save :set_type_of_source
+  has_many :bids, class_name: 'OrderBid'
+  has_many :asks, class_name: 'OrderAsk'
 
   def set_type_of_source
     self.type = self.source.capitalize if self.source
@@ -95,5 +97,13 @@ class Market < ActiveRecord::Base
       tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 18H 最高报价 #{last_quote.c}"
       quote_notice(tip)
     end
+  end
+
+  def new_bid(price, amount)
+    bids.create(price: price, amount: amount)
+  end
+
+  def new_ask(price, amount)
+    asks.create(price: price, amount: amount)
   end
 end

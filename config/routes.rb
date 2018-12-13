@@ -32,6 +32,7 @@ Rails.application.routes.draw do
       get :change_state, on: :member
     end
     resources :accounts
+    resources :orders
 
     Market.exchanges.each do |exchange|
       patch "/#{exchange.pluralize}/:id", to: "markets#update", as: exchange.to_sym

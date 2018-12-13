@@ -1,0 +1,49 @@
+<%= form_for(['backend',@order]) do |f| %>
+<div class="box-body">
+  <div class="col-md-5">
+    <div class="form-group has-success">
+      <label>市场</label>
+      <div class="input-group">
+        <div class="input-group-addon">
+          <i class="fa fa-btc"></i>
+        </div>
+        <%= f.select(:market_id, Market.seq.map{ |x| [x.full_name,x.id] }, {prompt:'请选择市场'},{:class => 'form-control'}) %>
+      </div>
+    </div>
+    <div class="form-group has-success">
+      <label>交易</label>
+      <div class="input-group">
+        <div class="input-group-addon">
+          <i class="fa fa-thermometer-half"></i>
+        </div>
+        <%= f.select(:type, [['买入', 'OrderBid'],['卖出', 'OrderAsk']], {prompt:'请选择交易'},{:class => 'form-control'}) %>
+      </div>
+    </div>
+    <div class="form-group has-success">
+      <label>价格</label>
+      <div class="input-group">
+        <div class="input-group-addon">
+          <i class="fa fa-money"></i>
+        </div>
+        <%= f.text_field :price, class:'form-control', placeholder:'（必填* 期望交易价格）' %>
+      </div>
+    </div>
+    <div class="form-group has-success">
+      <label>数量</label>
+      <div class="input-group">
+        <div class="input-group-addon">
+          <i class="fa fa-book"></i>
+        </div>
+        <%= f.text_field :amount, class:'form-control', placeholder:'（必填* 欲购买数量）' %>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12">
+    <hr>
+    <div>
+      <button type="submit" class="btn bg-maroon btn-flat" style="width: 120px">提交</button>
+      <a href="<%= request.referrer %>" class="btn bg-navy btn-flat" style="width: 120px">取消</a>
+    </div>
+  </div>
+</div>
+<% end %>

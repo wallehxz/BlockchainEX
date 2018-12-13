@@ -46,6 +46,11 @@
         <i class="fa fa-money"></i> <span>  货币资金</span>
       </a>
     </li>
+    <li class="treeview <%= 'active' if controller_name == 'orders' %>">
+      <a href="<%= backend_orders_path %>" target="_self">
+        <i class="fa fa-envelope-open-o"></i> <span>  市场订单</span>
+      </a>
+    </li>
     <li class="header">设置管理</li>
     <li class="treeview <%= 'active' if controller_name == 'dashboard' && action_name == 'daemon' %>">
       <a href="<%= backend_daemon_path %>" target="_self">

@@ -2,7 +2,7 @@
 
 # You might want to change this [development,production]
 #bundle exec rake daemon:quarter_quote:start RAILS_ENV=production
-ENV["RAILS_ENV"] ||= Settings.env
+ENV["RAILS_ENV"] ||= 'production'
 
 root = File.expand_path(__dir__)
 root = File.dirname(root) until File.exist?(File.join(root, 'config'))

@@ -18,6 +18,7 @@ class Binance < Market
     t = get_ticker('1m',1)[0]
     { last: t[4].to_f, ask: t[2].to_f, bid: t[3].to_f }
   end
+
   def generate_quote
     t = latest_ticker('15m',120)
     ticker = {}
@@ -69,30 +70,32 @@ class Binance < Market
     current = JSON.parse(res.body)
   end
 
-  def remote_order(side,quantity,price)
+  def sync_remote_order(side,quantity,price)
+    side = { 'bid': 'BUY', 'ask': 'SELL' }[side]
     order_url = 'https://api.binance.com/api/v3/order'
     timestamp = (Time.now.to_f * 1000).to_i - 2000
-    params_stirng = "price=#{price}&quantity=#{quantity}&recvWindow=10000&side=#{side}&symbol=#{symbol}&timeInForce=GTC&timestamp=#{timestamp}&type=LIMIT"
+    params_string = "price=#{price.to_d}&quantity=#{quantity.to_d}&recvWindow=10000&side=#{side}&symbol=#{symbol}&timeInForce=GTC&timestamp=#{timestamp}&type=LIMIT"
     res = Faraday.post do |req|
       req.url order_url
-      req.headers['X-MBX-APIKEY'] = Settings.apiKey
+      req.headers['X-MBX-APIKEY'] = Settings.binance_key
       req.params['symbol'] = symbol
       req.params['side'] = side
       req.params['type'] = 'LIMIT'
-      req.params['quantity'] = quantity
-      req.params['price'] = price
+      req.params['quantity'] = quantity.to_d
+      req.params['price'] = price.to_d
       req.params['recvWindow'] = 10000
       req.params['timeInForce'] = 'GTC'
       req.params['timestamp'] = timestamp
-      req.params['signature'] = signed(params_stirng)
+      req.params['signature'] = params_signed(params_string)
     end
-    JSON.parse(res.body)
+    result = JSON.parse(res.body)
+    result['code'] ? { 'state'=> 500 } : { 'state'=> 200 }
   end
 
-  def signed(data)
-    key = Settings.apiSecret
+  def params_signed(data)
+    key = Settings.binance_secret
     digest = OpenSSL::Digest.new('sha256')
-    return OpenSSL::HMAC.hexdigest(digest, key, data)
+    OpenSSL::HMAC.hexdigest(digest, key, data)
   end
 
   def sync_fund
@@ -110,4 +113,5 @@ class Binance < Market
     locale.freezing = remote['locked'].to_f
     locale.save
   end
+
 end
