@@ -90,13 +90,42 @@ class Market < ActiveRecord::Base
   end
 
   def extreme_report
-    if min_60 == last_quote.c
-      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 15H 最低报价 #{last_quote.c}"
+    if min_96 == last_quote.c
+      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 24H 最低报价 #{last_quote.c}"
       quote_notice(tip)
-    elsif max_72 == last_quote.c
-      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 18H 最高报价 #{last_quote.c}"
+      is_shopping? rescue nil
+    end
+    if max_96 == last_quote.c
+      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 24H 最高报价 #{last_quote.c}"
       quote_notice(tip)
     end
+  end
+
+  def latest_bid
+    bids.succ.recent.first
+  end
+
+  def latest_ask
+    asks.succ.recent.first
+  end
+
+  def is_shopping?
+    if regulate&.cost > 0
+      if !latest_bid || Time.now - latest_bid&.created_at > 12.hour
+        sync_cash
+        if cash.balance > regulate&.cost
+          shopping
+        end
+      end
+    end
+    false
+  end
+
+  def shopping
+    total = regulate.cost
+    price = last_quote.c
+    amout = (total / price).to_d.round(4,:down)
+    new_bid(price, amount)
   end
 
   def new_bid(price, amount)

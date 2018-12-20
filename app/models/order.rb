@@ -21,6 +21,7 @@ class Order < ActiveRecord::Base
   belongs_to :market
   after_create :fix_price
   after_save :push_order, :calc_total, :sms_order
+  scope :succ, -> { where(state: 'succ') }
 
   def calc_total
     unless self.total

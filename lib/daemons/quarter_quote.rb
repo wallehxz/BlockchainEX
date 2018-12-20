@@ -21,7 +21,7 @@ while $running
     starting = Time.now
     Market.seq.each do |item|
       item.generate_quote rescue nil
-      item.extreme_report
+      item.extreme_report rescue nil
     end
     consume = Time.now - starting
     sleep (900 - consume)
