@@ -84,19 +84,23 @@ class Market < ActiveRecord::Base
   end
 
   def quote_notice(content)
-    Notice.sms(content) if regulate&.notify_sms
     Notice.wechat(content) if regulate&.notify_wx
     Notice.dingding(content) if regulate&.notify_dd
+  end
+
+  def trade_notice(content)
+    Notice.sms(content) if regulate&.notify_sms
   end
 
   def extreme_report
     if min_96 == last_quote.c
       tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 24H 最低报价 #{last_quote.c}"
       quote_notice(tip)
-      is_shopping? rescue nil
-    end
-    if max_96 == last_quote.c
+      trade_notice(tip)
+      is_shopping
+    elsif max_96 == last_quote.c
       tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 24H 最高报价 #{last_quote.c}"
+      trade_notice(tip)
       quote_notice(tip)
     end
   end
@@ -109,7 +113,7 @@ class Market < ActiveRecord::Base
     asks.succ.recent.first
   end
 
-  def is_shopping?
+  def is_shopping
     if regulate&.cost > 0
       if !latest_bid || Time.now - latest_bid&.created_at > 12.hour
         sync_cash
@@ -122,9 +126,9 @@ class Market < ActiveRecord::Base
   end
 
   def shopping
-    total = regulate.cost
+    total = cash.balance > regulate.cost ? regulate.cost : cash.balance
     price = last_quote.c
-    amout = (total / price).to_d.round(4,:down)
+    amount = (total * 0.995 / price).to_d.round(4,:down)
     new_bid(price, amount)
   end
 

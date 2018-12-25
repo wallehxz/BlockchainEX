@@ -38,7 +38,7 @@ class Order < ActiveRecord::Base
   end
 
   def type_cn
-    { 'OrderAsk'=> '卖出', 'OrderBid'=> '买入'}[type]
+    {'OrderAsk'=> '卖出', 'OrderBid'=> '买入'}[type]
   end
 
   def sms_order

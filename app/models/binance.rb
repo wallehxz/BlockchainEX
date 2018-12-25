@@ -13,6 +13,7 @@
 #
 
 class Binance < Market
+  after_save :batch_sync_quote
 
   def get_price
     t = get_ticker('1m',1)[0]
@@ -30,6 +31,12 @@ class Binance < Market
     ticker[:t] = Time.now.to_i
     ticker
     candles.create(ticker)
+  end
+
+  def batch_sync_quote
+    if candles.count < 10
+      batch_quote(672)
+    end
   end
 
   def batch_quote(amount = 100)
@@ -113,5 +120,4 @@ class Binance < Market
     locale.freezing = remote['locked'].to_f
     locale.save
   end
-
 end
