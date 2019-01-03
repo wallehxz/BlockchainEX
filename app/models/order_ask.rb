@@ -11,6 +11,7 @@
 #  state      :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  cause      :string
 #
 
 class OrderAsk < Order
@@ -19,6 +20,7 @@ class OrderAsk < Order
     if state.init?
       result = market.sync_remote_order(:ask, amount, price)
       self.update_attributes(state: result['state'])
+      self.update_attributes(cause: result['cause']) if result['cause']
     end
   end
 end

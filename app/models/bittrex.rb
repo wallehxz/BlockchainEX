@@ -84,20 +84,24 @@ class Bittrex < Market
   end
 
   def sync_remote_order(side, amount, price)
-    order_url = { 'bid': 'https://bittrex.com/api/v1.1/market/buylimit', 'ask': 'https://bittrex.com/api/v1.1/market/selllimit' }[side]
-    timetamp = Time.now.to_i
-    sign_url = "#{order_url}?#{sign_query(timetamp, amount, price)}"
-    res = Faraday.get do |req|
-      req.url order_url
-      req.headers['apisign'] = Account.bittrex_hamc_digest(sign_url)
-      req.params['apikey'] = Settings.bittrex_key
-      req.params['market'] = symbol
-      req.params['nonce'] = timetamp
-      req.params['quantity'] = amount
-      req.params['rate'] = price
+    begin
+      order_url = { 'bid': 'https://bittrex.com/api/v1.1/market/buylimit', 'ask': 'https://bittrex.com/api/v1.1/market/selllimit' }[side]
+      timetamp = Time.now.to_i
+      sign_url = "#{order_url}?#{sign_query(timetamp, amount, price)}"
+      res = Faraday.get do |req|
+        req.url order_url
+        req.headers['apisign'] = Account.bittrex_hamc_digest(sign_url)
+        req.params['apikey'] = Settings.bittrex_key
+        req.params['market'] = symbol
+        req.params['nonce'] = timetamp
+        req.params['quantity'] = amount
+        req.params['rate'] = price
+      end
+      result = JSON.parse(res.body)
+      result['success'] ? { 'state'=> 200 } : { 'state'=> 500, 'cause'=> result['message'] }
+    rescue Exception => detail
+      { 'state'=> 500, 'cause'=> detail.cause }
     end
-    result = JSON.parse(res.body)
-    result['success'] ? { 'state'=> 200 } : { 'state'=> 500 }
   end
 
   def sign_query(timetamp, amount, price)

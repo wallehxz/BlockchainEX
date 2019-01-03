@@ -11,6 +11,15 @@
       </div>
     </div>
     <div class="form-group has-success">
+      <label>数量精度</label>
+      <div class="input-group">
+        <div class="input-group-addon">
+          <i class="fa fa-dot-circle-o"></i>
+        </div>
+        <%= f.text_field :precision, class:'form-control', placeholder:'（必填* 交易数量精度）' %>
+      </div>
+    </div>
+    <div class="form-group has-success">
       <label>行情浮动</label>
       <div class="input-group">
         <div class="input-group-addon">
@@ -20,7 +29,7 @@
       </div>
     </div>
     <div class="form-group has-success">
-      <label>保留余量</label>
+      <label>留用余量</label>
       <div class="input-group">
         <div class="input-group-addon">
           <i class="fa fa-battery-1"></i>
@@ -29,7 +38,7 @@
       </div>
     </div>
     <div class="form-group has-success">
-      <label>可用本金</label>
+      <label>计划本金</label>
       <div class="input-group">
         <div class="input-group-addon">
           <i class="fa fa-money"></i>

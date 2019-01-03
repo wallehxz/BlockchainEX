@@ -11,6 +11,7 @@
 #  state      :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  cause      :string
 #
 
 class Order < ActiveRecord::Base
@@ -20,7 +21,8 @@ class Order < ActiveRecord::Base
   enumerize :state, in: { init: 100, fail: 500, succ: 200, cancel: 0 }, default: 100, scope: true
   belongs_to :market
   after_create :fix_price
-  after_save :push_order, :calc_total, :sms_order
+  after_save :calc_total, :sms_order
+  after_save :push_order
   scope :succ, -> { where(state: 'succ') }
 
   def calc_total
@@ -33,8 +35,8 @@ class Order < ActiveRecord::Base
   end
 
   def fix_price
-    self.price = self.price.to_d.round(8, :down)
-    self.amount = self.amount.to_d.round(4, :down)
+    self.price = self.price.to_d.round(6, :down)
+    self.amount = self.amount.to_d.round(self.market&.regulate&.precision || 4, :down)
   end
 
   def type_cn

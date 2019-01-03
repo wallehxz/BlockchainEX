@@ -49,7 +49,7 @@ class Backend::RegulatesController < Backend::BaseController
 private
 
   def regulate_params
-    params.require(:regulate).permit(:market_id, :amplitude, :retain, :cost, :notify_wx, :notify_sms, :notify_dd)
+    params.require(:regulate).permit(:market_id, :precision, :amplitude, :retain, :cost, :notify_wx, :notify_sms, :notify_dd)
   end
 
 end

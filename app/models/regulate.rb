@@ -12,6 +12,7 @@
 #  notify_dd  :boolean
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  precision  :integer
 #
 
 class Regulate < ActiveRecord::Base

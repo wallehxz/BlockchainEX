@@ -25,18 +25,22 @@
               <th tabindex="0" aria-controls="example1" style="text-align: center">数量</th>
               <th tabindex="0" aria-controls="example1" style="text-align: center">小计</th>
               <th tabindex="0" aria-controls="example1" style="text-align: center">状态</th>
-              <th tabindex="0" aria-controls="example1" style="text-align: center;width: 240px">操作</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center;width: 80px">操作</th>
             </tr>
             </thead>
             <tbody>
             <% @orders.each do |item| %>
               <tr style="text-align: center">
-                <td><%= item.market.full_name %></td>
+                <td><%= item.market&.full_name %></td>
                 <td><%= item.type_cn %></td>
                 <td><%= item.price %></td>
                 <td><%= item.amount %></td>
                 <td><%= item.total %></td>
-                <td><%= item.state %></td>
+                <td>
+                  <label class="btn bg-black btn-flat" title="<%= item.cause if item.state.fail? %>" style="font-size: 16px;min-width: 100px">
+                    <%= item.state %>
+                  </label>
+                </td>
                 <td>
                   <a href="<%= backend_order_path(item) %>" class="btn bg-red btn-flat" data-method="delete" data-confirm="确定删除吗？">
                     <i class="glyphicon glyphicon-trash"></i>

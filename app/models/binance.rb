@@ -78,25 +78,29 @@ class Binance < Market
   end
 
   def sync_remote_order(side,quantity,price)
-    side = { 'bid': 'BUY', 'ask': 'SELL' }[side]
-    order_url = 'https://api.binance.com/api/v3/order'
-    timestamp = (Time.now.to_f * 1000).to_i - 2000
-    params_string = "price=#{price.to_d}&quantity=#{quantity.to_d}&recvWindow=10000&side=#{side}&symbol=#{symbol}&timeInForce=GTC&timestamp=#{timestamp}&type=LIMIT"
-    res = Faraday.post do |req|
-      req.url order_url
-      req.headers['X-MBX-APIKEY'] = Settings.binance_key
-      req.params['symbol'] = symbol
-      req.params['side'] = side
-      req.params['type'] = 'LIMIT'
-      req.params['quantity'] = quantity.to_d
-      req.params['price'] = price.to_d
-      req.params['recvWindow'] = 10000
-      req.params['timeInForce'] = 'GTC'
-      req.params['timestamp'] = timestamp
-      req.params['signature'] = params_signed(params_string)
+    begin
+      side = { 'bid': 'BUY', 'ask': 'SELL' }[side]
+      order_url = 'https://api.binance.com/api/v3/order'
+      timestamp = (Time.now.to_f * 1000).to_i - 2000
+      params_string = "price=#{price.to_d}&quantity=#{quantity.to_d}&recvWindow=10000&side=#{side}&symbol=#{symbol}&timeInForce=GTC&timestamp=#{timestamp}&type=LIMIT"
+      res = Faraday.post do |req|
+        req.url order_url
+        req.headers['X-MBX-APIKEY'] = Settings.binance_key
+        req.params['symbol'] = symbol
+        req.params['side'] = side
+        req.params['type'] = 'LIMIT'
+        req.params['quantity'] = quantity.to_d
+        req.params['price'] = price.to_d
+        req.params['recvWindow'] = 10000
+        req.params['timeInForce'] = 'GTC'
+        req.params['timestamp'] = timestamp
+        req.params['signature'] = params_signed(params_string)
+      end
+      result = JSON.parse(res.body)
+      result['code'] ? { 'state'=> 500, 'cause'=> result['msg'] } : { 'state'=> 200 }
+    rescue Exception => detail
+      { 'state'=> 500, 'cause'=> detail.cause }
     end
-    result = JSON.parse(res.body)
-    result['code'] ? { 'state'=> 500 } : { 'state'=> 200 }
   end
 
   def params_signed(data)

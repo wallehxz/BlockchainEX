@@ -22,7 +22,7 @@
             </tr>
             </thead>
             <tbody>
-            <% daemons = Daemons::Rails::Monitoring.statuses%>
+            <% daemons = Daemons::Rails::Monitoring.statuses %>
             <% daemons.each do |name,status| %>
               <tr  style="text-align: center">
                 <td>

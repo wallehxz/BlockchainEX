@@ -31,7 +31,9 @@ Rails.application.routes.draw do
     resources :regulates do
       get :change_state, on: :member
     end
-    resources :accounts
+    resources :accounts do
+      get :sync_balance, on: :collection
+    end
     resources :orders
 
     Market.exchanges.each do |exchange|
