@@ -93,18 +93,18 @@ class Market < ActiveRecord::Base
   end
 
   def extreme_report
-    if min_96 == last_quote.c
-      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 24H 最低报价 #{last_quote.c}"
+    if min_192 == last_quote.c
+      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 48H 最低报价 #{last_quote.c}"
       quote_notice(tip)
       trade_notice(tip)
       is_shopping
-      amplitude = 1 - (max_96 / min_96).to_f.round(2)
+      amplitude = 1 - (max_192 / min_192).to_f.round(2)
       regulate.update(amplitude: amplitude) if regulate
-    elsif max_96 == last_quote.c
-      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 24H 最高报价 #{last_quote.c}"
+    elsif max_192 == last_quote.c
+      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 48H 最高报价 #{last_quote.c}"
       trade_notice(tip)
       quote_notice(tip)
-      amplitude = (max_96 / min_96).to_f.round(2) - 1
+      amplitude = (max_192 / min_192).to_f.round(2) - 1
       regulate.update(amplitude: amplitude) if regulate
     end
   end

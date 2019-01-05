@@ -17,26 +17,24 @@ Signal.trap("TERM") do
 end
 
 def highest?
-  $c_market.max_48 == $c_market.last_quote.c
+  $c_market.max_96 == $c_market.last_quote.c
 end
 
 def lowest?
-  $c_market.min_48 == $c_market.last_quote.c
+  $c_market.min_96 == $c_market.last_quote.c
 end
 
 def low_to_up
   if $c_market.tip? && lowest? && $c_market.last_quote.c < $c_market.get_price[:last]
-    tip = "#{$c_market.full_name} 下跌盘点，#{$c_market.last_quote.c} => #{$c_market.get_price[:last]}"
+    tip = "#{$c_market.full_name} 下跌回升，#{$c_market.last_quote.c} => #{$c_market.get_price[:last]}"
     $c_market.quote_notice tip
-    puts "[ #{Time.now.httpdate} ] #{tip}"
   end
 end
 
 def up_to_low
   if $c_market.tip? && highest? && $c_market.last_quote.c > $c_market.get_price[:last]
-    tip = "#{$c_market.full_name} 上升盘点，#{$c_market.last_quote.c} => #{$c_market.get_price[:last]}"
+    tip = "#{$c_market.full_name} 上涨回落，#{$c_market.last_quote.c} => #{$c_market.get_price[:last]}"
     $c_market.quote_notice tip
-    puts "[ #{Time.now.httpdate} ] #{tip}"
   end
 end
 

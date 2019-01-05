@@ -20,6 +20,13 @@ Rails.application.routes.draw do
   get '/trending/history', to: "trending#history"
   get '/trending/time',    to: "trending#time"
 
+  namespace :api do
+    resources :tickers do
+      collection do
+        get 'fetch'
+      end
+    end
+  end
   namespace :backend do
     get 'quote', to:'dashboard#index', as: :quote
     get 'daemon', to: 'dashboard#daemon', as: :daemon
