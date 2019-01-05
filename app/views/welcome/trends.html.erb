@@ -89,7 +89,8 @@
       widget.createButton().on('click', function(e){ widget.chart().executeActionById('chartProperties')}).append('<span>设置</span>');
       widget.chart().createStudy("Moving Average",true,false,[7,'close'],null,{ "plot.color": '#07A0C3', 'plot.linewidth': 2 }); //添加 MA7 指标
       widget.chart().createStudy("Moving Average",true,false,[25,'close'],null,{ "plot.color": '#FFBA14', 'plot.linewidth': 2 }); //添加 MA 25 指标
-      widget.chart().createStudy("MACD",false,false,[3,8,'close',5],null,{"precision":2,'histogram.linewidth':2,'macd.linewidth':2,'signal.linewidth':2}); //添加 MACD 指标
+      widget.chart().createStudy("Relative Strength Index",false,false,[14],null,{ "plot.color": '#07A0C3', 'plot.linewidth': 3 }); //添加 RSI 指标
+      // widget.chart().createStudy("MACD",false,false,null,null,{"precision":2,'histogram.linewidth':2,'macd.linewidth':2,'signal.linewidth':2}); //添加 MACD 指标
     });
   });
 </script>
