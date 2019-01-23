@@ -32,4 +32,8 @@ class Candle < ActiveRecord::Base
     self.ts = Time.at self.t.to_i
     save
   end
+
+  def short_date
+    Time.at(int_t).to_s(:short)
+  end
 end

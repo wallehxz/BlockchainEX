@@ -31,7 +31,9 @@
             <tbody>
             <% @orders.each do |item| %>
               <tr style="text-align: center">
-                <td><%= item.market&.full_name %></td>
+                <td><%= item.market&.full_name %><br>
+                  <%= item.created_at.to_s(:short) %>
+                </td>
                 <td><%= item.type_cn %></td>
                 <td><%= item.price %></td>
                 <td><%= item.amount %></td>

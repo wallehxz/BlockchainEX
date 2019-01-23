@@ -79,6 +79,33 @@ class Market < ActiveRecord::Base
     eval "candles.last(#{amount.to_i}).map {|x| x.c }.#{side}"
   end
 
+  def rsi(amount)
+    rs = smma_up(amount) / smma_down(amount)
+    100 - (100 / (1 + rs))
+  end
+
+  def smma_up(amount)
+    prices= candles.last(amount).map { |x| x.c }
+    sum = 0
+    prices.each_with_index do |price, index|
+      if prices[index + 1].present? && prices[index + 1] - price > 0
+        sum =+ (prices[index + 1] - price) / (amount - 1)
+      end
+    end
+    sum
+  end
+
+  def smma_down(amount)
+    prices = candles.last(amount).map { |x| x.c }
+    sum = 0
+    prices.each_with_index do |price, index|
+      if prices[index + 1].present? && price - prices[index + 1] > 0
+        sum =+ (price - prices[index + 1]) / (amount - 1)
+      end
+    end
+    sum
+  end
+
   def tip?
     regulate.present?
   end

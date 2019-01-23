@@ -28,7 +28,7 @@ class Binance < Market
     ticker[:h] = t[2]
     ticker[:l] = t[3]
     ticker[:c] = t[4]
-    ticker[:v] = t[9]
+    ticker[:v] = t[5]
     ticker[:t] = Time.now.to_i
     ticker
     candles.create(ticker)
@@ -48,7 +48,7 @@ class Binance < Market
       ticker[:h] = t[2]
       ticker[:l] = t[3]
       ticker[:c] = t[4]
-      ticker[:v] = t[9]
+      ticker[:v] = t[5]
       ticker[:t] = (t[0] / 1000) + 900
       ticker
       candles.create(ticker)
