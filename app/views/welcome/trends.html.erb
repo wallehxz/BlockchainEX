@@ -34,7 +34,7 @@
         'volume_force_overlay',
         'header_screenshot',
         'header_fullscreen_button',
-        'create_volume_indicator_by_default',
+        // 'create_volume_indicator_by_default',
         'header_compare'
       ],
       charts_storage_url: 'https://saveload.tradingview.com',
@@ -57,7 +57,7 @@
         "paneProperties.bottomMargin": 5, //设置面板数据的底部间距
         "paneProperties.legendProperties.showStudyArguments": true, //是否显示指标的相关参数
         'paneProperties.legendProperties.showLegend': true,  //是否显示指标名称
-        "volumePaneSize": "small", //成交量规格
+        "volumePaneSize": "medium", //成交量规格 支持的值: large, medium, small, tiny
         "scalesProperties.scaleSeriesOnly": true
       },
       studies_overrides: {
@@ -87,9 +87,9 @@
       widget.createButton().on('click', function(e){ widget.chart().setResolution('1440')}).append('D1');
       widget.createButton().on('click', function(e){ widget.chart().executeActionById('insertIndicator')}).append('<span>技术指标</span>');
       widget.createButton().on('click', function(e){ widget.chart().executeActionById('chartProperties')}).append('<span>设置</span>');
-      widget.chart().createStudy("Moving Average",true,false,[7,'close'],null,{ "plot.color": '#07A0C3', 'plot.linewidth': 2 }); //添加 MA7 指标
-      widget.chart().createStudy("Moving Average",true,false,[25,'close'],null,{ "plot.color": '#FFBA14', 'plot.linewidth': 2 }); //添加 MA 25 指标
-      widget.chart().createStudy("Relative Strength Index",false,false,[14],null,{ "plot.color": '#07A0C3', 'plot.linewidth': 3 }); //添加 RSI 指标
+      // widget.chart().createStudy("Moving Average",true,false,[7,'close'],null,{ "plot.color": '#07A0C3', 'plot.linewidth': 2 }); //添加 MA7 指标
+      // widget.chart().createStudy("Moving Average",true,false,[25,'close'],null,{ "plot.color": '#FFBA14', 'plot.linewidth': 2 }); //添加 MA 25 指标
+      // widget.chart().createStudy("Relative Strength Index",false,false,[14],null,{ "plot.color": '#07A0C3', 'plot.linewidth': 3 }); //添加 RSI 指标
       // widget.chart().createStudy("MACD",false,false,null,null,{"precision":2,'histogram.linewidth':2,'macd.linewidth':2,'signal.linewidth':2}); //添加 MACD 指标
     });
   });
