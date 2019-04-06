@@ -46,18 +46,25 @@
                     <%= item.source %>
                   </label>
                 </td>
-                <td>
+                <td style="text-align: left">
                   <a href="<%= backend_market_candles_path(item) %>" class="btn bg-green btn-flat">
                     <i class="fa fa-area-chart"></i>
                   </a>
                   <a href="<%= sync_balance_backend_market_path(item) %>" class="btn bg-yellow btn-flat" title="同步资金">
-                    <i class="fa fa-handshake-o"></i>
+                    <i class="fa fa-money"></i>
                   </a>
                   <a href="<%= edit_backend_market_path(item) %>" class="btn bg-orange btn-flat">
                     <i class="glyphicon glyphicon-edit"></i>
                   </a>
                   <a href="<%= backend_market_path(item) %>" class="btn bg-red btn-flat" data-method="delete" data-confirm="确定删除吗？">
                     <i class="glyphicon glyphicon-trash"></i>
+                  </a>
+                  <br><br>
+                  <a href="<%= sync_candles_backend_market_path(item) %>" class="btn bg-green btn-flat" data-confirm="确定同步最新情数据吗？">
+                    <i class="fa fa-chain"></i>
+                  </a>
+                  <a href="<%= clear_candles_backend_market_path(item) %>" class="btn bg-red btn-flat" data-confirm="确定清空行情数据吗？">
+                    <i class="fa fa-unlink"></i>
                   </a>
                 </td>
               </tr>

@@ -24,6 +24,14 @@ class Candle < ActiveRecord::Base
     t.to_i * 1000
   end
 
+  def kline_info
+    if self.c > self.o
+      [self.h - self.c,self.c - self.o,self.o - self.l]
+    else
+      [self.h - self.o,self.c - self.o,self.c - self.l]
+    end
+  end
+
   def int_t
     t.to_i
   end

@@ -42,6 +42,7 @@
         <div class="col-sm-12">
           <!-- <canvas id="price-chart" width="100%" height="650"></canvas> -->
           <div id="price-chart" class="chart-container"></div>
+          <div id="volume-chart" class="chart-container"></div>
         </div>
       </div>
     </div>
@@ -51,12 +52,11 @@
   <%= javascript_include_tag 'highcharts','bignumber','price-charts', 'data-turbolinks-track' => true %>
   <script type="text/javascript">
     Highcharts.setOptions({
-      global:{
-        timezoneOffset: -8 * 60
-      }
+      global:{  timezoneOffset: -8 * 60 }
     })
     $( document ).ready(function() {
-      drawPrice(<%= raw @price_array %>, "<%= @market.full_name %>", <%= @decimal %>);
+      drawPrice(<%= raw @price_array %>, <%= @decimal %>);
+      drawVolume(<%= raw @volume_array %>, <%= raw @date_array %>);
     });
   </script>
 <% end %>

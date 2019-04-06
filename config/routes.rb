@@ -33,6 +33,8 @@ Rails.application.routes.draw do
     get 'daemon_operate', to: 'dashboard#daemon_operate'
     resources :markets do
       get :sync_balance, on: :member
+      get :clear_candles, on: :member
+      get :sync_candles, on: :member
       resources :candles
     end
     resources :regulates do

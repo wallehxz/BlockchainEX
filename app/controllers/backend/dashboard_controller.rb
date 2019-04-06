@@ -7,6 +7,8 @@ class Backend::DashboardController < Backend::BaseController
     tickers = @market.candles.where("ts >= ?",sta_time.to_time)
     tickers = @market.candles.last(192) if tickers.count < 96
     @price_array = tickers.map {|x| [x.ms_t,x.c] }
+    @volume_array = tickers.map {|x| x.v.to_i }
+    @date_array = tickers.map {|x| x.ms_t }
     @decimal = Market.calc_decimal tickers.last.c rescue 2
   end
 

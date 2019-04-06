@@ -41,6 +41,18 @@ class Backend::MarketsController < Backend::BaseController
     redirect_to :back
   end
 
+  def clear_candles
+    @market.candles.destroy_all
+    flash[:notice] = "行情数据清空"
+    redirect_to :back
+  end
+
+  def sync_candles
+    @market.batch_quote(1000)
+    flash[:notice] = "最新行情数据同步成功"
+    redirect_to :back
+  end
+
 private
 
   def market_params

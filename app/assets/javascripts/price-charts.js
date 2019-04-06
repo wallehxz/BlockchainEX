@@ -1,10 +1,9 @@
-
-function drawPrice(data, ticker, decimal) {
+function drawPrice(data, decimal) {
   var valueDecimals = decimal;
   $('#price-chart').highcharts({
     chart: { backgroundColor: null, height: 500 },
     tooltip: {backgroundColor: "#e2e2e2", borderColor: '#fff', style: {"color": "#2f2f2f"}},
-    title: {text: ''},
+    title: {text: 'Price' },
     credits: {enabled: false},
     exporting: {enabled: false},
     navigator: {enabled: false},
@@ -19,11 +18,7 @@ function drawPrice(data, ticker, decimal) {
         title: {text: ''},
         gridLineWidth: 1,
         gridLineColor: '#fff',
-        labels: {style: {color: '#9aa2a9', fill: '#9aa2a9'},
-            formatter: function() {
-                return BigNumber(this.value).round(decimal, BigNumber.ROUND_DOWN).toF(decimal);
-            }
-        }
+        labels:{ formatter: function(){ return ''; } }
     },
     series: [{
         name: 'Price',
@@ -31,9 +26,43 @@ function drawPrice(data, ticker, decimal) {
         type: 'spline',
         color: '#3c4ba6',
         lineWidth: 2,
-        tooltip: { valueDecimals: valueDecimals },
+        tooltip: { valueDecimals: 6 },
         marker: { enabled: false },
         states: { hover: { lineWidth: 2 } }
+    }]
+  });
+}
+
+function drawVolume(v_data, d_data) {
+  var valueDecimals = 0;
+  $('#volume-chart').highcharts({
+    chart: { backgroundColor: null, height: 300 },
+    tooltip: {backgroundColor: "#e2e2e2", borderColor: '#fff', style: {"color": "#2f2f2f"}, dateTimeLabelFormats: { hour: "%A, %b %e, %H:%M"}},
+    title: {text: 'Volumes' },
+    credits: {enabled: false},
+    exporting: {enabled: false},
+    navigator: {enabled: false},
+    legend: {enabled: false},
+    xAxis: {
+        type: 'datetime',
+        labels:{ formatter: function(){ return ''; } },
+        gridLineWidth: 1,
+        gridLineColor: '#fff',
+        categories: d_data,
+    },
+    yAxis: {
+        title: { text: '' },
+        labels:{ formatter: function(){ return ''; } },
+        gridLineWidth: 1,
+        gridLineColor: '#fff',
+        labels:{ formatter: function(){ return ''; } },
+    },
+    series: [{
+        type: 'column',
+        name: 'Volumes',
+        color: '#ef1071',
+        data: v_data,
+        lineWidth: 2,
     }]
   });
 }

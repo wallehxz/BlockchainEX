@@ -49,14 +49,7 @@ class Market < ActiveRecord::Base
   end
 
   def self.calc_decimal(number = 0)
-    if number < 0.0001
-      return 6
-    elsif number < 0.01
-      return 4
-    elsif number > 100
-      return 1
-    end
-    2
+    4
   end
 
   # Market.select(:type).distinct.map { |x| x.type.underscore.pluralize }
@@ -69,6 +62,7 @@ class Market < ActiveRecord::Base
     return recent_max_min('min',m_string.delete('min_')) if m_string.include?('min_')
     return recent_max_min('max',m_string.delete('max_')) if m_string.include?('max_')
     return ma_value(m_string.delete('ma_')) if m_string.include?('ma_')
+    return recent_vol(m_string.delete('vol_')) if m_string.include?('vol_')
   end
 
   def ma_value(amount)
@@ -77,6 +71,10 @@ class Market < ActiveRecord::Base
 
   def recent_max_min(side,amount)
     eval "candles.last(#{amount.to_i}).map {|x| x.c }.#{side}"
+  end
+
+  def recent_vol(amount)
+    candles.last(amount.to_i).map {|x| x.v }
   end
 
   def rsi(amount)
@@ -121,18 +119,26 @@ class Market < ActiveRecord::Base
 
   def extreme_report
     if min_192 == last_quote.c
-      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 48H 最低报价 #{last_quote.c}"
+      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 报价 #{last_quote.c} 成交量 #{last_quote.v}"
       quote_notice(tip)
       trade_notice(tip)
       is_shopping
       amplitude = 1 - (max_192 / min_192).to_f.round(2)
       regulate.update(amplitude: amplitude) if regulate
     elsif max_192 == last_quote.c
-      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 48H 最高报价 #{last_quote.c}"
+      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 报价 #{last_quote.c} 成交量 #{last_quote.v}"
       trade_notice(tip)
       quote_notice(tip)
       amplitude = (max_192 / min_192).to_f.round(2) - 1
       regulate.update(amplitude: amplitude) if regulate
+    end
+  end
+
+  def volume_report
+    if vol_48.max == last_quote.v
+      kline = last_quote.kline_info
+      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 12H最大成交量 #{last_quote.v}，价格浮动 #{kline}"
+      quote_notice(tip)
     end
   end
 
@@ -146,7 +152,7 @@ class Market < ActiveRecord::Base
 
   def is_shopping
     if regulate&.cost > 0
-      if !latest_bid || Time.now - latest_bid&.created_at > 12.hour
+      if !latest_bid || Time.now - latest_bid&.created_at > 8.hour
         sync_cash
         if cash.balance > regulate&.cost
           shopping
