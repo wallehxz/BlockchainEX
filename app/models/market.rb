@@ -137,7 +137,7 @@ class Market < ActiveRecord::Base
   def volume_report
     if vol_48.max == last_quote.v
       kline = last_quote.kline_info
-      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 12H最大成交量 #{last_quote.v}，价格浮动 #{kline}"
+      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 12H最大成交量 #{last_quote.v}，报价 #{last_quote.c}，价格浮动 #{kline}"
       quote_notice(tip)
     end
   end

@@ -26,9 +26,9 @@ class Candle < ActiveRecord::Base
 
   def kline_info
     if self.c > self.o
-      [self.h - self.c,self.c - self.o,self.o - self.l]
+      [(self.h - self.c).round(4),(self.c - self.o).round(4),(self.o - self.l).round(4)]
     else
-      [self.h - self.o,self.c - self.o,self.c - self.l]
+      [(self.h - self.o).round(4),(self.c - self.o).round(4),(self.c - self.l).round(4)]
     end
   end
 
