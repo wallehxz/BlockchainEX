@@ -20,6 +20,7 @@ class Market < ActiveRecord::Base
   has_one :cash, ->(curr) { where(exchange: curr.type) }, class_name: 'Account', primary_key: 'base_unit', foreign_key: 'currency'
   has_one :fund, ->(curr) { where(exchange: curr.type) }, class_name: 'Account', primary_key: 'quote_unit', foreign_key: 'currency'
   has_many :candles, dependent: :destroy
+  has_many :messages, dependent: :destroy
   enumerize :source, in: ['bittrex', 'binance']
   scope :seq, -> { order('sequence') }
   before_save :set_type_of_source
@@ -111,23 +112,23 @@ class Market < ActiveRecord::Base
   def quote_notice(content)
     Notice.wechat(content) if regulate&.notify_wx
     Notice.dingding(content) if regulate&.notify_dd
+    messages.create(body: content)
   end
 
   def trade_notice(content)
     Notice.sms(content) if regulate&.notify_sms
+    messages.create(body: content)
   end
 
   def extreme_report
     if min_192 == last_quote.c
       tip = "[#{Time.now.strftime('%H:%M')}] #{full_name}下跌 报价 #{last_quote.c} 成交量 #{last_quote.v}"
       quote_notice(tip)
-      trade_notice(tip)
       is_shopping
       amplitude = 1 - (max_192 / min_192).to_f.round(2)
       regulate.update(amplitude: amplitude) if regulate
     elsif max_192 == last_quote.c
       tip = "[#{Time.now.strftime('%H:%M')}] #{full_name}上涨 报价 #{last_quote.c} 成交量 #{last_quote.v}"
-      trade_notice(tip)
       quote_notice(tip)
       amplitude = (max_192 / min_192).to_f.round(2) - 1
       regulate.update(amplitude: amplitude) if regulate

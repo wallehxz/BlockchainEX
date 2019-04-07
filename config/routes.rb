@@ -44,6 +44,7 @@ Rails.application.routes.draw do
       get :sync_balance, on: :collection
     end
     resources :orders
+    resources :messages
 
     Market.exchanges.each do |exchange|
       patch "/#{exchange.pluralize}/:id", to: "markets#update", as: exchange.to_sym

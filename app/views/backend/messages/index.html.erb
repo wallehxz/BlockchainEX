@@ -1,0 +1,52 @@
+<section class="content-header">
+  <h1>
+    市场 <small>信息预览</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+    <li class="active"><i class="fa fa-exchange"></i> 市场列表</li>
+  </ol>
+</section>
+<section class="content">
+  <div class="box box-primary">
+    <div class="box-body">
+      <div class="row">
+        <div class="col-sm-12">
+          <table id="example1" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="example1_info">
+            <thead>
+            <tr>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">时间</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">市场</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">内容</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @messages.each do |item| %>
+              <tr style="text-align: center">
+                <td style="width: 222px"><%= item.short_date %>
+                  &nbsp;&nbsp;
+                  <a href="<%= backend_message_path(item) %>" data-method="delete" data-confirm="确定删除该讯息吗？">
+                    <i class="fa fa-close"></i>
+                  </a>
+                </td>
+                <td style="width: 200px"><%= item.market.full_name %></td>
+                <td><%= item.body %></td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-5">
+          <div class="dataTables_info" id="example1_info" role="status" aria-live="polite"><h5>总计：「<%= @messages.count %>」</h5></div>
+        </div>
+        <div class="col-sm-12">
+          <div class="dataTables_paginate paging_simple_numbers">
+          <%= will_paginate @messages, :class=>'apple_pagination' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
