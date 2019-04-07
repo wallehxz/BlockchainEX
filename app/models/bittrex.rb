@@ -108,4 +108,14 @@ class Bittrex < Market
     query_arry = ["apikey=#{Settings.bittrex_key}","market=#{symbol}","nonce=#{timetamp}","quantity=#{amount}","rate=#{price}"]
     query_arry.sort.join('&')
   end
+
+  def recent_price
+    trade_url = "https://api.bittrex.com/api/v1.1/public/getmarkethistory?market=#{symbol}"
+    res = Faraday.get do |req|
+      req.url trade_url
+      req.params['symbol'] = symbol
+    end
+    current = JSON.parse(res.body)
+    current['result'].first["Price"]
+  end
 end

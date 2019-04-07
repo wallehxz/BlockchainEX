@@ -125,4 +125,15 @@ class Binance < Market
     locale.freezing = remote['locked'].to_f
     locale.save
   end
+
+  def recent_price
+    trade_url = 'https://api.binance.com/api/v1/trades'
+    res = Faraday.get do |req|
+      req.url trade_url
+      req.params['symbol'] = symbol
+      req.params['limit'] = 10
+    end
+    current = JSON.parse(res.body)
+    current.last['price'].to_f
+  end
 end

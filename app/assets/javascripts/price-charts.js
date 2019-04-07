@@ -26,7 +26,7 @@ function drawPrice(data, decimal) {
         type: 'spline',
         color: '#3c4ba6',
         lineWidth: 2,
-        tooltip: { valueDecimals: 6 },
+        tooltip: { valueDecimals: valueDecimals },
         marker: { enabled: false },
         states: { hover: { lineWidth: 2 } }
     }]

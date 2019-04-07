@@ -119,14 +119,14 @@ class Market < ActiveRecord::Base
 
   def extreme_report
     if min_192 == last_quote.c
-      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 报价 #{last_quote.c} 成交量 #{last_quote.v}"
+      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name}下跌 报价 #{last_quote.c} 成交量 #{last_quote.v}"
       quote_notice(tip)
       trade_notice(tip)
       is_shopping
       amplitude = 1 - (max_192 / min_192).to_f.round(2)
       regulate.update(amplitude: amplitude) if regulate
     elsif max_192 == last_quote.c
-      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 报价 #{last_quote.c} 成交量 #{last_quote.v}"
+      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name}上涨 报价 #{last_quote.c} 成交量 #{last_quote.v}"
       trade_notice(tip)
       quote_notice(tip)
       amplitude = (max_192 / min_192).to_f.round(2) - 1
@@ -155,16 +155,15 @@ class Market < ActiveRecord::Base
       if !latest_bid || Time.now - latest_bid&.created_at > 8.hour
         sync_cash
         if cash.balance > regulate&.cost
-          shopping
+          trade_order
         end
       end
     end
-    false
   end
 
-  def shopping
+  def trade_order
     total = cash.balance > regulate.cost ? regulate.cost : cash.balance
-    price = last_quote.c
+    price = recent_price
     amount = (total * 0.995 / price).to_d.round(4,:down)
     new_bid(price, amount)
   end
