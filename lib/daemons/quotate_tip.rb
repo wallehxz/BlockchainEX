@@ -26,14 +26,14 @@ end
 
 def low_to_up
   if $c_market.tip? && lowest? && $c_market.last_quote.c < $c_market.get_price[:last]
-    tip = "#{$c_market.full_name} 下跌回升，#{$c_market.last_quote.c} => #{$c_market.get_price[:last]}"
+    tip = "#{$c_market.full_name} 上升回调 价格浮动，#{$c_market.last_quote.c} DOWN #{$c_market.get_price[:last]}"
     $c_market.quote_notice tip
   end
 end
 
 def up_to_low
   if $c_market.tip? && highest? && $c_market.last_quote.c > $c_market.get_price[:last]
-    tip = "#{$c_market.full_name} 上涨回落，#{$c_market.last_quote.c} => #{$c_market.get_price[:last]}"
+    tip = "#{$c_market.full_name} 下跌回暖 价格浮动，#{$c_market.last_quote.c} UP #{$c_market.get_price[:last]}"
     $c_market.quote_notice tip
   end
 end

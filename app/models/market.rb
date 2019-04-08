@@ -10,7 +10,8 @@
 #  type       :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#
+# 获取交易对相关参数限制
+# https://api.binance.com/api/v1/exchangeInfo
 
 class Market < ActiveRecord::Base
   extend Enumerize
@@ -124,14 +125,14 @@ class Market < ActiveRecord::Base
     if min_192 == last_quote.c
       tip = "[#{Time.now.strftime('%H:%M')}] #{full_name}下跌 报价 #{last_quote.c} 成交量 #{last_quote.v}"
       quote_notice(tip)
-      is_shopping
-      amplitude = 1 - (max_192 / min_192).to_f.round(2)
-      regulate.update(amplitude: amplitude) if regulate
+      buy_trade
+      amplitude = (max_192 / min_192) - 1
+      regulate.update(amplitude: amplitude.round(2)) if regulate
     elsif max_192 == last_quote.c
       tip = "[#{Time.now.strftime('%H:%M')}] #{full_name}上涨 报价 #{last_quote.c} 成交量 #{last_quote.v}"
       quote_notice(tip)
-      amplitude = (max_192 / min_192).to_f.round(2) - 1
-      regulate.update(amplitude: amplitude) if regulate
+      amplitude = 1 - (max_192 / min_192)
+      regulate.update(amplitude: amplitude.round(2)) if regulate
     end
   end
 
@@ -151,18 +152,18 @@ class Market < ActiveRecord::Base
     asks.succ.recent.first
   end
 
-  def is_shopping
+  def buy_trade
     if regulate&.cost > 0
       if !latest_bid || Time.now - latest_bid&.created_at > 8.hour
         sync_cash
         if cash.balance > regulate&.cost
-          trade_order
+          trade_buy_order
         end
       end
     end
   end
 
-  def trade_order
+  def trade_buy_order
     total = cash.balance > regulate.cost ? regulate.cost : cash.balance
     price = recent_price
     amount = (total * 0.995 / price).to_d.round(4,:down)
