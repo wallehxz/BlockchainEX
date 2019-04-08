@@ -20,28 +20,32 @@
             <thead>
             <tr>
               <th tabindex="0" aria-controls="example1" style="text-align: center">交易所</th>
-              <th tabindex="0" aria-controls="example1" style="text-align: center">浮动</th>
-              <th tabindex="0" aria-controls="example1" style="text-align: center">留用</th>
-              <th tabindex="0" aria-controls="example1" style="text-align: center">支出</th>
-              <th tabindex="0" aria-controls="example1" style="text-align: center">提醒</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">参数</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">通知</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">交易</th>
               <th tabindex="0" aria-controls="example1" style="width: 120px;">操作</th>
             </tr>
             </thead>
             <tbody>
             <% @regulates.each do |item| %>
               <tr style="text-align: center">
-                <td><br><%= item.market.full_name %></td>
-                <td><br>
-                  <label class="btn bg-black btn-flat" title="<%= item.updated_at.to_s(:short) %>" style="font-size: 16px;min-width: 100px">
-                    <%= item.amplitude %>
-                  </label>
+                <td>
+                  <%= item.market.class %><br><br>
+                  <%= item.market.quote_unit + "-" + item.market.base_unit %><br>
                 </td>
-                <td><br><%= item.retain %></td>
-                <td><br><%= item.cost %></td>
+                <td style="text-align: left">
+                   最大涨幅： <%= item.amplitude %><br>
+                   持有头寸： <%= item.retain %> <%= item.market.quote_unit %><br>
+                   交易资金： <%= item.cost %> <%= item.market.base_unit %><br>
+                   快频收益： <%= item.fast_profit %>%<br>
+                </td>
                 <td>
                   钉钉：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_dd %> onchange='switch_state(<%= item.id %>, "dd")'></br>
                   微信：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_wx %> onchange='switch_state(<%= item.id %>, "wx")'></br>
                   短信：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_sms %> onchange='switch_state(<%= item.id %>,"sms")'>
+                </td>
+                <td>
+                  快频：<input type="checkbox" name="my-state" <%= 'checked' if item.fast_trade %> onchange='switch_state(<%= item.id %>, "fast")'></br>
                 </td>
                 <td><br>
                   <a href="<%= edit_backend_regulate_path(item) %>" class="btn bg-orange btn-flat">

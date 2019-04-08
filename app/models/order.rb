@@ -18,7 +18,7 @@ class Order < ActiveRecord::Base
   extend Enumerize
   self.per_page = 10
   scope :recent, -> { order('created_at desc') }
-  enumerize :state, in: { init: 100, fail: 500, succ: 200, cancel: 0 }, default: 100, scope: true
+  enumerize :state, in: { init: 100, fail: 500, succ: 200, cancel: 0, rescue: 120 }, default: 100, scope: true
   belongs_to :market
   after_create :fix_price
   after_save :calc_total, :sms_order

@@ -46,6 +46,9 @@ Rails.application.routes.draw do
     resources :orders
     resources :messages
 
+    patch "/order_bid/:id", to: "orders#update", as: :order_bid
+    patch "/order_ask/:id", to: "orders#update", as: :order_ask
+
     Market.exchanges.each do |exchange|
       patch "/#{exchange.pluralize}/:id", to: "markets#update", as: exchange.to_sym
     end

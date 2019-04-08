@@ -25,7 +25,7 @@
               <th tabindex="0" aria-controls="example1" style="text-align: center">数量</th>
               <th tabindex="0" aria-controls="example1" style="text-align: center">小计</th>
               <th tabindex="0" aria-controls="example1" style="text-align: center">状态</th>
-              <th tabindex="0" aria-controls="example1" style="text-align: center;width: 80px">操作</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center;width: 150px">操作</th>
             </tr>
             </thead>
             <tbody>
@@ -44,6 +44,9 @@
                   </label>
                 </td>
                 <td>
+                  <a href="<%= edit_backend_order_path(item) %>" class="btn bg-orange btn-flat">
+                    <i class="glyphicon glyphicon-edit"></i>
+                  </a>
                   <a href="<%= backend_order_path(item) %>" class="btn bg-red btn-flat" data-method="delete" data-confirm="确定删除吗？">
                     <i class="glyphicon glyphicon-trash"></i>
                   </a>

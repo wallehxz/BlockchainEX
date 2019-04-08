@@ -42,6 +42,8 @@ class Backend::RegulatesController < Backend::BaseController
       @regulate.update(notify_wx: !@regulate.notify_wx)
     elsif params[:kind] == 'dd'
       @regulate.update(notify_dd: !@regulate.notify_dd)
+    elsif params[:kind] == 'fast'
+      @regulate.update(fast_trade: !@regulate.fast_trade)
     end
     render json: { message: 'Success'}
   end
@@ -49,7 +51,7 @@ class Backend::RegulatesController < Backend::BaseController
 private
 
   def regulate_params
-    params.require(:regulate).permit(:market_id, :precision, :amplitude, :retain, :cost, :notify_wx, :notify_sms, :notify_dd)
+    params.require(:regulate).permit(:market_id, :precision, :amplitude, :retain, :cost, :fast_profit)
   end
 
 end

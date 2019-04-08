@@ -20,7 +20,7 @@ class Backend::OrdersController < Backend::BaseController
   end
 
   def update
-    if @order.update(exchange_params)
+    if @order.update(order_side_params)
       redirect_to backend_orders_path, notice: '市场订单更新成功'
     else
       flash[:warn] = "请完善表单信息"
@@ -38,6 +38,12 @@ private
 
   def order_params
     params.require(:order).permit(:market_id, :type, :price, :amount)
+  end
+
+  def order_side_params
+    ['order_bid', 'order_ask'].each do |order_side|
+      return params.require(order_side.to_sym).permit(:market_id, :type, :price, :amount, :total, :state, :cause) if params[order_side.to_sym]
+    end
   end
 
 end

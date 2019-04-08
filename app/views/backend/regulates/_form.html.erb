@@ -29,7 +29,7 @@
       </div>
     </div>
     <div class="form-group has-success">
-      <label>留用余量</label>
+      <label>持有头寸</label>
       <div class="input-group">
         <div class="input-group-addon">
           <i class="fa fa-battery-1"></i>
@@ -38,12 +38,21 @@
       </div>
     </div>
     <div class="form-group has-success">
-      <label>计划本金</label>
+      <label>交易资金</label>
       <div class="input-group">
         <div class="input-group-addon">
           <i class="fa fa-money"></i>
         </div>
         <%= f.text_field :cost, class:'form-control', placeholder:'（必填* 交易分配的资金）' %>
+      </div>
+    </div>
+    <div class="form-group has-success">
+      <label>快频收益</label>
+      <div class="input-group">
+        <div class="input-group-addon">
+          <i class="fa fa-gift"></i>
+        </div>
+        <%= f.text_field :fast_profit, class:'form-control', placeholder:'（必填* 快频交易最小收益率）' %>
       </div>
     </div>
   </div>
