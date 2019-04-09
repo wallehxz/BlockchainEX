@@ -2,18 +2,19 @@
 #
 # Table name: regulates
 #
-# t.integer  "market_id"
-# t.float    "amplitude"
-# t.float    "retain"
-# t.float    "cost"
-# t.boolean  "notify_wx"
-# t.boolean  "notify_sms"
-# t.boolean  "notify_dd"
-# t.datetime "created_at",                  null: false
-# t.datetime "updated_at",                  null: false
-# t.integer  "precision"
-# t.integer  "fast_profit"
-# t.boolean  "fast_trade",  default: false
+#  id          :integer          not null, primary key
+#  market_id   :integer
+#  amplitude   :float
+#  retain      :float
+#  cost        :float
+#  notify_wx   :boolean
+#  notify_sms  :boolean
+#  notify_dd   :boolean
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  precision   :integer
+#  fast_profit :float
+#  fast_trade  :boolean          default(FALSE)
 #
 
 class Regulate < ActiveRecord::Base

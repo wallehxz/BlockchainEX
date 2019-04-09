@@ -1,6 +1,6 @@
 class Backend::MessagesController < Backend::BaseController
   def index
-    @messages = Message.paginate(page:params[:page])
+    @messages = Message.recent.paginate(page:params[:page])
   end
 
   def destroy
