@@ -111,14 +111,14 @@ class Market < ActiveRecord::Base
   end
 
   def quote_notice(content)
+    messages.create(body: content)
     Notice.wechat(content) if regulate&.notify_wx
     Notice.dingding(content) if regulate&.notify_dd
-    messages.create(body: content)
   end
 
   def trade_notice(content)
-    Notice.sms(content) if regulate&.notify_sms
     messages.create(body: content)
+    Notice.sms(content) if regulate&.notify_sms
   end
 
   def extreme_report
@@ -164,9 +164,9 @@ class Market < ActiveRecord::Base
   end
 
   def trade_buy_order
-    total = cash.balance > regulate.cost ? regulate.cost : cash.balance
+    total = cash.balance > regulate.cost ? regulate.cost : cash.balance * 0.995
     price = recent_price
-    amount = (total * 0.995 / price).to_d.round(4,:down)
+    amount = (total / price).to_d.round(4,:down)
     new_bid(price, amount)
   end
 

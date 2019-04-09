@@ -19,15 +19,21 @@
           <table id="example1" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="example1_info">
             <thead>
             <tr>
-              <th tabindex="0" aria-controls="example1" style="text-align: center">报价</th>
-              <th tabindex="0" aria-controls="example1" style="text-align: center">基准</th>
-              <th tabindex="0" aria-controls="example1" style="text-align: center">来源</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">市场</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">货币</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">对标</th>
               <th tabindex="0" aria-controls="example1" style="text-align: center;width: 240px">操作</th>
             </tr>
             </thead>
             <tbody>
             <% @markets.each do |item| %>
               <tr style="text-align: center">
+                <td>
+                  <label class="btn bg-black btn-flat" style="font-size: 16px">
+                    <i class="fa fa-cc-mastercard"></i>
+                    <%= item.source.camelize %>
+                  </label>
+                </td>
                 <td>
                   <label class="btn bg-black btn-flat" style="font-size: 16px;min-width: 100px">
                     <i class="fa fa-dot-circle-o" style="float: left;"></i>
@@ -38,12 +44,6 @@
                   <label class="btn bg-black btn-flat" style="font-size: 16px;min-width: 100px">
                     <i class="fa fa-circle" style="float: left;"></i>
                     <%= item.base_unit %>
-                  </label>
-                </td>
-                <td>
-                  <label class="btn bg-black btn-flat" style="font-size: 16px">
-                    <i class="fa fa-cc-mastercard"></i>
-                    <%= item.source %>
                   </label>
                 </td>
                 <td style="text-align: left">
