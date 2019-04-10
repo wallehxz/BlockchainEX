@@ -44,7 +44,9 @@ Rails.application.routes.draw do
       get :sync_balance, on: :collection
     end
     resources :orders
-    resources :messages
+    resources :messages do
+      get :clear_history, on: :collection
+    end
 
     patch "/order_bid/:id", to: "orders#update", as: :order_bid
     patch "/order_ask/:id", to: "orders#update", as: :order_ask

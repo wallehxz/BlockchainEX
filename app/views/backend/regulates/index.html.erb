@@ -38,6 +38,8 @@
                    持有头寸： <%= item.retain %> <%= item.market.quote_unit %><br>
                    交易资金： <%= item.cost %> <%= item.market.base_unit %><br>
                    快频收益： <%= item.fast_profit %>%<br>
+                   阻力位价： <%= item.resistance %><br>
+                   支撑位价： <%= item.support %><br>
                 </td>
                 <td>
                   钉钉：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_dd %> onchange='switch_state(<%= item.id %>, "dd")'></br>

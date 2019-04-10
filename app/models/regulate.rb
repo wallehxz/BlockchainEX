@@ -15,6 +15,8 @@
 #  precision   :integer
 #  fast_profit :float
 #  fast_trade  :boolean          default(FALSE)
+#  support     :float
+#  resistance  :float
 #
 
 class Regulate < ActiveRecord::Base
