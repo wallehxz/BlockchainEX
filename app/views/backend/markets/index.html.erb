@@ -28,23 +28,22 @@
             <tbody>
             <% @markets.each do |item| %>
               <tr style="text-align: center">
-                <td>
+                <td><br>
                   <label class="btn bg-black btn-flat" style="font-size: 16px">
                     <%= item.source.camelize %>
                     <i class="fa fa-cc-mastercard"></i>
                     <%= item.id %>
                   </label>
                 </td>
-                <td>
+                <td><br>
                   <label class="btn bg-black btn-flat" style="font-size: 16px;min-width: 100px">
                     <i class="fa fa-dot-circle-o" style="float: left;"></i>
                     <%= item.quote_unit %>
                   </label>
                 </td>
-                <td>
+                <td><br>
                   <label class="btn bg-black btn-flat" style="font-size: 16px;min-width: 100px">
-                    <i class="fa fa-circle" style="float: left;"></i>
-                    <%= item.base_unit %>
+                    <%= item.recent_price %> <%= item.base_unit %>
                   </label>
                 </td>
                 <td style="text-align: left">
