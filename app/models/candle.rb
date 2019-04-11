@@ -46,19 +46,23 @@ class Candle < ActiveRecord::Base
   end
 
   def update_support_level
-    cls = market.candles.last(3)
-    if market.candles.size > 48 && market.min_48 == cls[1].c
-      if cls[1].c < cls[0].c && cls[1].c < cls[2].o
-        market.regulate.update(support: cls[1].c)
+    if market.regulate
+      cls = market.candles.last(3)
+      if market.candles.size > 48 && market.min_48 == cls[1].c
+        if cls[1].c < cls[0].c && cls[1].c < cls[2].o
+          market.regulate.update(support: cls[1].c)
+        end
       end
     end
   end
 
   def update_resistance_level
-    cls = market.candles.last(3)
-    if market.candles.size > 48 && market.max_48 == cls[1].c
-      if cls[1].c > cls[0].c && cls[1].c > cls[2].o
-        market.regulate.update(resistance: cls[1].c)
+    if market.regulate
+      cls = market.candles.last(3)
+      if market.candles.size > 48 && market.max_48 == cls[1].c
+        if cls[1].c > cls[0].c && cls[1].c > cls[2].o
+          market.regulate.update(resistance: cls[1].c)
+        end
       end
     end
   end
