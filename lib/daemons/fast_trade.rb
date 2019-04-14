@@ -50,7 +50,6 @@ def sell_trade_order
   order = current_fast_order
   order_price = order.price
   recent_price = $market.recent_price
-  Notice.dingding("#{order},#{order_price},#{recent_price}")
   if recent_price >= order_price * fast_profit
     ask_order = $market.new_ask(recent_price, order.amount, 'fast')
     if ask_order.state.succ?
