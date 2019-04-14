@@ -49,7 +49,7 @@ while $running
     consume = Time.now - starting
     sleep (300 - consume)
   rescue => detail
-    print detail.backtrace.join("\n")
+    Notice.dingding("行情成交量错误提醒：\n #{detail.backtrace.join("\n")}")
     sleep 300
   end
 end

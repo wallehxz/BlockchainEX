@@ -136,4 +136,14 @@ class Binance < Market
     current = JSON.parse(res.body)
     current.last['price'].to_f
   end
+
+  def market_index(interval, amount)
+    markets = get_ticker(interval,amount + 1)[0..-2]
+    up_body = markets.select {|c| c[4].to_f - c[1].to_f >= 0 }
+    down_body = markets.select {|c| c[4].to_f - c[1].to_f < 0}
+    first_price = markets.first[4].to_f
+    last_price = markets.last[4].to_f
+    indexs = (up_body.size.to_f / down_body.size) * (last_price / first_price)
+    [first_price, last_price, up_body.size, down_body.size, indexs]
+  end
 end

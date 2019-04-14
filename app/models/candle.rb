@@ -49,9 +49,10 @@ class Candle < ActiveRecord::Base
     if market.regulate
       cls = market.candles.last(3)
       if market.candles.size > 48 && market.min_48 == cls[1].c
-        if cls[1].c < cls[0].c && cls[1].c < cls[2].o
+        # if cls[1].c < cls[0].c && cls[1].c < cls[2].o
           market.regulate.update(support: cls[1].c)
-        end
+          market.messages.create(body: "#{market.symbols} 支撑位价格 更新 #{cls[1].c}")
+        # end
       end
     end
   end
@@ -60,10 +61,22 @@ class Candle < ActiveRecord::Base
     if market.regulate
       cls = market.candles.last(3)
       if market.candles.size > 48 && market.max_48 == cls[1].c
-        if cls[1].c > cls[0].c && cls[1].c > cls[2].o
+        # if cls[1].c > cls[0].c && cls[1].c > cls[2].o
           market.regulate.update(resistance: cls[1].c)
-        end
+          market.messages.create(body: "#{market.symbols} 阻力位 价格更新 #{cls[1].c}")
+        # end
       end
     end
   end
+
+  def index(amount = 48)
+    candles_24h = market.candles.where("ts <= ?", ts).last(amount)
+    candles_body = candles_24h.map(&:kline_info)
+    up_body = candles_body.select { |x| x[1] > 0 }.size
+    down_body = candles_body.select { |x| x[1] < 0 }.size
+    first_price = candles_24h.first.c
+    last_price = candles_24h.last.c
+    (up_body.to_f / candles_24h.size) * (last_price.to_f / first_price)
+  end
+
 end

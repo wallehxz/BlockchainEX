@@ -152,6 +152,16 @@ class Market < ActiveRecord::Base
     asks.succ.recent.first
   end
 
+  def index
+    candles_24h = candles.where("ts <= ?", self.ts).last(96)
+    candles_body = candles_24h.map(&:kline_info)
+    up_body = candles_body.select { |x| x[1] > 0 }.size
+    down_body = candles_body.select { |x| x[1] < 0 }.size
+    first_price = candles_24h.first.c
+    last_price = candles_24h.last.c
+    (up_body.to_f / candles_24h.size) * (last_price.to_f / first_price)
+  end
+
   def buy_trade
     if regulate&.cost > 0
       if !latest_bid || Time.now - latest_bid&.created_at > 8.hour
@@ -170,11 +180,11 @@ class Market < ActiveRecord::Base
     new_bid(price, amount)
   end
 
-  def new_bid(price, amount)
-    bids.create(price: price, amount: amount)
+  def new_bid(price, amount, category = 'limit')
+    bids.create(price: price, amount: amount, category: category)
   end
 
-  def new_ask(price, amount)
-    asks.create(price: price, amount: amount)
+  def new_ask(price, amount, category = 'limit')
+    asks.create(price: price, amount: amount, category: category)
   end
 end

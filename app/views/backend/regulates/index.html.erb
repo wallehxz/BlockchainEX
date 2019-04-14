@@ -37,7 +37,6 @@
                    最大涨幅： <%= item.amplitude %><br>
                    持有头寸： <%= item.retain %> <%= item.market.quote_unit %><br>
                    交易资金： <%= item.cost %> <%= item.market.base_unit %><br>
-                   快频收益： <%= item.fast_profit %>%<br>
                    阻力位价： <%= item.resistance %><br>
                    支撑位价： <%= item.support %><br>
                 </td>
@@ -46,8 +45,10 @@
                   微信：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_wx %> onchange='switch_state(<%= item.id %>, "wx")'></br>
                   短信：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_sms %> onchange='switch_state(<%= item.id %>,"sms")'>
                 </td>
-                <td>
+                <td style="text-align: left">
                   快频：<input type="checkbox" name="my-state" <%= 'checked' if item.fast_trade %> onchange='switch_state(<%= item.id %>, "fast")'></br>
+                  投入资金： <%= item.fast_cash %><%= item.market.base_unit %><br>
+                  预期收益： <%= item.fast_profit %>%<br>
                 </td>
                 <td><br>
                   <a href="<%= edit_backend_regulate_path(item) %>" class="btn bg-orange btn-flat">

@@ -62,7 +62,7 @@
           <div class="input-group-addon">
             <i class="fa fa-thermometer-half"></i>
           </div>
-          <%= f.select(:state, [['init', 'init'],['succ', 'succ'],['cancel', 'cancel'],['fail', 'fail'],['rescue', 120]], {prompt:'请选择交易'},{:class => 'form-control'}) %>
+          <%= f.select(:state, [['init', 'init'],['succ', 'succ'],['cancel', 'cancel'],['fail', 'fail'],['rescue', 'rescue']], {prompt:'请选择交易'},{:class => 'form-control'}) %>
         </div>
       </div>
     <% end %>

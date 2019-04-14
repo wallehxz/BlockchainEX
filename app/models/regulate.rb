@@ -17,6 +17,7 @@
 #  fast_trade  :boolean          default(FALSE)
 #  support     :float
 #  resistance  :float
+#  fast_cash   :float
 #
 
 class Regulate < ActiveRecord::Base

@@ -12,6 +12,7 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  cause      :string
+#  category   :string           default("limit")
 #
 
 class Order < ActiveRecord::Base
@@ -19,11 +20,13 @@ class Order < ActiveRecord::Base
   self.per_page = 10
   scope :recent, -> { order('created_at desc') }
   enumerize :state, in: { init: 100, fail: 500, succ: 200, cancel: 0, rescue: 120 }, default: 100, scope: true
+  enumerize :category, in: ['limit', 'fast'], default: 'limit', scope: true
   belongs_to :market
   after_create :fix_price
   after_save :calc_total, :sms_order
   after_save :push_order
   scope :succ, -> { where(state: 'succ') }
+  scope :fast_order, -> { with_category(:fast) }
 
   def calc_total
     unless self.total
@@ -46,8 +49,18 @@ class Order < ActiveRecord::Base
   def sms_order
     if state.succ?
       content = "#{market.symbols} #{type_cn}订单, 价格：#{price}, 数量: #{amount}, 小计：#{total} "
-      Notice.sms(content)
+      Notice.sms(content) if Rails.env.production?
       market.messages.create(body: content)
     end
+  end
+
+  def sold_tip_with(ask_order)
+    content = "#{market.symbols} #{type_cn}订单完成出售, 成交数量: #{amount}，交易收益: #{(ask_order.total - total).round(2)}"
+    Notice.sms(content) if Rails.env.production?
+    market.messages.create(body: content)
+  end
+
+  def mock_push
+    self.update_attributes(state: 200)
   end
 end
