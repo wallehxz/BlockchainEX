@@ -35,19 +35,36 @@ def trade_cash
 end
 
 def buy_trade_order
-  if $market.market_index('15m',12)[4] < 0.5
-    Notice.dingding("快频交易提醒： 发现15m 成交条件 #{$market.market_index('15m',12)}")
-    if $market.market_index('1m',5)[4] > 1.382
-      Notice.dingding("快频交易提醒： 发现 1m 成交条件 #{$market.market_index('15m',12)}")
-      recent_price = $market.recent_price
-      amount = trade_cash / recent_price
-      $market.new_bid(recent_price, amount, 'fast')
+  up_with_market
+  down_with_market
+end
+
+def up_with_market
+  if $market.market_index('1h',24)[4] > 0.85
+    if $market.market_index('15m',12)[4] < 0.5
+      if $market.market_index('1m',5)[4] > 1.5
+        recent_price = $market.recent_price
+        amount = trade_cash / recent_price
+        $market.new_bid(recent_price, amount, 'fast')
+      end
+    end
+  end
+end
+
+def down_with_market
+  if $market.market_index('1h',24)[4] < 0.5
+    if $market.market_index('30m',12)[4] < 0.32
+      if $market.market_index('1m',5)[4] > 1.5
+        recent_price = $market.recent_price
+        amount = trade_cash / recent_price
+        $market.new_bid(recent_price, amount, 'fast')
+      end
     end
   end
 end
 
 def fast_profit
-  $market.regulate&.fast_profit || 1.052
+  $market.regulate&.fast_profit || 1.0382
 end
 
 def sell_trade_order
