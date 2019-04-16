@@ -40,9 +40,9 @@ def buy_trade_order
 end
 
 def up_with_market
-  if $market.market_index('1h',24)[4] > 0.85
-    if $market.market_index('15m',12)[4] < 0.5
-      if $market.market_index('1m',5)[4] > 1.5
+  if $market.market_index('1h',24)[4] > 0.9
+    if $market.market_index('15m',16)[4] < 0.45
+      if $market.market_index('1m',7)[4] > 1.33
         recent_price = $market.recent_price
         amount = trade_cash / recent_price
         $market.new_bid(recent_price, amount, 'fast')
@@ -53,8 +53,8 @@ end
 
 def down_with_market
   if $market.market_index('1h',24)[4] < 0.5
-    if $market.market_index('30m',12)[4] < 0.32
-      if $market.market_index('1m',5)[4] > 1.5
+    if $market.market_index('30m',16)[4] < 0.32
+      if $market.market_index('1m',7)[4] > 1.33
         recent_price = $market.recent_price
         amount = trade_cash / recent_price
         $market.new_bid(recent_price, amount, 'fast')
