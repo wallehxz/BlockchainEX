@@ -22,57 +22,37 @@ def start_trading
   end
 end
 
-def support_level
-  $market.regulate.support
-end
-
 def current_range_order
-  $market.bids.range_order.succ.first
+  $market_range.bids.range_order.succ.first
 end
 
 def trade_cash
-  $market.regulate&.range_cash
+  $market_range.regulate&.range_cash
+end
+
+def range_profit
+  $market_range.regulate&.fast_profit || 1.0618
 end
 
 def buy_trade_order
-  up_with_market
-  down_with_market
-end
-
-def up_with_market
-  if $market.market_index('1h',24)[4] > 0.9
-    if $market.market_index('15m',16)[4] < 0.45
-      if $market.market_index('1m',7)[4] > 1.33
-        recent_price = $market.recent_price
-        amount = trade_cash / recent_price
-        $market.new_bid(recent_price, amount, 'fast')
-      end
-    end
+  cds_price = $market_range.get_ticker('30m', 145)[0..-2].map {|x| x[4].to_f}
+  recent_price = $market_range.recent_price
+  min_price = cds_price.min
+  if recent_price > min_price && recent_price < min_price * 1.005
+    amount = trade_cash / recent_price
+    $market_range.new_bid(recent_price, amount, 'range')
   end
-end
-
-def down_with_market
-  if $market.market_index('1h',24)[4] < 0.5
-    if $market.market_index('30m',16)[4] < 0.32
-      if $market.market_index('1m',7)[4] > 1.33
-        recent_price = $market.recent_price
-        amount = trade_cash / recent_price
-        $market.new_bid(recent_price, amount, 'fast')
-      end
-    end
-  end
-end
-
-def fast_profit
-  $market.regulate&.fast_profit || 1.0382
 end
 
 def sell_trade_order
   order = current_range_order
   order_price = order.price
-  recent_price = $market.recent_price
-  if recent_price >= order_price * fast_profit
-    ask_order = $market.new_ask(recent_price, order.amount, 'fast')
+  amount = order.amount
+  recent_price = $market_range.recent_price
+  cds_price = $market_range.get_ticker('30m', 145)[0..-2].map {|x| x[4].to_f}
+  max_price = cds_price.max
+  if recent_price > recent_price * 0.995 || recent_price > order_price * range_profit
+    ask_order = $market_range.new_ask(recent_price, amount, 'range')
     if ask_order.state.succ?
       order.update_attributes(state: 120)
       order.sold_tip_with(ask_order)
@@ -83,7 +63,7 @@ end
 while $running
   begin
     Market.seq.includes(:regulate).each do |item|
-      $market = item
+      $market_range = item
       if item.regulate&.range_trade
         start_trading
       end
@@ -91,5 +71,5 @@ while $running
   rescue => detail
     Notice.dingding("支阻位错误提醒：\n 时间：#{Time.now} \n #{detail.backtrace.select {|x| x.include?('releases')}.join("\n")}")
   end
-  sleep 180
+  sleep 200
 end
