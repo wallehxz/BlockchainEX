@@ -1,7 +1,7 @@
 <%= form_for(['backend',@order]) do |f| %>
 <div class="box-body">
   <div class="col-md-5">
-    <div class="form-group has-success">
+    <div class="form-group has-error">
       <label>市场</label>
       <div class="input-group">
         <div class="input-group-addon">
@@ -10,7 +10,16 @@
         <%= f.select(:market_id, Market.seq.map{ |x| [x.full_name,x.id] }, {prompt:'请选择市场'},{:class => 'form-control'}) %>
       </div>
     </div>
-    <div class="form-group has-success">
+    <div class="form-group has-error">
+      <label>类别</label>
+      <div class="input-group">
+        <div class="input-group-addon">
+          <i class="fa fa-thermometer-half"></i>
+        </div>
+        <%= f.select(:category, [['限价', 'limit'],['快频', 'fast'],['支撑', 'range']], {prompt:'请选择交易'},{:class => 'form-control'}) %>
+      </div>
+    </div>
+    <div class="form-group has-error">
       <label>交易</label>
       <div class="input-group">
         <div class="input-group-addon">
@@ -47,22 +56,22 @@
           <%= f.text_field :total, class:'form-control' %>
         </div>
       </div>
-      <div class="form-group has-success">
-        <label>失败原因</label>
-        <div class="input-group">
-          <div class="input-group-addon">
-            <i class="fa fa-book"></i>
-          </div>
-          <%= f.text_field :cause, class:'form-control' %>
-        </div>
-      </div>
-      <div class="form-group has-success">
+      <div class="form-group has-warning">
         <label>交易状态</label>
         <div class="input-group">
           <div class="input-group-addon">
             <i class="fa fa-thermometer-half"></i>
           </div>
           <%= f.select(:state, [['init', 'init'],['succ', 'succ'],['cancel', 'cancel'],['fail', 'fail'],['rescue', 'rescue']], {prompt:'请选择交易'},{:class => 'form-control'}) %>
+        </div>
+      </div>
+      <div class="form-group has-warning">
+        <label>失败原因</label>
+        <div class="input-group">
+          <div class="input-group-addon">
+            <i class="fa fa-book"></i>
+          </div>
+          <%= f.text_field :cause, class:'form-control' %>
         </div>
       </div>
     <% end %>

@@ -15,7 +15,7 @@ Signal.trap("TERM") do
 end
 
 def start_trading
-  if current_fast_order
+  if current_range_order
     sell_trade_order
   else
     buy_trade_order
@@ -26,12 +26,12 @@ def support_level
   $market.regulate.support
 end
 
-def current_fast_order
-  $market.bids.fast_order.succ.first
+def current_range_order
+  $market.bids.range_order.succ.first
 end
 
 def trade_cash
-  $market.regulate&.fast_cash
+  $market.regulate&.range_cash
 end
 
 def buy_trade_order
@@ -68,28 +68,15 @@ def fast_profit
 end
 
 def sell_trade_order
-  order = current_fast_order
+  order = current_range_order
   order_price = order.price
-  amount = order.amount
   recent_price = $market.recent_price
   if recent_price >= order_price * fast_profit
-    sell_order(order, recent_price, amount)
-  elsif $market.market_index('1m',7)[4] < 0.5
-    if recent_price > order_price * 1.0618
-      sell_order(order, recent_price, amount)
+    ask_order = $market.new_ask(recent_price, order.amount, 'fast')
+    if ask_order.state.succ?
+      order.update_attributes(state: 120)
+      order.sold_tip_with(ask_order)
     end
-  elsif recent_price <= order_price * 0.995
-    sell_order(order, recent_price, amount)
-    $market.regulate.update(fast_trade: false)
-    Notice.wechat("快频交易关闭提醒：#{$market.symbols} 暂停交易")
-  end
-end
-
-def sell_order(order, recent_price, amount)
-  ask_order = $market.new_ask(recent_price, amount, 'fast')
-  if ask_order.state.succ?
-    order.update_attributes(state: 120)
-    order.sold_tip_with(ask_order)
   end
 end
 
@@ -97,12 +84,12 @@ while $running
   begin
     Market.seq.includes(:regulate).each do |item|
       $market = item
-      if item.regulate&.fast_trade
+      if item.regulate&.range_trade
         start_trading
       end
     end
   rescue => detail
-    Notice.dingding("快频交易错误提醒：\n #{detail.backtrace.join("\n")}")
+    Notice.dingding("支阻位错误提醒：\n 时间：#{Time.now} \n #{detail.backtrace.select {|x| x.include?('releases')}.join("\n")}")
   end
-  sleep 100
+  sleep 180
 end

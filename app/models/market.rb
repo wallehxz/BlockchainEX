@@ -125,7 +125,6 @@ class Market < ActiveRecord::Base
     if min_192 == last_quote.c
       tip = "[#{Time.now.strftime('%H:%M')}] #{full_name}下跌 报价 #{last_quote.c} 成交量 #{last_quote.v}"
       quote_notice(tip)
-      buy_trade
       amplitude = 1 - (max_192 / min_192)
       regulate.update(amplitude: amplitude.round(2)) if regulate
     elsif max_192 == last_quote.c
@@ -150,34 +149,6 @@ class Market < ActiveRecord::Base
 
   def latest_ask
     asks.succ.recent.first
-  end
-
-  def index
-    candles_24h = candles.where("ts <= ?", self.ts).last(96)
-    candles_body = candles_24h.map(&:kline_info)
-    up_body = candles_body.select { |x| x[1] > 0 }.size
-    down_body = candles_body.select { |x| x[1] < 0 }.size
-    first_price = candles_24h.first.c
-    last_price = candles_24h.last.c
-    (up_body.to_f / candles_24h.size) * (last_price.to_f / first_price)
-  end
-
-  def buy_trade
-    if regulate&.cost > 0
-      if !latest_bid || Time.now - latest_bid&.created_at > 8.hour
-        sync_cash
-        if cash.balance > regulate&.cost
-          trade_buy_order
-        end
-      end
-    end
-  end
-
-  def trade_buy_order
-    total = cash.balance > regulate.cost ? regulate.cost : cash.balance * 0.995
-    price = recent_price
-    amount = (total / price).to_d.round(4,:down)
-    new_bid(price, amount)
   end
 
   def new_bid(price, amount, category = 'limit')

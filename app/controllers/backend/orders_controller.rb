@@ -42,7 +42,7 @@ private
 
   def order_side_params
     ['order_bid', 'order_ask'].each do |order_side|
-      return params.require(order_side.to_sym).permit(:market_id, :type, :price, :amount, :total, :state, :cause) if params[order_side.to_sym]
+      return params.require(order_side.to_sym).permit(:market_id, :category, :type, :price, :amount, :total, :state, :cause) if params[order_side.to_sym]
     end
   end
 

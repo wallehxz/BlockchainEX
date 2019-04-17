@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190414014407) do
+ActiveRecord::Schema.define(version: 20190417055702) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -74,14 +74,17 @@ ActiveRecord::Schema.define(version: 20190414014407) do
     t.boolean  "notify_wx"
     t.boolean  "notify_sms"
     t.boolean  "notify_dd"
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
     t.integer  "precision"
     t.float    "fast_profit"
-    t.boolean  "fast_trade",  default: false
+    t.boolean  "fast_trade",   default: false
     t.float    "support"
     t.float    "resistance"
     t.float    "fast_cash"
+    t.boolean  "range_trade",  default: false
+    t.float    "range_cash"
+    t.float    "range_profit"
   end
 
   create_table "users", force: :cascade do |t|

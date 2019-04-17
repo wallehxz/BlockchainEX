@@ -46,9 +46,12 @@
                   短信：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_sms %> onchange='switch_state(<%= item.id %>,"sms")'>
                 </td>
                 <td style="text-align: left">
-                  快频：<input type="checkbox" name="my-state" <%= 'checked' if item.fast_trade %> onchange='switch_state(<%= item.id %>, "fast")'></br>
-                  投入资金： <%= item.fast_cash %><%= item.market.base_unit %><br>
-                  预期收益： <%= item.fast_profit %>%<br>
+                  快频：<input type="checkbox" name="my-state" <%= 'checked' if item.fast_trade %> onchange='switch_state(<%= item.id %>, "fast")'>&nbsp;
+                  现金： <%= item.fast_cash %><%= item.market.base_unit %>&nbsp;
+                  收益： <%= item.fast_profit %>%&nbsp;<br>
+                  支阻：<input type="checkbox" name="my-state" <%= 'checked' if item.range_trade %> onchange='switch_state(<%= item.id %>, "range")'>&nbsp;
+                  现金： <%= item.range_cash %><%= item.market.base_unit %>&nbsp;
+                  收益： <%= item.range_profit %>%&nbsp;
                 </td>
                 <td><br>
                   <a href="<%= edit_backend_regulate_path(item) %>" class="btn bg-orange btn-flat">

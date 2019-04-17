@@ -20,13 +20,14 @@ class Order < ActiveRecord::Base
   self.per_page = 10
   scope :recent, -> { order('created_at desc') }
   enumerize :state, in: { init: 100, fail: 500, succ: 200, cancel: 0, rescue: 120 }, default: 100, scope: true
-  enumerize :category, in: ['limit', 'fast'], default: 'limit', scope: true
+  enumerize :category, in: ['limit', 'fast', 'range'], default: 'limit', scope: true
   belongs_to :market
   after_create :fix_price
   after_save :calc_total, :sms_order
   after_save :push_order
   scope :succ, -> { where(state: 'succ') }
   scope :fast_order, -> { with_category(:fast) }
+  scope :range_order, -> { with_category(:range) }
 
   def calc_total
     unless self.total
