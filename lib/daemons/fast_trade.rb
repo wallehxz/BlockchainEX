@@ -75,7 +75,7 @@ def sell_trade_order
   if recent_price >= order_price * fast_profit
     sell_order(order, recent_price, amount)
   elsif $market.market_index('1m',7)[4] < 0.5
-    if recent_price > order_price * 1.0618
+    if recent_price > order_price * 1.012
       sell_order(order, recent_price, amount)
     end
   elsif recent_price <= order_price * 0.995
