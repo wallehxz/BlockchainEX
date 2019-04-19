@@ -35,11 +35,10 @@ def trade_cash
 end
 
 def buy_trade_order
-  tickers_30m = $market.get_ticker('1m', 45)
+  tickers_30m = $market.get_ticker('1m', 30)
   price_30m = tickers_30m.map { |x| x[4].to_f }
   extent = price_30m.last / price_30m.max
-  # puts "#{$market.symbols} #{price_30m} 当前浮动比例 #{extent}"
-  if extent > 0.98 && extent < 0.9925
+  if price_30m[-2] == price_30m.min && extent < 0.993
     recent_price = $market.recent_price
     amount = trade_cash / recent_price
     $market.new_bid(recent_price, amount, 'fast')
@@ -55,16 +54,15 @@ def sell_trade_order
   order_price = order.price
   amount = order.amount
   recent_price = $market.recent_price
-  tickers_3m = $market.get_ticker('1m', 3).map {|x| x[4].to_f }
-  # puts "#{$market.symbols} 最新价 #{recent_price} 订单价 #{order_price} 变化趋势 #{tickers_3m}"
+  tickers_3m = $market.get_ticker('1m', 3).map {|x| x[5].to_f }
   if recent_price >= order_price * fast_profit
     sell_order(order, recent_price, amount)
-  elsif tickers_3m[0] < tickers_3m[1] && tickers_3m[1] > tickers_3m[2] && recent_price > order_price * 1.012
+  elsif  tickers_3m[-2] == && tickers_3m.max && recent_price > order_price * 1.012
     sell_order(order, recent_price, amount)
-  elsif recent_price <= order_price * 0.98
-    sell_order(order, recent_price, amount)
-    $market.regulate.update(fast_trade: false)
-    Notice.wechat("快频交易关闭提醒：#{$market.symbols} 暂停交易")
+    # elsif recent_price <= order_price * 0.965
+    #   sell_order(order, recent_price, amount)
+    #   $market.regulate.update(fast_trade: false)
+    #   Notice.wechat("快频交易关闭提醒：#{$market.symbols} 暂停交易")
   end
 end
 
