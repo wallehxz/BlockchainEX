@@ -85,6 +85,6 @@
     function switch_state(id,kind) {
       $.get('/backend/regulates/' + id +'/change_state?kind=' + kind);
     }
-    $("[name='my-state']").bootstrapSwitch({onColor:'success',offColor:'danger'});
+    $("[name='my-state']").bootstrapSwitch({onColor:'success',offColor:'danger', onText: '开', offText: '关'});
   </script>
 <% end %>

@@ -21,8 +21,8 @@ class OrderBid < Order
     if state.init?
       if Rails.env.production?
         result = market.sync_remote_order(:bid, amount, price)
-        self.update_attributes(state: result['state'])
         self.update_attributes(cause: result['cause']) if result['cause']
+        self.update_attributes(state: result['state'])
       else
         mock_push
       end

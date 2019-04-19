@@ -22,7 +22,7 @@ class Market < ActiveRecord::Base
   has_one :fund, ->(curr) { where(exchange: curr.type) }, class_name: 'Account', primary_key: 'quote_unit', foreign_key: 'currency'
   has_many :candles, dependent: :destroy
   has_many :messages, dependent: :destroy
-  enumerize :source, in: ['bittrex', 'binance']
+  enumerize :source, in: ['bittrex', 'binance', 'fcoin']
   scope :seq, -> { order('sequence') }
   before_save :set_type_of_source
   has_many :bids, class_name: 'OrderBid'
@@ -56,7 +56,7 @@ class Market < ActiveRecord::Base
 
   # Market.select(:type).distinct.map { |x| x.type.underscore.pluralize }
   def self.exchanges
-    ['bittrex', 'binance']
+    ['binance', 'bittrex', 'fcoin']
   end
 
   def method_missing(method, *args)
