@@ -35,36 +35,19 @@ def trade_cash
 end
 
 def buy_trade_order
-  up_with_market
-  down_with_market
-end
-
-def up_with_market
-  if $market.market_index('1h',24)[4] > 0.9
-    if $market.market_index('15m',16)[4] < 0.45
-      if $market.market_index('1m',7)[4] > 1.33
-        recent_price = $market.recent_price
-        amount = trade_cash / recent_price
-        $market.new_bid(recent_price, amount, 'fast')
-      end
-    end
-  end
-end
-
-def down_with_market
-  if $market.market_index('1h',24)[4] < 0.5
-    if $market.market_index('30m',16)[4] < 0.32
-      if $market.market_index('1m',7)[4] > 1.33
-        recent_price = $market.recent_price
-        amount = trade_cash / recent_price
-        $market.new_bid(recent_price, amount, 'fast')
-      end
-    end
+  tickers_30m = $market.get_ticker('1m', 45)
+  price_30m = tickers_30m.map { |x| x[4].to_f }
+  extent = price_30m.last / price_30m.max
+  # puts "#{$market.symbols} #{price_30m} 当前浮动比例 #{extent}"
+  if extent > 0.98 && extent < 0.9925
+    recent_price = $market.recent_price
+    amount = trade_cash / recent_price
+    $market.new_bid(recent_price, amount, 'fast')
   end
 end
 
 def fast_profit
-  $market.regulate&.fast_profit || 1.0382
+  $market.regulate&.fast_profit || 1.02
 end
 
 def sell_trade_order
@@ -72,13 +55,13 @@ def sell_trade_order
   order_price = order.price
   amount = order.amount
   recent_price = $market.recent_price
+  tickers_3m = $market.get_ticker('1m', 3).map {|x| x[4].to_f }
+  # puts "#{$market.symbols} 最新价 #{recent_price} 订单价 #{order_price} 变化趋势 #{tickers_3m}"
   if recent_price >= order_price * fast_profit
     sell_order(order, recent_price, amount)
-  elsif $market.market_index('1m',7)[4] < 0.5
-    if recent_price > order_price * 1.012
-      sell_order(order, recent_price, amount)
-    end
-  elsif recent_price <= order_price * 0.995
+  elsif tickers_3m[0] < tickers_3m[1] && tickers_3m[1] > tickers_3m[2] && recent_price > order_price * 1.012
+    sell_order(order, recent_price, amount)
+  elsif recent_price <= order_price * 0.98
     sell_order(order, recent_price, amount)
     $market.regulate.update(fast_trade: false)
     Notice.wechat("快频交易关闭提醒：#{$market.symbols} 暂停交易")
@@ -102,7 +85,7 @@ while $running
       end
     end
   rescue => detail
-    Notice.dingding("快频交易错误提醒：\n #{detail.backtrace.join("\n")}")
+    Notice.dingding("快频交易错误提醒：\n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")
   end
-  sleep 100
+  sleep 45
 end

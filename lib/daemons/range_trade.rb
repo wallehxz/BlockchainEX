@@ -39,7 +39,7 @@ def buy_trade_order
   recent_price = $market_range.recent_price
   min_price = cds_price.min
   if recent_price > min_price && recent_price < min_price * 1.005
-    amount = trade_cash / recent_price
+    amount = trade_cash / (recent_price * 0.99)
     $market_range.new_bid(recent_price, amount, 'range')
   end
 end
@@ -51,7 +51,7 @@ def sell_trade_order
   recent_price = $market_range.recent_price
   cds_price = $market_range.get_ticker('30m', 145)[0..-2].map {|x| x[4].to_f}
   max_price = cds_price.max
-  if recent_price > recent_price * 0.995 || recent_price > order_price * range_profit
+  if recent_price > order_price * range_profit || recent_price > max_price * 0.9925
     ask_order = $market_range.new_ask(recent_price, amount, 'range')
     if ask_order.state.succ?
       order.update_attributes(state: 120)
@@ -69,7 +69,7 @@ while $running
       end
     end
   rescue => detail
-    Notice.dingding("支阻位错误提醒：\n 时间：#{Time.now} \n #{detail.backtrace.select {|x| x.include?('releases')}.join("\n")}")
+    Notice.dingding("支阻位错误提醒：\n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")
   end
   sleep 200
 end
