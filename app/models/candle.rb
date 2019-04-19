@@ -16,7 +16,7 @@
 class Candle < ActiveRecord::Base
   belongs_to :market
   scope :recent, -> { order(t: :desc) }
-  scope :history, -> { order(ts) }
+  scope :history, -> { order(:ts) }
   after_create :calc_ts, :update_resistance_level, :update_support_level
 
   self.per_page = 15
