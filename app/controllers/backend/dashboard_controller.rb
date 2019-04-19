@@ -12,8 +12,7 @@ class Backend::DashboardController < Backend::BaseController
     @decimal = Market.calc_decimal tickers.last.c rescue 2
   end
 
-  def daemon
-  end
+  def daemon; end
 
   def daemon_operate
     status = {'on': '开启', 'off': '关闭'}
