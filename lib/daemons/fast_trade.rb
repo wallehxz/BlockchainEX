@@ -35,13 +35,27 @@ def trade_cash
 end
 
 def buy_trade_order
-  tickers_30m = $market.get_ticker('1m', 30)
+  tickers_30m = $market.get_ticker('3m', 10)
   price_30m = tickers_30m.map { |x| x[4].to_f }
   extent = price_30m.last / price_30m.max
-  if price_30m[-2] == price_30m.min && extent < 0.993
-    recent_price = $market.recent_price
+  kline = tickers_30m.tickers_to_kline
+  down_entity = kline.select {|x| x[1] < 0 }
+  up_entity = kline.select {|x| x[1] > 0 }
+  recent_price = $market.recent_price
+  if recent_price < $market.min_16 * 1.0075 && recent_price > $market.min_16
     amount = trade_cash / recent_price
     $market.new_bid(recent_price, amount, 'fast')
+  elsif extent < 0.992
+    if down_entity.size < 5
+      amount = trade_cash / ( recent_price * 0.9975 )
+      $market.new_bid(recent_price, amount, 'fast')
+    elsif down_entity.size == 5
+      amount = trade_cash / ( recent_price * 0.9985 )
+      $market.new_bid(recent_price, amount, 'fast')
+    elsif [6,7].include? down_entity.size
+      amount = trade_cash / ( recent_price * 0.9965 )
+      $market.new_bid(recent_price, amount, 'fast')
+    end
   end
 end
 
@@ -53,16 +67,25 @@ def sell_trade_order
   order = current_fast_order
   order_price = order.price
   amount = order.amount
-  recent_price = $market.recent_price
-  tickers_3m = $market.get_ticker('1m', 3).map {|x| x[5].to_f }
-  if recent_price >= order_price * fast_profit
-    sell_order(order, recent_price, amount)
-  elsif  tickers_3m[-2] == && tickers_3m.max && recent_price > order_price * 1.012
-    sell_order(order, recent_price, amount)
-    # elsif recent_price <= order_price * 0.965
-    #   sell_order(order, recent_price, amount)
-    #   $market.regulate.update(fast_trade: false)
-    #   Notice.wechat("快频交易关闭提醒：#{$market.symbols} 暂停交易")
+  if Time.now - order.created_at > 5.minute
+    tickers_12m = $market.get_ticker('3m', 4)
+    recent_price = $market.recent_price
+    kline = tickers_12m.tickers_to_kline
+    down_entity = kline.select {|x| x[1] < 0 }
+    up_entity = kline.select {|x| x[1] > 0 }
+    if recent_price > order_price
+      if down_entity.size == 1 && kline[-1][1] < 0 && recent_price > order_price * fast_profit
+        sell_order(order, recent_price, amount)
+      elsif down_entity.size == 2 && recent_price > order_price * 1.005
+        sell_order(order, recent_price , amount)
+      elsif down_entity.size > 2
+        sell_order(order, recent_price , amount)
+      end
+    else
+      if down_entity.size > 2 && kline[-1][1] < 0 #强行止损
+        sell_order(order, recent_price , amount)
+      end
+    end
   end
 end
 

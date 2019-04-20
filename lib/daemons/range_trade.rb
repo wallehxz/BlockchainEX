@@ -35,11 +35,10 @@ def range_profit
 end
 
 def buy_trade_order
-  cds_price = $market_range.get_ticker('30m', 145)[0..-2].map {|x| x[4].to_f}
+  sup_price = $market_range.regulate.support
   recent_price = $market_range.recent_price
-  min_price = cds_price.min
-  if recent_price > min_price && recent_price < min_price * 1.005
-    amount = trade_cash / (recent_price * 0.99)
+  if recent_price > sup_price && recent_price < sup_price * 1.005
+    amount = trade_cash / recent_price
     $market_range.new_bid(recent_price, amount, 'range')
   end
 end
@@ -49,9 +48,8 @@ def sell_trade_order
   order_price = order.price
   amount = order.amount
   recent_price = $market_range.recent_price
-  cds_price = $market_range.get_ticker('30m', 145)[0..-2].map {|x| x[4].to_f}
-  max_price = cds_price.max
-  if recent_price > order_price * range_profit || recent_price > max_price * 0.9925
+  res_price = $market_range.regulate.resistance
+  if recent_price > order_price * range_profit || recent_price > res_price * 0.995
     ask_order = $market_range.new_ask(recent_price, amount, 'range')
     if ask_order.state.succ?
       order.update_attributes(state: 120)

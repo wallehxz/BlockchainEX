@@ -24,7 +24,7 @@ class Order < ActiveRecord::Base
   enumerize :category, in: ['limit', 'fast', 'range'], default: 'limit', scope: true
   belongs_to :market
   after_create :fix_price
-  after_save :calc_total, :sms_order
+  after_save :calc_total
   after_save :push_order
   scope :succ, -> { where(state: 'succ') }
   scope :fast_order, -> { with_category(:fast) }
@@ -58,7 +58,6 @@ class Order < ActiveRecord::Base
 
   def sold_tip_with(ask_order)
     content = "#{market.symbols} #{type_cn}订单完成出售, 成交数量: #{amount}，交易收益: #{(ask_order.total - total).round(2)}"
-    Notice.sms(content) if Rails.env.production?
     market.messages.create(body: content)
   end
 

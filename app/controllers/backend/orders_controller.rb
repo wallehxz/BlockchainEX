@@ -1,6 +1,9 @@
 class Backend::OrdersController < Backend::BaseController
   def index
-    @orders = Order.recent.paginate(page:params[:page])
+    @orders = Order.recent
+    @orders = @orders.where(type: params[:type])if params[:type].present?
+    @orders = @orders.where(state: params[:state])if params[:state].present?
+    @orders = @orders.paginate(page:params[:page])
   end
 
   def new
