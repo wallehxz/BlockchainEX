@@ -47,16 +47,14 @@ class Candle < ActiveRecord::Base
   end
 
   def update_support_level
-    if market.regulate && market.candles.size > 95
+    if market.regulate && market.min_96 == market.regulate.support
       market.regulate.update(support: market.min_96)
-      market.messages.create(body: "#{market.symbols} 支撑位价格 更新 #{cls[1].c}")
     end
   end
 
   def update_resistance_level
-    if market.regulate && market.candles.size > 95
+    if market.regulate && market.max_96 == market.regulate.resistance
       market.regulate.update(resistance: market.max_96)
-      market.messages.create(body: "#{market.symbols} 阻力位 价格更新 #{cls[1].c}")
     end
   end
 
