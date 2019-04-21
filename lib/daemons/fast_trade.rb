@@ -47,13 +47,13 @@ def buy_trade_order
     $market.new_bid(recent_price, amount, 'fast')
   elsif extent < 0.992
     if down_entity.size < 5
-      amount = trade_cash / ( recent_price * 0.9975 )
+      amount = trade_cash / ( recent_price * 0.9935 )
       $market.new_bid(recent_price, amount, 'fast')
     elsif down_entity.size == 5
       amount = trade_cash / ( recent_price * 0.9985 )
       $market.new_bid(recent_price, amount, 'fast')
     elsif [6,7].include? down_entity.size
-      amount = trade_cash / ( recent_price * 0.9965 )
+      amount = trade_cash / ( recent_price * 0.9935 )
       $market.new_bid(recent_price, amount, 'fast')
     elsif down_entity.size == 8
       amount = trade_cash / ( recent_price * 0.99 )
@@ -70,7 +70,7 @@ def sell_trade_order
   order = current_fast_order
   order_price = order.price
   amount = order.amount
-  if Time.now - order.created_at > 6.minute
+  if Time.now - order.created_at > 7.minute
     tickers_12m = $market.get_ticker('3m', 4)
     recent_price = $market.recent_price
     kline = tickers_12m.tickers_to_kline
@@ -84,7 +84,15 @@ def sell_trade_order
       elsif down_entity.size > 2
         sell_order(order, recent_price , amount)
       end
-    elsif kline[-1][1] < 0 && recent_price < order_price * 0.98 #强行止损
+    elsif kline[-1][1] < 0 && recent_price < order_price * 0.985 #强行止损
+      sell_order(order, recent_price , amount)
+    end
+  else
+    tickers_5m = $market.get_ticker('1m', 5)
+    kline = tickers_5m.tickers_to_kline
+    recent_price = $market.recent_price
+    down_entity = kline.select {|x| x[1] < 0 }
+    if down_entity.size > 2 && kline[-1][1] < 0 && recent_price > order_price * 1.005
       sell_order(order, recent_price , amount)
     end
   end
