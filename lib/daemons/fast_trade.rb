@@ -55,6 +55,9 @@ def buy_trade_order
     elsif [6,7].include? down_entity.size
       amount = trade_cash / ( recent_price * 0.9965 )
       $market.new_bid(recent_price, amount, 'fast')
+    elsif down_entity.size == 8
+      amount = trade_cash / ( recent_price * 0.99 )
+      $market.new_bid(recent_price, amount, 'fast')
     end
   end
 end
@@ -81,10 +84,8 @@ def sell_trade_order
       elsif down_entity.size > 2
         sell_order(order, recent_price , amount)
       end
-    else
-      if down_entity.size > 2 && kline[-1][1] < 0 #强行止损
-        sell_order(order, recent_price , amount)
-      end
+    elsif kline[-1][1] < 0 && recent_price < order_price * 0.98 #强行止损
+      sell_order(order, recent_price , amount)
     end
   end
 end
