@@ -31,7 +31,7 @@ def current_fast_order
 end
 
 def order_cooling?
-  (Time.now - $market.asks.fast_order.succ.last.created_at) > 3.minute
+  (Time.now - $market.asks.fast_order.succ.last.created_at) > 5.minute
 end
 
 def trade_cash
@@ -85,19 +85,21 @@ def sell_trade_order
         sell_order(order, recent_price, amount)
       elsif down_entity.size == 2 && kline[-1][1] < 0 && recent_price > order_price * 1.0075
         sell_order(order, recent_price , amount)
-      elsif down_entity.size > 2
+      elsif down_entity.size > 2 && recent_price > order_price * 1.0025
         sell_order(order, recent_price , amount)
       end
     elsif kline[-1][1] < 0 && recent_price < order_price * 0.985 #强行止损
-      if $market.market_index('15m', 24) > 0.6 && order_price * amount < trade_cash * 1.26
-        expansion = trade_cash / recent_price * 5
-        expansion_order = $market.new_bid(recent_price, expansion)
-        if expansion_order.state.succ?
-          order.update(amount: amount + expansion)
+      if $market.market_index('15m', 18)[4] > 0.6
+        if order_price * amount < trade_cash * 1.45
+          expansion = trade_cash / recent_price * 5
+          expansion_order = $market.new_bid(recent_price, expansion)
+          if expansion_order.state.succ?
+            order.update(amount: amount + expansion)
+            expansion_order.update(state: 120)
+          end
         end
       else
-        $market.regulate.update(fast_cash: 0)
-        # sell_order(order, recent_price , amount)
+        sell_order(order, recent_price , amount)
       end
     end
   else
