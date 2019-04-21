@@ -94,7 +94,7 @@ def sell_trade_order
           expansion = trade_cash / recent_price / 5
           expansion_order = $market.new_bid(recent_price, expansion)
           if expansion_order.state.succ?
-            order.update(amount: amount + expansion)
+            order.update(amount: amount + expansion_order.amount)
             expansion_order.update(state: 120)
           end
         end
