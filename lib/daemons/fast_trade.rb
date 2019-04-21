@@ -70,7 +70,7 @@ def sell_trade_order
   order = current_fast_order
   order_price = order.price
   amount = order.amount
-  if Time.now - order.created_at > 5.minute
+  if Time.now - order.created_at > 6.minute
     tickers_12m = $market.get_ticker('3m', 4)
     recent_price = $market.recent_price
     kline = tickers_12m.tickers_to_kline
@@ -79,7 +79,7 @@ def sell_trade_order
     if recent_price > order_price
       if down_entity.size == 1 && kline[-1][1] < 0 && recent_price > order_price * fast_profit
         sell_order(order, recent_price, amount)
-      elsif down_entity.size == 2 && recent_price > order_price * 1.005
+      elsif down_entity.size == 2 && kline[-1][1] < 0 && recent_price > order_price * 1.0075
         sell_order(order, recent_price , amount)
       elsif down_entity.size > 2
         sell_order(order, recent_price , amount)
