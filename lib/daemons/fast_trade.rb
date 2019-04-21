@@ -52,16 +52,16 @@ def buy_trade_order
   elsif extent < 0.992
     if down_entity.size < 5
       amount = trade_cash / ( recent_price * 0.9935 )
-      $market.new_bid(recent_price, amount, 'fast')
+      $market.new_bid(recent_price * 0.9935, amount, 'fast')
     elsif down_entity.size == 5
       amount = trade_cash / ( recent_price * 0.9985 )
-      $market.new_bid(recent_price, amount, 'fast')
+      $market.new_bid(recent_price * 0.9985, amount, 'fast')
     elsif [6,7].include? down_entity.size
       amount = trade_cash / ( recent_price * 0.9935 )
       $market.new_bid(recent_price, amount, 'fast')
     elsif down_entity.size == 8
       amount = trade_cash / ( recent_price * 0.99 )
-      $market.new_bid(recent_price, amount, 'fast')
+      $market.new_bid(recent_price * 0.99, amount, 'fast')
     end
   end
 end
@@ -89,7 +89,16 @@ def sell_trade_order
         sell_order(order, recent_price , amount)
       end
     elsif kline[-1][1] < 0 && recent_price < order_price * 0.985 #强行止损
-      sell_order(order, recent_price , amount)
+      if $market.market_index('15m', 24) > 0.6 && order_price * amount < trade_cash * 1.26
+        expansion = trade_cash / recent_price * 5
+        expansion_order = $market.new_bid(recent_price, expansion)
+        if expansion_order.state.succ?
+          order.update(amount: amount + expansion)
+        end
+      else
+        $market.regulate.update(fast_cash: 0)
+        # sell_order(order, recent_price , amount)
+      end
     end
   else
     tickers_5m = $market.get_ticker('1m', 5)
