@@ -91,7 +91,7 @@ def sell_trade_order
     elsif kline[-1][1] < 0 && recent_price < order_price * 0.985 #强行止损
       if $market.market_index('15m', 18)[4] > 0.6
         if order_price * amount < trade_cash * 1.45
-          expansion = trade_cash / recent_price * 5
+          expansion = trade_cash / recent_price / 5
           expansion_order = $market.new_bid(recent_price, expansion)
           if expansion_order.state.succ?
             order.update(amount: amount + expansion)
