@@ -39,36 +39,43 @@ def trade_cash
 end
 
 def buy_trade_order
-  tickers_30m = $market.get_ticker('3m', 10)
-  price_30m = tickers_30m.map { |x| x[4].to_f }
-  extent = price_30m.last / price_30m.max
-  kline = tickers_30m.tickers_to_kline
+  tickers_36m = $market.get_ticker('3m', 12)
+  price_36m = tickers_36m.map { |x| x[4].to_f }
+  extent = price_36m.last / price_36m.max
+  kline = tickers_45m.tickers_to_kline
   down_entity = kline.select {|x| x[1] < 0 }
   up_entity = kline.select {|x| x[1] > 0 }
   recent_price = $market.recent_price
-  market_index = $market.market_index('15m', 18)[4]
-  if recent_price < $market.min_16 * 1.0075 && recent_price > $market.min_16
+  market_index = $market.market_index('3m', 20)[4]
+
+  if recent_price < $market.min_16 * 1.005 && recent_price > $market.min_16
     amount = trade_cash / recent_price
     $market.new_bid(recent_price, amount, 'fast')
-  elsif (extent < 0.9925 && market_index > 0.6) || (extent < 0.985 && market_index < 0.6)
+  end
+
+  if (extent < 0.995 && market_index > 0.6) || (extent < 0.985 && market_index < 0.6)
     if down_entity.size < 5
-      trade_price = recent_price * 0.9925
+      trade_price = recent_price * 0.9975
       amount = trade_cash / trade_price
       $market.new_bid(trade_price, amount, 'fast')
+
     elsif down_entity.size == 5
       trade_price = recent_price * 0.9985
       amount = trade_cash / trade_price
       $market.new_bid(trade_price, amount, 'fast')
+
     elsif [6,7].include? down_entity.size
-      trade_price = recent_price * 0.9935
+      trade_price = recent_price * 0.9965
       amount = trade_cash / trade_price
       $market.new_bid(trade_price, amount, 'fast')
+
     elsif down_entity.size == 8
-      trade_price = recent_price * 0.99
+      trade_price = recent_price * 0.9925
       amount = trade_cash / trade_price
       $market.new_bid(trade_price, amount, 'fast')
     end
   end
+
 end
 
 def fast_profit
@@ -86,7 +93,7 @@ def sell_trade_order
     kline = tickers_15m.tickers_to_kline
     down_entity = kline.select {|x| x[1] < 0 }
     up_entity = kline.select {|x| x[1] > 0 }
-    market_index = $market.market_index('15m', 18)[4]
+    market_index = $market.market_index('3m', 20)[4]
 
     if recent_price > order_price
       if down_entity.size == 1 && kline[-1][1] < 0 && recent_price > order_price * fast_profit
@@ -98,8 +105,10 @@ def sell_trade_order
       end
     end
 
-    if  market_index > 0.6 && kline[-1][1] < 0 && recent_price < order_price * 0.985
-      if order_price * amount < trade_cash * 1.25
+    if recent_price < order_price
+      if market_index < 0.6
+        sell_order(order, recent_price , amount)
+      elsif market_index > 0.6 && recent_price < order_price * 0.985 && order_price * amount < trade_cash * 1.25
         expansion = trade_cash / recent_price / 5
         expansion_order = $market.new_bid(recent_price, expansion)
         if expansion_order.state.succ?
@@ -107,10 +116,6 @@ def sell_trade_order
           expansion_order.update(state: 120)
         end
       end
-    end
-
-    if market_index < 0.6 && recent_price < order_price
-      sell_order(order, recent_price , amount)
     end
 
   else
