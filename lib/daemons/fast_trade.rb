@@ -53,7 +53,7 @@ def buy_trade_order
     $market.new_bid(recent_price, amount, 'fast')
   end
 
-  if (extent < 0.995 && market_index > 0.6) || (extent < 0.985 && market_index < 0.6)
+  if (extent < 0.995 && market_index > 0.6 && kline[-1][1] > 0) || (extent < 0.985 && market_index < 0.6 && kline[-1][1] > 0)
     if down_entity.size < 5
       trade_price = recent_price * 0.9975
       amount = trade_cash / trade_price
@@ -96,11 +96,11 @@ def sell_trade_order
     market_index = $market.market_index('3m', 20)[4]
 
     if recent_price > order_price
-      if down_entity.size == 1 && kline[-1][1] < 0 && recent_price > order_price * fast_profit
+      if kline[-1][1] < 0 && recent_price > order_price * fast_profit
         sell_order(order, recent_price, amount)
-      elsif down_entity.size == 2 && kline[-1][1] < 0 && recent_price > order_price * 1.0075
+      elsif kline[-1][1] < 0 && down_entity.size == 2 && recent_price > order_price * 1.0075
         sell_order(order, recent_price , amount)
-      elsif down_entity.size > 2 && recent_price > order_price * 1.0035
+      elsif kline[-1][1] < 0 && down_entity.size > 2 && recent_price > order_price * 1.0035
         sell_order(order, recent_price , amount)
       end
     end
