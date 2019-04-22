@@ -24,7 +24,7 @@ class Order < ActiveRecord::Base
   enumerize :category, in: ['limit', 'fast', 'range'], default: 'limit', scope: true
   belongs_to :market
   after_create :fix_price
-  after_save :calc_total
+  before_save :calc_total
   after_save :push_order
   scope :succ, -> { where(state: 'succ') }
   scope :fast_order, -> { with_category(:fast) }
@@ -40,8 +40,8 @@ class Order < ActiveRecord::Base
   end
 
   def fix_price
-    self.price = self.price.to_d.round(6, :down)
-    self.amount = self.amount.to_d.round(self.market&.regulate&.precision || 4, :down)
+    self.price = self.price.to_d.round(self.market&.regulate&.price_precision || 4, :down)
+    self.amount = self.amount.to_d.round(self.market&.regulate&.amount_precision || 4, :down)
   end
 
   def type_cn

@@ -53,8 +53,8 @@ class Backend::RegulatesController < Backend::BaseController
 private
 
   def regulate_params
-    params.require(:regulate).permit(:market_id, :precision, :amplitude, :retain, :cost,
-      :fast_profit, :fast_cash, :range_profit, :range_cash)
+    params.require(:regulate).permit(:market_id, :amount_precision, :price_precision,
+      :amplitude, :retain, :cost,:fast_profit, :fast_cash, :range_profit, :range_cash)
   end
 
 end

@@ -11,7 +11,7 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 
-#https://api.binance.com/api/v1/exchangeInfo
+# https://api.binance.com/api/v1/exchangeInfo
 
 class Binance < Market
   after_save :batch_sync_quote

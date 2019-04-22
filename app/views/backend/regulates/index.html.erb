@@ -30,11 +30,13 @@
             <% @regulates.each do |item| %>
               <tr style="text-align: center">
                 <td>
-                  <%= item.market.class %><br><br>
-                  <%= item.market.quote_unit + "-" + item.market.base_unit %><br>
+                  <%= item.market.class %><br>
+                  <%= item.market.quote_unit + "-" + item.market.base_unit %><br><br>
+                  价格精度：<%= item.price_precision %><br>
+                  数量精度：<%= item.amount_precision %>
                 </td>
                 <td style="text-align: left">
-                   最大涨幅： <%= item.amplitude %><br>
+                   24H浮动： <%= item.amplitude %><br>
                    持有头寸： <%= item.retain %> <%= item.market.quote_unit %><br>
                    交易资金： <%= item.cost %> <%= item.market.base_unit %><br>
                    阻力位价： <%= item.resistance %><br>

@@ -10,13 +10,22 @@
         <%= f.select(:market_id, Market.all.map{|x| [x.full_name,x.id]}, {prompt:'请选择市场'},{:class => 'form-control'}) %>
       </div>
     </div>
-    <div class="form-group has-success">
+    <div class="form-group has-error">
       <label>数量精度</label>
       <div class="input-group">
         <div class="input-group-addon">
           <i class="fa fa-dot-circle-o"></i>
         </div>
-        <%= f.text_field :precision, class:'form-control', placeholder:'（必填* 交易数量精度）' %>
+        <%= f.text_field :amount_precision, class:'form-control', placeholder:'（必填* 交易数量精度）' %>
+      </div>
+    </div>
+    <div class="form-group has-error">
+      <label>价格精度</label>
+      <div class="input-group">
+        <div class="input-group-addon">
+          <i class="fa fa-dot-circle-o"></i>
+        </div>
+        <%= f.text_field :price_precision, class:'form-control', placeholder:'（必填* 交易价格精度）' %>
       </div>
     </div>
     <div class="form-group has-success">
