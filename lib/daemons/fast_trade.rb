@@ -53,7 +53,7 @@ def buy_trade_order
     $market.new_bid(recent_price, amount, 'fast')
   end
 
-  if (extent < 0.995 && market_index > 0.6 && kline[-1][1] > 0) || (extent < 0.985 && market_index < 0.6 && kline[-1][1] > 0)
+  if (extent < 0.9915 && market_index > 0.6 && kline[-1][1] > 0) || (extent < 0.98 && market_index < 0.6 && kline[-1][1] > 0)
     if down_entity.size < 5
       trade_price = recent_price * 0.9975
       amount = trade_cash / trade_price
@@ -70,7 +70,7 @@ def buy_trade_order
       $market.new_bid(trade_price, amount, 'fast')
 
     elsif down_entity.size == 8
-      trade_price = recent_price * 0.9925
+      trade_price = recent_price * 0.9935
       amount = trade_cash / trade_price
       $market.new_bid(trade_price, amount, 'fast')
     end
