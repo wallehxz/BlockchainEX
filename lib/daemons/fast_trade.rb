@@ -42,7 +42,7 @@ def buy_trade_order
   tickers_36m = $market.get_ticker('3m', 12)
   price_36m = tickers_36m.map { |x| x[4].to_f }
   extent = price_36m.last / price_36m.max
-  kline = tickers_45m.tickers_to_kline
+  kline = tickers_36m.tickers_to_kline
   down_entity = kline.select {|x| x[1] < 0 }
   up_entity = kline.select {|x| x[1] > 0 }
   recent_price = $market.recent_price
