@@ -31,13 +31,18 @@ def trade_cash
 end
 
 def range_profit
-  $market_range.regulate&.fast_profit || 1.0618
+  $market_range.regulate&.range_profit || 1.0618
 end
 
 def buy_trade_order
-  sup_price = $market_range.regulate.support
+  kline = $market_range.get_ticker('5m', 144).tickers_to_kline
+  volumes = kline.map {|x| x[4] }
+  prices = kline.map {|x| x[3] }
   recent_price = $market_range.recent_price
-  if recent_price > sup_price && recent_price < sup_price * 1.005
+  if prices.min == prices[-2]
+    amount = trade_cash / recent_price
+    $market_range.new_bid(recent_price, amount, 'range')
+  elsif volumes.max == volumes[-2] && kline[-2][1] > 0
     amount = trade_cash / recent_price
     $market_range.new_bid(recent_price, amount, 'range')
   end
@@ -48,8 +53,7 @@ def sell_trade_order
   order_price = order.price
   amount = order.amount
   recent_price = $market_range.recent_price
-  res_price = $market_range.regulate.resistance
-  if recent_price > order_price * range_profit || recent_price > res_price * 0.995
+  if recent_price > order_price * range_profit
     ask_order = $market_range.new_ask(recent_price, amount, 'range')
     if ask_order.state.succ?
       order.update_attributes(state: 120)

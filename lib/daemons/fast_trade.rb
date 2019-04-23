@@ -31,7 +31,7 @@ def current_fast_order
 end
 
 def order_cooling?
-  (Time.now - $market.asks.fast_order.succ.last.created_at) > 5.minute
+  (Time.now - $market.asks.fast_order.succ.last.created_at) > 7.minute
 end
 
 def trade_cash
@@ -53,7 +53,7 @@ def buy_trade_order
     $market.new_bid(recent_price, amount, 'fast')
   end
 
-  if (extent < 0.9925 && market_index > 0.6) || (extent < 0.985 && market_index < 0.6)
+  if (extent < 0.99 && market_index > 0.6) || (extent < 0.985 && market_index < 0.6)
     if down_entity.size < 5
       trade_price = recent_price * 0.998
       amount = trade_cash / trade_price
@@ -93,21 +93,19 @@ def sell_trade_order
     kline = tickers_15m.tickers_to_kline
     down_entity = kline.select {|x| x[1] < 0 }
     up_entity = kline.select {|x| x[1] > 0 }
-    market_index = $market.market_index('3m', 20)[4]
+    market_index = $market.market_index('5m', 30)[4]
 
     if recent_price > order_price
       if kline[-1][1] < 0 && recent_price > order_price * fast_profit
         sell_order(order, recent_price, amount)
-      # elsif kline[-1][1] < 0 && down_entity.size == 2 && recent_price > order_price * 1.0075
-      #   sell_order(order, recent_price , amount)
-      # elsif kline[-1][1] < 0 && down_entity.size > 2 && recent_price > order_price * 1.0035
-      #   sell_order(order, recent_price , amount)
+      elsif recent_price > order_price * 1.02
+        sell_order(order, recent_price , amount)
       end
     end
 
     if recent_price < order_price
-      # if market_index < 0.6
-      #   sell_order(order, recent_price , amount)
+      if market_index < 0.6
+        order.update(category: 'limit')
       if market_index > 0.6 && recent_price < order_price * 0.985 && order_price * amount < trade_cash * 1.25
         expansion = trade_cash / recent_price / 5
         expansion_order = $market.new_bid(recent_price, expansion)
@@ -116,17 +114,6 @@ def sell_trade_order
           expansion_order.update(state: 120)
         end
       end
-    end
-
-  else
-    tickers_5m = $market.get_ticker('1m', 5)
-    kline = tickers_5m.tickers_to_kline
-    recent_price = $market.recent_price
-    down_entity = kline.select {|x| x[1] < 0 }
-    if kline[-1][1] < 0 && recent_price > order_price * 1.01
-      sell_order(order, recent_price , amount)
-    # elsif kline[-1][1] < 0 && down_entity.size > 2 && recent_price > order_price * 1.005
-    #   sell_order(order, recent_price , amount)
     end
   end
 end
