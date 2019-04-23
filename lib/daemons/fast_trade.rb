@@ -31,7 +31,7 @@ def current_fast_order
 end
 
 def order_cooling?
-  (Time.now - $market.asks.fast_order.succ.last.created_at) > 7.minute
+  (Time.now - $market.asks.fast_order.succ.last.created_at) > 7.minute rescue true
 end
 
 def trade_cash
@@ -75,7 +75,6 @@ def buy_trade_order
       $market.new_bid(trade_price, amount, 'fast')
     end
   end
-
 end
 
 def fast_profit
@@ -106,7 +105,7 @@ def sell_trade_order
     if recent_price < order_price
       if market_index < 0.6
         order.update(category: 'limit')
-      if market_index > 0.6 && recent_price < order_price * 0.985 && order_price * amount < trade_cash * 1.25
+      elsif market_index > 0.6 && recent_price < order_price * 0.985 && order_price * amount < trade_cash * 1.25
         expansion = trade_cash / recent_price / 5
         expansion_order = $market.new_bid(recent_price, expansion)
         if expansion_order.state.succ?
