@@ -41,7 +41,7 @@ class Market < ActiveRecord::Base
   end
 
   def symbols
-    "#{base_unit}-#{quote_unit}"
+    "#{quote_unit}-#{base_unit}"
   end
 
   def self.market_list

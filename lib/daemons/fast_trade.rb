@@ -53,7 +53,7 @@ def buy_trade_order
     $market.new_bid(recent_price, amount, 'fast')
   end
 
-  if (extent < 0.99 && market_index > 0.6) || (extent < 0.985 && market_index < 0.6)
+  if (extent < 0.99 && market_index > 0.6) || (extent < 0.97 && market_index < 0.6)
     if down_entity.size < 5
       trade_price = recent_price * 0.998
       amount = trade_cash / trade_price
@@ -103,9 +103,7 @@ def sell_trade_order
     end
 
     if recent_price < order_price
-      if market_index < 0.6
-        order.update(category: 'limit')
-      elsif market_index > 0.6 && recent_price < order_price * 0.985 && order_price * amount < trade_cash * 1.25
+      if market_index > 0.6 && recent_price < order_price * 0.985 && order_price * amount < trade_cash * 1.25
         expansion = trade_cash / recent_price / 5
         expansion_order = $market.new_bid(recent_price, expansion)
         if expansion_order.state.succ?
@@ -114,6 +112,7 @@ def sell_trade_order
         end
       end
     end
+
   end
 end
 
