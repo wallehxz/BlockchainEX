@@ -39,12 +39,19 @@ def buy_trade_order
   volumes = kline.map {|x| x[4] }
   prices = kline.map {|x| x[3] }
   recent_price = $market_range.recent_price
+
   if prices.min == prices[-2]
-    amount = trade_cash / recent_price
-    $market_range.new_bid(recent_price, amount, 'range')
+    $market.sync_cash
+    if $market.cash.balance > trade_price
+      amount = trade_cash / recent_price
+      $market_range.new_bid(recent_price, amount, 'range')
+    end
   elsif volumes.max == volumes[-2] && kline[-2][1] > 0
-    amount = trade_cash / recent_price
-    $market_range.new_bid(recent_price, amount, 'range')
+    $market.sync_cash
+    if $market.cash.balance > trade_price
+      amount = trade_cash / recent_price
+      $market_range.new_bid(recent_price, amount, 'range')
+    end
   end
 end
 

@@ -54,27 +54,31 @@ def buy_trade_order
   end
 
   if (extent < 0.99 && market_index > 0.6) || (extent < 0.97 && market_index < 0.6)
-    if down_entity.size < 5
-      trade_price = recent_price * 0.998
-      amount = trade_cash / trade_price
-      $market.new_bid(trade_price, amount, 'fast')
+    $market.sync_cash
+    if $market.cash.balance > trade_price
+      if down_entity.size < 5
+        trade_price = recent_price * 0.998
+        amount = trade_cash / trade_price
+        $market.new_bid(trade_price, amount, 'fast')
 
-    elsif down_entity.size == 5
-      trade_price = recent_price * 0.999
-      amount = trade_cash / trade_price
-      $market.new_bid(trade_price, amount, 'fast')
+      elsif down_entity.size == 5
+        trade_price = recent_price * 0.9985
+        amount = trade_cash / trade_price
+        $market.new_bid(trade_price, amount, 'fast')
 
-    elsif [6,7].include? down_entity.size
-      trade_price = recent_price * 0.997
-      amount = trade_cash / trade_price
-      $market.new_bid(trade_price, amount, 'fast')
+      elsif [6,7].include? down_entity.size
+        trade_price = recent_price * 0.997
+        amount = trade_cash / trade_price
+        $market.new_bid(trade_price, amount, 'fast')
 
-    elsif down_entity.size == 8
-      trade_price = recent_price * 0.996
-      amount = trade_cash / trade_price
-      $market.new_bid(trade_price, amount, 'fast')
+      elsif down_entity.size == 8
+        trade_price = recent_price * 0.996
+        amount = trade_cash / trade_price
+        $market.new_bid(trade_price, amount, 'fast')
+      end
     end
   end
+
 end
 
 def fast_profit
