@@ -115,6 +115,11 @@ def sell_trade_order
           expansion_order.update(state: 120)
         end
       end
+
+      if recent_price < order_price * 997
+        sell_order(order, recent_price , amount)
+        $market.regulate.update(fast_trade: false)
+      end
     end
 
   end
