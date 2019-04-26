@@ -112,18 +112,22 @@ class Binance < Market
 
   def sync_fund
     remote =Account.binace_sync(quote_unit)
-    locale = fund || build_fund
-    locale.balance = remote['free'].to_f
-    locale.freezing = remote['locked'].to_f
-    locale.save
+    if remote['free'].to_f > 0.01 || remote['locked'].to_f > 0.01
+      locale = fund || build_fund
+      locale.balance = remote['free'].to_f
+      locale.freezing = remote['locked'].to_f
+      locale.save
+    end
   end
 
   def sync_cash
     remote = Account.binace_sync(base_unit)
-    locale = cash || build_cash
-    locale.balance = remote['free'].to_f
-    locale.freezing = remote['locked'].to_f
-    locale.save
+    if remote['free'].to_f > 0.01 || remote['locked'].to_f > 0.01
+      locale = cash || build_cash
+      locale.balance = remote['free'].to_f
+      locale.freezing = remote['locked'].to_f
+      locale.save
+    end
   end
 
   def recent_price

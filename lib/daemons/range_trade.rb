@@ -35,7 +35,7 @@ def range_profit
 end
 
 def buy_trade_order
-  kline = $market_range.get_ticker('5m', 144).tickers_to_kline
+  kline = $market_range.get_ticker('5m', 72).tickers_to_kline
   volumes = kline.map {|x| x[4] }
   prices = kline.map {|x| x[3] }
   recent_price = $market_range.recent_price
