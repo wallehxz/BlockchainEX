@@ -53,7 +53,7 @@ def buy_trade_order
     $market.new_bid(recent_price, amount, 'fast')
   end
 
-  if (extent < 0.99 && market_index > 0.6) || (extent < 0.975 && market_index < 0.6)
+  if (extent < 0.9925 && market_index > 0.6)
     $market.sync_cash
     if $market.cash.balance > trade_price
       if down_entity.size < 7
