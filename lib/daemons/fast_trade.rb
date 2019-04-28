@@ -41,8 +41,8 @@ end
 def buy_trade_order
   tickers_45m = $market.get_ticker('3m', 15)
   price_45m = tickers_45m.map { |x| x[4].to_f }
-  extent = price_45m.last / price_45m.first
-  kline = tickers_30m.tickers_to_kline
+  extent = price_45m.last / price_45m.max
+  kline = tickers_45m.tickers_to_kline
   down_entity = kline.select {|x| x[1] < 0 }
   up_entity = kline.select {|x| x[1] > 0 }
   recent_price = $market.recent_price
@@ -57,7 +57,7 @@ def buy_trade_order
     $market.sync_cash
     if $market.cash.balance > trade_price
       if down_entity.size < 7
-        trade_price = recent_price * 0.9925
+        trade_price = recent_price * 0.9935
         amount = trade_cash / trade_price
         $market.new_bid(trade_price, amount, 'fast')
 
@@ -67,7 +67,7 @@ def buy_trade_order
         $market.new_bid(trade_price, amount, 'fast')
 
       elsif [8,9,10].include? down_entity.size
-        trade_price = recent_price * 0.997
+        trade_price = recent_price * 0.9965
         amount = trade_cash / trade_price
         $market.new_bid(trade_price, amount, 'fast')
 
@@ -103,22 +103,13 @@ def sell_trade_order
     if recent_price > order_price
       if kline[-1][1] < 0 && recent_price > order_price * fast_profit
         sell_order(order, recent_price, amount)
-      elsif recent_price > order_price * 1.02
+      elsif recent_price > order_price * 1.015
         sell_order(order, recent_price , amount)
       end
     end
 
     if recent_price < order_price
-      if market_index > 0.6 && recent_price < order_price * 0.985 && order_price * amount < trade_cash * 1.25
-        expansion = trade_cash / recent_price / 10
-        expansion_order = $market.new_bid(recent_price, expansion)
-        if expansion_order.state.succ?
-          order.update(amount: amount + expansion_order.amount)
-          expansion_order.update(state: 120)
-        end
-      end
-
-      if recent_price < order_price * 997
+      if recent_price < order_price * 9975
         sell_order(order, recent_price , amount)
         $market.regulate.update(fast_trade: false)
       end
