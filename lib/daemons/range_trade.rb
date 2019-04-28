@@ -60,6 +60,14 @@ def sell_trade_order
   order_price = order.price
   amount = order.amount
   recent_price = $market_range.recent_price
+  prices_6h = $market_range.get_ticker('5m', 72).map{|x| x[4].to_f}
+  if recent_price > order_price && prices_6h[-3] == prices_6h.max
+    ask_order = $market_range.new_ask(recent_price, amount, 'range')
+    if ask_order.state.succ?
+      order.update_attributes(state: 120)
+      order.sold_tip_with(ask_order)
+    end
+  end
   if recent_price > order_price * range_profit
     ask_order = $market_range.new_ask(recent_price, amount, 'range')
     if ask_order.state.succ?
