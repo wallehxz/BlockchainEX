@@ -48,19 +48,13 @@ def buy_trade_order
   recent_price = $market.recent_price
   market_index = $market.market_index('3m', 40)[4]
 
-  if recent_price < $market.min_16 * 1.075 && recent_price > $market.min_16
-    amount = trade_cash / recent_price
-    $market.new_bid(recent_price, amount, 'fast')
-  end
-
   if (extent < 0.9925 && market_index > 0.6)
     $market.sync_cash
-    if $market.cash.balance > trade_price
-      if down_entity.size < 7
-        trade_price = recent_price * 0.9935
+    if $market.cash.balance > trade_cash
+      if down_entity.size
+        trade_price = recent_price * 0.9985
         amount = trade_cash / trade_price
         $market.new_bid(trade_price, amount, 'fast')
-
       elsif down_entity.size == 7
         trade_price = recent_price * 0.9985
         amount = trade_cash / trade_price
@@ -109,7 +103,7 @@ def sell_trade_order
     end
 
     if recent_price < order_price
-      if recent_price < order_price * 9975
+      if recent_price < order_price * 9875
         sell_order(order, recent_price , amount)
         $market.regulate.update(fast_trade: false)
       end
