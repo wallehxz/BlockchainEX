@@ -2,6 +2,7 @@ class Backend::OrdersController < Backend::BaseController
   def index
     @orders = Order.recent
     @orders = @orders.where(type: params[:type])if params[:type].present?
+    @orders = @orders.where(category: params[:cate])if params[:cate].present?
     @orders = @orders.where(state: params[:state])if params[:state].present?
     @orders = @orders.paginate(page:params[:page])
   end
