@@ -39,9 +39,9 @@ def trade_cash
 end
 
 def buy_trade_order
-  tickers_30m = $market.get_ticker('3m', 11)
-  price_30m = tickers_30m.map { |x| x[4].to_f }
-  extent = price_30m.last / price_30m.first
+  tickers_45m = $market.get_ticker('3m', 15)
+  price_45m = tickers_45m.map { |x| x[4].to_f }
+  extent = price_45m.last / price_45m.first
   kline = tickers_30m.tickers_to_kline
   down_entity = kline.select {|x| x[1] < 0 }
   up_entity = kline.select {|x| x[1] > 0 }
@@ -56,23 +56,23 @@ def buy_trade_order
   if (extent < 0.99 && market_index > 0.6) || (extent < 0.975 && market_index < 0.6)
     $market.sync_cash
     if $market.cash.balance > trade_price
-      if down_entity.size < 5
-        trade_price = recent_price * 0.998
+      if down_entity.size < 7
+        trade_price = recent_price * 0.9925
         amount = trade_cash / trade_price
         $market.new_bid(trade_price, amount, 'fast')
 
-      elsif down_entity.size == 5
+      elsif down_entity.size == 7
         trade_price = recent_price * 0.9985
         amount = trade_cash / trade_price
         $market.new_bid(trade_price, amount, 'fast')
 
-      elsif [6,7].include? down_entity.size
+      elsif [8,9,10].include? down_entity.size
         trade_price = recent_price * 0.997
         amount = trade_cash / trade_price
         $market.new_bid(trade_price, amount, 'fast')
 
-      elsif down_entity.size == 8
-        trade_price = recent_price * 0.996
+      elsif down_entity.size > 10
+        trade_price = recent_price * 0.9925
         amount = trade_cash / trade_price
         $market.new_bid(trade_price, amount, 'fast')
       end
@@ -88,7 +88,9 @@ end
 def sell_trade_order
   order = current_fast_order
   order_price = order.price
-  amount = order.amount
+  $market.sync_fund
+  fund = $market.fund.balance
+  amount = fund > order.amount ? order.amount : fund
 
   if Time.now - order.created_at > 5.minute
     tickers_15m = $market.get_ticker('3m', 5)
@@ -116,7 +118,7 @@ def sell_trade_order
         end
       end
 
-      if recent_price < order_price * 997 && market_index < 0.6
+      if recent_price < order_price * 997
         sell_order(order, recent_price , amount)
         $market.regulate.update(fast_trade: false)
       end
