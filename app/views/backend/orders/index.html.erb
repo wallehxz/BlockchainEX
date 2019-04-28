@@ -15,14 +15,14 @@
       <row>
         <div class="col-sm-2">
           <select onchange="javascript:location.href = this.value;" class="form-control" style="display: inline;">
-            <option>类型</option>
+            <option value="?">类别</option>
             <option value="?type=OrderAsk" <%= 'selected' if params[:type] == 'OrderAsk' %>>卖出</option>
             <option value="?type=OrderBid" <%= 'selected' if params[:type] == 'OrderBid' %>>买入</option>
           </select>
         </div>
         <div class="col-sm-2">
           <select onchange="javascript:location.href = this.value;" class="form-control" style="display: inline;">
-            <option>类别</option>
+            <option value="?">类型</option>
             <option value="?cate=limit&type=<%= params[:type] %>" <%= 'selected' if params[:cate] == 'limit' %>>限价</option>
             <option value="?cate=fast&type=<%= params[:type] %>" <%= 'selected' if params[:cate] == 'fast' %>>快频</option>
             <option value="?cate=range&type=<%= params[:type] %>" <%= 'selected' if params[:cate] == 'range' %>>量价</option>
@@ -30,7 +30,7 @@
         </div>
         <div class="col-sm-2">
           <select onchange="javascript:location.href = this.value;" class="form-control" style="display: inline;">
-            <option value="">状态</option>
+            <option value="?">状态</option>
             <% ['init','succ','rescue', 'fail'].each do |state|%>
               <option value="?type=<%= params[:type] %>&cate=<%= params[:cate] %>&state=<%= state %>" <%= 'selected' if params[:state] == state %>><%= state.upcase %></option>
             <% end %>
