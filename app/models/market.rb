@@ -144,7 +144,7 @@ class Market < ActiveRecord::Base
       tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 12H最大成交量 #{last_quote.v}，报价 #{last_quote.c}，价格浮动 #{kline}"
       quote_notice(tip)
 
-      if kline[1] > 0 && regulate&.range_cash > 1 && bids.range_order.succ.count.zero?
+      if kline[1] > 0 && regulate&.range_trade && bids.range_order.succ.count.zero?
         lat_price = recent_price
         amount = regulate.range_cash / lat_price
         new_bid(lat_price, amount, 'range')
