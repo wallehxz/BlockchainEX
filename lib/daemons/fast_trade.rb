@@ -51,10 +51,11 @@ def buy_trade_order
   if (extent < 0.9925 && market_index > 0.6)
     $market.sync_cash
     if $market.cash.balance > trade_cash
-      if down_entity.size
+      if [5,6].include? down_entity.size
         trade_price = recent_price * 0.9985
         amount = trade_cash / trade_price
         $market.new_bid(trade_price, amount, 'fast')
+
       elsif down_entity.size == 7
         trade_price = recent_price * 0.9985
         amount = trade_cash / trade_price
@@ -86,7 +87,7 @@ def sell_trade_order
   fund = $market.fund.balance
   amount = fund > order.amount ? order.amount : fund
 
-  if Time.now - order.created_at > 5.minute
+  if Time.now - order.created_at > 7.minute
     tickers_15m = $market.get_ticker('3m', 5)
     recent_price = $market.recent_price
     kline = tickers_15m.tickers_to_kline
@@ -102,11 +103,9 @@ def sell_trade_order
       end
     end
 
-    if recent_price < order_price
-      if recent_price < order_price * 9875
-        sell_order(order, recent_price , amount)
-        $market.regulate.update(fast_trade: false)
-      end
+    if recent_price < order_price * 975
+      sell_order(order, recent_price , amount)
+      $market.regulate.update(fast_trade: false)
     end
 
   end

@@ -41,14 +41,14 @@ def buy_trade_order
   recent_price = $market_range.recent_price
 
   if prices.min == prices[-2]
-    $market.sync_cash
-    if $market.cash.balance > trade_price
+    $market_range.sync_cash
+    if $market_range.cash.balance > trade_price
       amount = trade_cash / recent_price
       $market_range.new_bid(recent_price, amount, 'range')
     end
   elsif volumes.max == volumes[-2] && kline[-2][1] > 0
-    $market.sync_cash
-    if $market.cash.balance > trade_price
+    $market_range.sync_cash
+    if $market_range.cash.balance > trade_price
       amount = trade_cash / recent_price
       $market_range.new_bid(recent_price, amount, 'range')
     end
@@ -86,7 +86,7 @@ while $running
       end
     end
   rescue => detail
-    Notice.dingding("支阻位错误提醒：\n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")
+    Notice.dingding("支阻位错误提醒：\n 交易对：#{$market_range.symbols} \n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")
   end
   sleep 200
 end
