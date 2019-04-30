@@ -17,10 +17,10 @@
 
 class OrderBid < Order
 
-  def push_order
+  def push_limit_order
     if state.init?
       if Rails.env.production?
-        result = market.sync_remote_order(:bid, amount, price)
+        result = market.sync_limit_order(:bid, amount, price)
         self.update_attributes(state: result['state'], cause: result['cause'])
       else
         mock_push
@@ -28,4 +28,9 @@ class OrderBid < Order
       sms_order
     end
   end
+
+  def push_market_order
+    market.sync_market_order(:bid, amount)
+  end
+
 end

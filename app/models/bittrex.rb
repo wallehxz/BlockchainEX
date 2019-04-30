@@ -87,7 +87,7 @@ class Bittrex < Market
     end
   end
 
-  def sync_remote_order(side, amount, price)
+  def sync_limit_order(side, amount, price)
     begin
       order_url = { 'bid': 'https://bittrex.com/api/v1.1/market/buylimit', 'ask': 'https://bittrex.com/api/v1.1/market/selllimit' }[side]
       timetamp = Time.now.to_i

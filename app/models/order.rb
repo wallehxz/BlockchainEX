@@ -25,7 +25,7 @@ class Order < ActiveRecord::Base
   belongs_to :market
   after_create :fix_price
   before_save :calc_total
-  after_save :push_order
+  after_save :push_limit_order
   scope :succ, -> { where(state: 'succ') }
   scope :fast_order, -> { with_category(:fast) }
   scope :range_order, -> { with_category(:range) }

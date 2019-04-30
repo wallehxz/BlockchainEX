@@ -15,10 +15,10 @@ Signal.trap("TERM") do
 end
 
 def start_trading
-  if current_fast_order
-    sell_trade_order
-  else
+  unless current_fast_order
     buy_trade_order if order_cooling?
+  else
+    sell_trade_order
   end
 end
 
@@ -31,92 +31,108 @@ def current_fast_order
 end
 
 def order_cooling?
-  (Time.now - $market.asks.fast_order.succ.last.created_at) > 7.minute rescue true
+  (Time.now - $market.asks.fast_order.succ.last.created_at) > 5.minute rescue true
 end
 
 def trade_cash
-  $market.regulate&.fast_cash
-end
-
-def buy_trade_order
-  tickers_45m = $market.get_ticker('3m', 15)
-  price_45m = tickers_45m.map { |x| x[4].to_f }
-  extent = price_45m.last / price_45m.max
-  kline = tickers_45m.tickers_to_kline
-  down_entity = kline.select {|x| x[1] < 0 }
-  up_entity = kline.select {|x| x[1] > 0 }
-  recent_price = $market.recent_price
-  market_index = $market.market_index('3m', 40)[4]
-
-  if (extent < 0.9925 && market_index > 0.6)
-    $market.sync_cash
-    if $market.cash.balance > trade_cash
-      if [5,6].include? down_entity.size
-        trade_price = recent_price * 0.9985
-        amount = trade_cash / trade_price
-        $market.new_bid(trade_price, amount, 'fast')
-
-      elsif down_entity.size == 7
-        trade_price = recent_price * 0.9985
-        amount = trade_cash / trade_price
-        $market.new_bid(trade_price, amount, 'fast')
-
-      elsif [8,9,10].include? down_entity.size
-        trade_price = recent_price * 0.9965
-        amount = trade_cash / trade_price
-        $market.new_bid(trade_price, amount, 'fast')
-
-      elsif down_entity.size > 10
-        trade_price = recent_price * 0.9925
-        amount = trade_cash / trade_price
-        $market.new_bid(trade_price, amount, 'fast')
-      end
-    end
-  end
-
+  $market.sync_cash
+  cash = $market.cash.balance
+  fast_cash = $market.regulate&.fast_cash
+  cash > fast_cash ? fast_cash : 0
 end
 
 def fast_profit
   $market.regulate&.fast_profit || 1.02
 end
 
+def buy_trade_order
+  #判断当前
+  candles_1h = $market.get_ticker('3m', 15)
+  prices = candles_1h.map {|x| x[4].to_f }
+  _fir_price = prices[0]
+  _las_price = prices[-1]
+  _min_price = prices.min
+  _max_price = prices.max
+  if _min_price == prices[-2] && trade_cash > 0
+    if _las_price / _fir_price < 0.9925
+      amount = trade_cash / _las_price
+      $market.new_bid(_las_price, amount, 'fast')
+    elsif _las_price / _max_price < 0.9875
+      amount = trade_cash / _las_price
+      $market.new_bid(_las_price, amount, 'fast')
+    end
+  end
+end
+
 def sell_trade_order
-  order = current_fast_order
-  order_price = order.price
-  $market.sync_fund
-  fund = $market.fund.balance
-  amount = fund > order.amount ? order.amount : fund
+  bid_order = current_fast_order
+  _price = bid_order.price
+  _amount = bid_order.amount
+  candles_12m = $market.get_ticker('3m', 4)
+  kline_12m = candles_12m.tickers_to_kline
+  _las_price = kline[-1][3]
 
-  if Time.now - order.created_at > 7.minute
-    tickers_15m = $market.get_ticker('3m', 5)
-    recent_price = $market.recent_price
-    kline = tickers_15m.tickers_to_kline
-    down_entity = kline.select {|x| x[1] < 0 }
-    up_entity = kline.select {|x| x[1] > 0 }
-    market_index = $market.market_index('5m', 30)[4]
+  if dat_ma10_up?
 
-    if recent_price > order_price
-      if kline[-1][1] < 0 && recent_price > order_price * fast_profit
-        sell_order(order, recent_price, amount)
-      elsif recent_price > order_price * 1.015
-        sell_order(order, recent_price , amount)
+    if kline_12m[-1] < 0 && _las_price > _price * 1.005
+      if _las_price > _price * fast_profit
+        sell_order(bid_order, _las_price, _amount)
+      end
+      if kline_12m.select {|x| x[1] < 0}.size > 1
+        sell_order(bid_order, _las_price, _amount)
       end
     end
 
-    if recent_price < order_price * 975
-      sell_order(order, recent_price , amount)
-      $market.regulate.update(fast_trade: false)
+    if _las_price < _price * 0.97
+      sell_order(bid_order, _las_price, _amount)
+    end
+
+  else
+
+    if _las_price > _price * fast_profit
+      sell_order(bid_order, _las_price, _amount)
+    end
+
+    if kline_12m[-1] < 0 && _las_price > _price * 1.005
+      sell_order(bid_order, _las_price, _amount)
+    end
+
+    if _las_price < _price * 0.9925
+      stop_loss_order(bid_order, _las_price, _amount)
     end
 
   end
 end
 
-def sell_order(order, recent_price, amount)
-  ask_order = $market.new_ask(recent_price, amount, 'fast')
+def sell_order(order, price, amount)
+  ask_order = $market.new_ask(price, amount, 'fast')
   if ask_order.state.succ?
     order.update_attributes(state: 120)
     order.sold_tip_with(ask_order)
   end
+end
+
+def stop_loss_order(order, price, amount)
+  $market.regulate.update(fast_trade: false)
+  stop_order = $market.asks.create(price: price, amount: amount, category: 'fast', state: 'succ')
+  result = stop_order.push_market_order
+  if result['state'] != 200
+    stop_order.update_attributes(state: result['state'], cause: result['cause'])
+  else
+    order.update_attributes(state: 120)
+    order.sold_tip_with(stop_order)
+  end
+end
+
+def dat_ma10_up?
+  tickers_10d = $market.get_ticker('1d', 10)
+  prices = tickers_10d.map {|x| x[4].to_f }
+  _cur_price = prices.last
+  _ma10_price = prices.sum / 10
+  if _cur_price > _ma10_price
+    return true
+  end
+  false
 end
 
 while $running

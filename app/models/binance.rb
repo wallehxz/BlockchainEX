@@ -78,7 +78,7 @@ class Binance < Market
     current = JSON.parse(res.body)
   end
 
-  def sync_remote_order(side,quantity,price)
+  def sync_limit_order(side,quantity,price)
     begin
       side = { 'bid': 'BUY', 'ask': 'SELL' }[side]
       order_url = 'https://api.binance.com/api/v3/order'
@@ -94,6 +94,30 @@ class Binance < Market
         req.params['price'] = price.to_d
         req.params['recvWindow'] = 10000
         req.params['timeInForce'] = 'GTC'
+        req.params['timestamp'] = timestamp
+        req.params['signature'] = params_signed(params_string)
+      end
+      result = JSON.parse(res.body)
+      result['code'] ? { 'state'=> 500, 'cause'=> result['msg'] } : { 'state'=> 200 }
+    rescue Exception => detail
+      { 'state'=> 500, 'cause'=> detail.cause }
+    end
+  end
+
+  def sync_market_order(side, quantity)
+    begin
+      side = { 'bid': 'BUY', 'ask': 'SELL' }[side]
+      order_url = 'https://api.binance.com/api/v3/order'
+      timestamp = (Time.now.to_f * 1000).to_i - 2000
+      params_string = "quantity=#{quantity.to_d}&recvWindow=10000&side=#{side}&symbol=#{symbol}&timestamp=#{timestamp}&type=MARKET"
+      res = Faraday.post do |req|
+        req.url order_url
+        req.headers['X-MBX-APIKEY'] = Settings.binance_key
+        req.params['symbol'] = symbol
+        req.params['side'] = side
+        req.params['type'] = 'MARKET'
+        req.params['quantity'] = quantity.to_d
+        req.params['recvWindow'] = 10000
         req.params['timestamp'] = timestamp
         req.params['signature'] = params_signed(params_string)
       end
@@ -142,7 +166,7 @@ class Binance < Market
   end
 
   def market_index(interval, amount)
-    markets = get_ticker(interval,amount + 1)[0..-2]
+    markets = get_ticker(interval,amount)
     up_body = markets.select {|c| c[4].to_f - c[1].to_f >= 0 }
     down_body = markets.select {|c| c[4].to_f - c[1].to_f < 0}
     first_price = markets.first[4].to_f
