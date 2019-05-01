@@ -70,7 +70,7 @@ def sell_trade_order
   _amount = bid_order.amount
   candles_12m = $market.get_ticker('3m', 4)
   kline_12m = candles_12m.tickers_to_kline
-  _las_price = kline[-1][3]
+  _las_price = kline_12m[-1][3]
 
   if dat_ma10_up?
 

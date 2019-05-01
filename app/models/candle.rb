@@ -47,13 +47,13 @@ class Candle < ActiveRecord::Base
   end
 
   def update_support_level
-    if market.regulate && market.min_96 == market.regulate.support
+    if market.regulate && market.min_96 == self.c
       market.regulate.update(support: market.min_96)
     end
   end
 
   def update_resistance_level
-    if market.regulate && market.max_96 == market.regulate.resistance
+    if market.regulate && market.max_96 == self.c
       market.regulate.update(resistance: market.max_96)
     end
   end
