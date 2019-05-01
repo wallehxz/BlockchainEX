@@ -74,7 +74,7 @@ def sell_trade_order
 
   if dat_ma10_up?
 
-    if kline_12m[-1] < 0 && _las_price > _price * 1.005
+    if kline_12m[-1][1] && _las_price > _price * 1.005
       if _las_price > _price * fast_profit
         sell_order(bid_order, _las_price, _amount)
       end
@@ -93,7 +93,7 @@ def sell_trade_order
       sell_order(bid_order, _las_price, _amount)
     end
 
-    if kline_12m[-1] < 0 && _las_price > _price * 1.005
+    if kline_12m[-1][1] < 0 && _las_price > _price * 1.005
       sell_order(bid_order, _las_price, _amount)
     end
 
