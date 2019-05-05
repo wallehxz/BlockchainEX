@@ -67,40 +67,48 @@ end
 def sell_trade_order
   bid_order = current_fast_order
   _price = bid_order.price
+  $market.sync_fund
+  _fund = $market.fund.balance
   _amount = bid_order.amount
+  _amount = _fund > _amount ? _amount : _fund * 0.999
   candles_12m = $market.get_ticker('3m', 4)
   kline_12m = candles_12m.tickers_to_kline
   _las_price = kline_12m[-1][3]
 
   if dat_ma10_up?
 
-    if kline_12m[-1][1] && _las_price > _price * 1.005
+    if kline_12m[-1][1] < 0
       if _las_price > _price * fast_profit
         sell_order(bid_order, _las_price, _amount)
       end
-      if kline_12m.select {|x| x[1] < 0}.size > 1
+      if kline_12m.select {|x| x[1] < 0}.size == 2 && _las_price > _price * 1.005
+        sell_order(bid_order, _las_price, _amount)
+      end
+      if kline_12m.select {|x| x[1] < 0}.size > 2
         sell_order(bid_order, _las_price, _amount)
       end
     end
 
     if _las_price < _price * 0.97
-      sell_order(bid_order, _las_price, _amount)
-    end
-
-  else
-
-    if _las_price > _price * fast_profit
-      sell_order(bid_order, _las_price, _amount)
-    end
-
-    if kline_12m[-1][1] < 0 && _las_price > _price * 1.005
-      sell_order(bid_order, _las_price, _amount)
-    end
-
-    if _las_price < _price * 0.9925
       stop_loss_order(bid_order, _las_price, _amount)
     end
+  else
 
+    if kline_12m[-1][1] < 0
+      if _las_price > _price * fast_profit
+        sell_order(bid_order, _las_price, _amount)
+      end
+      if kline_12m.select {|x| x[1] < 0}.size == 2 && _las_price > _price * 1.002
+        sell_order(bid_order, _las_price, _amount)
+      end
+      if kline_12m.select {|x| x[1] < 0}.size > 2
+        sell_order(bid_order, _las_price, _amount)
+      end
+    end
+
+    if _las_price < _price * 0.985
+      stop_loss_order(bid_order, _las_price, _amount)
+    end
   end
 end
 
