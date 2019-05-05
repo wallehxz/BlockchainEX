@@ -16,9 +16,9 @@ end
 
 def start_trading
   unless current_fast_order
-    buy_trade_order if order_cooling?
+    buy_trade_order if buy_cooling?
   else
-    sell_trade_order
+    sell_trade_order if sell_cooling?
   end
 end
 
@@ -30,8 +30,12 @@ def current_fast_order
   $market.bids.fast_order.succ.first
 end
 
-def order_cooling?
+def buy_cooling?
   (Time.now - $market.asks.fast_order.succ.last.created_at) > 5.minute rescue true
+end
+
+def sell_cooling?
+  (Time.now - current_fast_order.created_at) > 9.minute rescue true
 end
 
 def trade_cash
