@@ -50,14 +50,15 @@ class Order < ActiveRecord::Base
 
   def sms_order
     if state.succ?
-      content = "#{market.symbols} #{type_cn}订单, 价格：#{price}, 数量: #{amount}, 小计：#{total} "
+      content = "#{market.symbols} #{type_cn}-#{category}订单, 价格：#{price}, 数量: #{amount}, 小计：#{total} "
       Notice.sms(content) if Rails.env.production?
       market.messages.create(body: content)
     end
   end
 
   def sold_tip_with(ask_order)
-    content = "#{market.symbols} #{type_cn}订单完成出售, 成交数量: #{amount}，交易收益: #{(ask_order.total - total).round(2)}"
+    content = "#{market.symbols} #{type_cn}-#{category} 出售成交, 成交数量: #{amount}，交易收益: #{(ask_order.total - total).round(2)}"
+    Notice.sms(content) if Rails.env.production?
     market.messages.create(body: content)
   end
 
