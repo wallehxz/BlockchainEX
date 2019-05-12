@@ -16,7 +16,7 @@ end
 
 def start_trading
   unless current_fast_order
-    buy_trade_order if buy_cooling?
+    buy_trade_order if sell_order_done?
   else
     sell_trade_order if buy_order_done?
   end
@@ -46,6 +46,14 @@ def buy_order_done?
   true
 end
 
+def sell_order_done?
+  $market.sync_fund
+  if $market.fund.freezing > 10
+    return false
+  end
+  true
+end
+
 def trade_cash
   $market.sync_cash
   cash = $market.cash.balance
@@ -59,34 +67,24 @@ end
 
 def buy_trade_order
   #判断当前
-  candles_1h = $market.get_ticker('3m', 15)
+  candles_1h = $market.get_ticker('3m', 20)
   prices = candles_1h.map {|x| x[4].to_f }
+  klines = candles_1h.tickers_to_kline
   _fir_price = prices[0]
   _las_price = prices[-1]
   _min_price = prices.min
   _max_price = prices.max
-
-  if _min_price == prices[-2] && trade_cash > 0
-    if day_ma10_up?
-      if _las_price / _fir_price < 0.99
-        amount = trade_cash / _las_price
-        $market.new_bid(_las_price, amount, 'fast')
-      elsif _las_price / _max_price < 0.985
-        amount = trade_cash / _las_price
-        $market.new_bid(_las_price, amount, 'fast')
-      end
-    else
-      if _las_price / _fir_price < 0.985
-        amount = trade_cash / _las_price
-        $market.new_bid(_las_price, amount, 'fast')
-      elsif _las_price / _max_price < 0.975
-        amount = trade_cash / _las_price
-        $market.new_bid(_las_price, amount, 'fast')
-      end
+  if prices[-3] == _min_price && klines[-2][1] > klines[-2][3] * 0.0015
+    if (_las_price / _fir_price) < 0.985
+      _price = _las_price * 0.9985
+      amount = trade_cash / _price
+      $market.new_bid(_price, amount, 'fast')
+    elsif (_las_price / _max_price) < 0.97
+      _price = _las_price * 0.9985
+      amount = trade_cash / _price
+      $market.new_bid(_price, amount, 'fast')
     end
-
   end
-
 end
 
 def sell_trade_order
