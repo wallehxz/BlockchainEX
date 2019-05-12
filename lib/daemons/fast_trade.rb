@@ -23,7 +23,7 @@ def start_trading
 end
 
 def support_level
-  $market.regulate.support
+  $market.get_ticker('3m', 50).map {|x| x[3].to_f}.min * 1.005
 end
 
 def current_fast_order
@@ -102,7 +102,7 @@ def sell_trade_order
     sell_order(bid_order, _las_price, _amount)
   end
 
-  if kline_12m[-1][1] < 0
+  if kline_12m[-2][1] < 0
     if _las_price > _price * fast_profit
       sell_order(bid_order, _las_price, _amount)
     end
@@ -111,9 +111,14 @@ def sell_trade_order
       sell_order(bid_order, _las_price, _amount)
     end
 
-    if _las_price < _price
+    if _las_price < _price && _las_price < support_level
+      sell_order(bid_order, _las_price, _amount)
+    end
+
+    if _las_price < _price * 0.975
       stop_loss_order(bid_order, _las_price, _amount)
     end
+
   end
 
 end
@@ -130,11 +135,11 @@ def stop_loss_order(order, price, amount)
   # $market.regulate.update(fast_trade: false)
   stop_order = $market.asks.create(price: price, amount: amount, category: 'fast', state: 'succ')
   result = stop_order.push_market_order
-  if result['state'] != 200
-    stop_order.update_attributes(state: result['state'], cause: result['cause'])
-  else
+  if result['state'] == 200
     order.update_attributes(state: 120)
     order.sold_tip_with(stop_order)
+  else
+    stop_order.update_attributes(state: result['state'], cause: result['cause'])
   end
 end
 
