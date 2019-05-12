@@ -134,6 +134,21 @@ class Binance < Market
     OpenSSL::HMAC.hexdigest(digest, key, data)
   end
 
+  def open_orders
+    order_url = 'https://api.binance.com/api/v3/openOrders'
+    timestamp = (Time.now.to_f * 1000).to_i - 2000
+    params_string = "recvWindow=10000&symbol=#{symbol}&timestamp=#{timestamp}"
+    res = Faraday.get do |req|
+      req.url order_url
+      req.headers['X-MBX-APIKEY'] = Settings.binance_key
+      req.params['symbol'] = symbol
+      req.params['recvWindow'] = 10000
+      req.params['timestamp'] = timestamp
+      req.params['signature'] = params_signed(params_string)
+    end
+    result = JSON.parse(res.body)
+  end
+
   def sync_fund
     remote =Account.binace_sync(quote_unit)
     if remote['free'].to_f > 0.01 || remote['locked'].to_f > 0.01

@@ -30,28 +30,12 @@ def current_fast_order
   $market.bids.fast_order.succ.first
 end
 
-def buy_cooling?
-  (Time.now - $market.asks.fast_order.succ.last.created_at) > 5.minute rescue true
-end
-
-def sell_cooling?
-  (Time.now - current_fast_order.created_at) > 9.minute rescue true
-end
-
 def buy_order_done?
-  $market.sync_cash
-  if $market.cash.freezing > 10
-    return false
-  end
-  true
+  $market.open_orders.select {|x| x['side'] == 'BUY' }.size.zero? ? true : false
 end
 
 def sell_order_done?
-  $market.sync_fund
-  if $market.fund.freezing > 10
-    return false
-  end
-  true
+  $market.open_orders.select {|x| x['side'] == 'SELL' }.size.zero? ? true : false
 end
 
 def trade_cash
@@ -91,7 +75,7 @@ def sell_trade_order
   bid_order = current_fast_order
   _price = bid_order.price
   $market.sync_fund
-  _fund = $market.fund.balance
+  _fund = $market.fund&.balance || 0
   _amount = bid_order.amount
   _amount = _fund > _amount ? _amount : _fund * 0.999
   candles_12m = $market.get_ticker('3m', 4)
