@@ -1,5 +1,5 @@
-source 'https://gems.ruby-china.com/'  #Ruby-China源
-# source 'https://rubygems.org/'  #官方源
+# source 'https://gems.ruby-china.com/'  #Ruby-China源
+source 'https://rubygems.org/'  #官方源
 
 gem 'rails', '4.2.7'
 gem 'sass-rails', '5.0.6' # Use SCSS for stylesheets
