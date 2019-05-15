@@ -46,6 +46,8 @@ Rails.application.routes.draw do
     resources :orders
     resources :messages do
       get :clear_history, on: :collection
+      get :clear_alerts, on: :collection
+      get :alerts, on: :collection
     end
 
     patch "/order_bid/:id", to: "orders#update", as: :order_bid

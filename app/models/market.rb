@@ -21,6 +21,7 @@ class Market < ActiveRecord::Base
   has_one :cash, ->(curr) { where(exchange: curr.type) }, class_name: 'Account', primary_key: 'base_unit', foreign_key: 'currency'
   has_one :fund, ->(curr) { where(exchange: curr.type) }, class_name: 'Account', primary_key: 'quote_unit', foreign_key: 'currency'
   has_many :candles, dependent: :destroy
+  has_many :indicators, dependent: :destroy
   has_many :messages, dependent: :destroy
   enumerize :source, in: ['bittrex', 'binance', 'fcoin']
   scope :seq, -> { order('sequence') }

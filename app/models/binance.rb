@@ -14,7 +14,7 @@
 # https://api.binance.com/api/v1/exchangeInfo
 
 class Binance < Market
-  after_save :batch_sync_quote
+  after_create :batch_sync_quote
 
   def get_price
     t = get_ticker('1m',1)[0]
@@ -36,7 +36,7 @@ class Binance < Market
 
   def batch_sync_quote
     if candles.count < 10
-      batch_quote(672)
+      batch_quote(672) rescue nil
     end
   end
 
