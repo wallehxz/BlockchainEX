@@ -23,7 +23,7 @@ def start_trading
 end
 
 def support_level
-  $market.get_ticker('3m', 50).map {|x| x[3].to_f}.min * 1.005
+  $market.get_ticker('3m', 50).map {|x| x[3].to_f}.min * 1.0015
 end
 
 def current_fast_order
@@ -58,7 +58,7 @@ def buy_trade_order
   _las_price = prices[-1]
   _min_price = prices.min
   _max_price = prices.max
-  if prices[-3] == _min_price && klines[-2][1] > klines[-2][3] * 0.0015
+  if klines[-2][1] > 0
     if (_las_price / _fir_price) < 0.985
       _price = _las_price * 0.9985
       amount = trade_cash / _price
@@ -68,6 +68,10 @@ def buy_trade_order
       amount = trade_cash / _price
       $market.new_bid(_price, amount, 'fast')
     end
+  elsif _las_price > support_level && _las_price < support_level * 1.025
+    _price = _las_price * 0.9995
+    amount = trade_cash / _price
+    $market.new_bid(_price, amount, 'fast')
   end
 end
 
@@ -91,10 +95,6 @@ def sell_trade_order
       sell_order(bid_order, _las_price, _amount)
     end
 
-    if kline_12m.select {|x| x[1] < 0}.size == 2 && _las_price > _price * 1.0075
-      sell_order(bid_order, _las_price, _amount)
-    end
-
     if _las_price < _price && _las_price < support_level
       sell_order(bid_order, _las_price, _amount)
     end
@@ -102,9 +102,7 @@ def sell_trade_order
     if _las_price < _price * 0.975
       stop_loss_order(bid_order, _las_price, _amount)
     end
-
   end
-
 end
 
 def sell_order(order, price, amount)
@@ -116,7 +114,6 @@ def sell_order(order, price, amount)
 end
 
 def stop_loss_order(order, price, amount)
-  # $market.regulate.update(fast_trade: false)
   stop_order = $market.asks.create(price: price, amount: amount, category: 'fast', state: 'succ')
   result = stop_order.push_market_order
   if result['state'] == 200
@@ -125,17 +122,7 @@ def stop_loss_order(order, price, amount)
   else
     stop_order.update_attributes(state: result['state'], cause: result['cause'])
   end
-end
-
-def day_ma10_up?
-  tickers_10d = $market.get_ticker('1d', 10)
-  prices = tickers_10d.map {|x| x[4].to_f }
-  _cur_price = prices.last
-  _ma10_price = prices.sum / 10
-  if _cur_price > _ma10_price
-    return true
-  end
-  false
+  $market.regulate.update(fast_trade: false)
 end
 
 while $running

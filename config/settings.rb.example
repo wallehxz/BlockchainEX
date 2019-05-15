@@ -6,6 +6,10 @@ settings.email_account = '*****@qq.com'
 settings.email_password = '*****'
 settings.email_stmp_address = 'smtp.xx.com'
 settings.email_stmp_port = '587'
+
+settings.pop_host = 'pop.gmail.com'
+settings.pop_username = 'xxxxxxxx@gmail.com'
+settings.pop_password = 'xxxxxxxxx'
 #消息通知
 settings.default_mobile = '13812345678'
 #http://pushbear.ftqq.com
