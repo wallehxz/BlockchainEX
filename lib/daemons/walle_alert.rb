@@ -26,5 +26,5 @@ while($running) do
   rescue => detail
     Notice.dingding("指标接收工人：\n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")
   end
-  sleep 45
+  sleep 10
 end
