@@ -1,5 +1,5 @@
 GEM
-  remote: https://gems.ruby-china.com/
+  remote: https://rubygems.org/
   specs:
     aasm (5.0.1)
       concurrent-ruby (~> 1.0)
@@ -352,7 +352,7 @@ DEPENDENCIES
   jbuilder (= 2.6.0)
   jquery-rails (= 4.2.0)
   json_spec (= 1.1.4)
-  mail
+  mail (= 2.7.1)
   minitest (= 5.8.4)
   mocha (= 1.1.0)
   nokogiri (= 1.8.0)
