@@ -18,10 +18,12 @@ while($running) do
   begin
     alerts = Mail.all.select { |x| x.from[0] =~ /tradingview/ }
     alerts.each do |alert|
-      string = alert.subject.split('|')[1..-1]
-      quote = string[0].split('_')
-      market = Market.where(quote_unit: quote[0], base_unit: quote[1]).first
-      market.indicators.create(name: string[1], created_at: alert.date)
+      if alert.subject.include? '|'
+        string = alert.subject.split('|')[1..-1]
+        quote = string[0].split('_')
+        market = Market.where(quote_unit: quote[0], base_unit: quote[1]).first
+        market.indicators.create(name: string[1], created_at: alert.date) if market
+      end
     end
   rescue => detail
     Notice.dingding("指标接收工人：\n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")

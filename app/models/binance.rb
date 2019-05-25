@@ -78,9 +78,9 @@ class Binance < Market
     current = JSON.parse(res.body)
   end
 
-  def sync_limit_order(side,quantity,price)
+  def sync_limit_order(side, quantity, price)
     begin
-      side = { 'bid': 'BUY', 'ask': 'SELL' }[side]
+      side = {'bid': 'BUY', 'ask': 'SELL'}[side]
       order_url = 'https://api.binance.com/api/v3/order'
       timestamp = (Time.now.to_f * 1000).to_i - 2000
       params_string = "price=#{price.to_d}&quantity=#{quantity.to_d}&recvWindow=10000&side=#{side}&symbol=#{symbol}&timeInForce=GTC&timestamp=#{timestamp}&type=LIMIT"
@@ -149,9 +149,26 @@ class Binance < Market
     result = JSON.parse(res.body)
   end
 
+  def undo_order(order_id)
+    cancle_url = 'https://api.binance.com/api/v3/order'
+    timestamp = (Time.now.to_f * 1000).to_i - 2000
+    params_string = "orderId=#{order_id}&recvWindow=10000&symbol=#{symbol}&timestamp=#{timestamp}"
+    res = Faraday.delete do |req|
+      req.url cancle_url
+      req.headers['X-MBX-APIKEY'] = Settings.binance_key
+      req.params['symbol'] = symbol
+      req.params['orderId'] = order_id
+      req.params['recvWindow'] = 10000
+      req.params['timestamp'] = timestamp
+      req.params['signature'] = params_signed(params_string)
+    end
+    result = JSON.parse(res.body)
+    puts "撤销订单 #{order_id}"
+  end
+
   def sync_fund
     remote =Account.binace_sync(quote_unit)
-    if remote['free'].to_f > 0.01 || remote['locked'].to_f > 0.01
+    if remote['free'].to_f > 0 || remote['locked'].to_f > 0
       locale = fund || build_fund
       locale.balance = remote['free'].to_f
       locale.freezing = remote['locked'].to_f
@@ -161,7 +178,7 @@ class Binance < Market
 
   def sync_cash
     remote = Account.binace_sync(base_unit)
-    if remote['free'].to_f > 0.01 || remote['locked'].to_f > 0.01
+    if remote['free'].to_f > 0 || remote['locked'].to_f > 0
       locale = cash || build_cash
       locale.balance = remote['free'].to_f
       locale.freezing = remote['locked'].to_f
@@ -189,40 +206,78 @@ class Binance < Market
     indexs = (up_body.size.to_f / down_body.size) * (last_price / first_price)
     [first_price, last_price, up_body.size, down_body.size, indexs]
   end
-end
 
-class Array
-  def tickers_to_kline
-    array = []
-    self.each do |item|
-      if item[4].to_f - item[1].to_f > 0
-        array << [item[2].to_f - item[4].to_f, item[4].to_f - item[1].to_f, item[1].to_f - item[3].to_f, item[4].to_f, item[5].to_f]
+  def ticker
+    ticker_url = 'https://api.binance.com/api/v1/ticker/24hr'
+    res = Faraday.get do |req|
+      req.url ticker_url
+      req.params['symbol'] = symbol
+    end
+    result = JSON.parse(res.body)
+  end
+
+  def bid_active_orders
+    open_orders.select {|o| o['side'] == 'BUY'}
+  end
+
+  def ask_active_orders
+    open_orders.select {|o| o['side'] == 'SELL'}
+  end
+
+  def step_price_bid(amount)
+    continue = true
+    sync_fund
+    ave_amount = amount / 10.0
+    base_amount = fund.balance
+    total_amount = base_amount + amount
+    while base_amount <= total_amount && continue
+      bid_active_orders.each do |order|
+        undo_order(order['orderId'])
+      end
+      bid_price = ticker['bidPrice'].to_f
+      bid_amount = (total_amount - base_amount) > ave_amount ? ave_amount : (total_amount - base_amount)
+      _bid_order = bids.create(price: bid_price, amount: bid_amount, category: 'limit', state: 'succ')
+      _result = sync_limit_order(:bid, _bid_order.amount, _bid_order.price)
+      if _result['state'] == 500
+        continue = false
+        _bid_order.update(state: _result['state'], cause: _result['cause'])
       else
-        array << [item[2].to_f - item[1].to_f, item[4].to_f - item[1].to_f, item[4].to_f - item[3].to_f, item[4].to_f, item[5].to_f]
+        sleep 2
+        sync_fund
+        base_amount = fund.balance
       end
     end
-    array
+    orders = bids.succ.last(10)
+    tip = "#{Time.now.to_s(:short)} 阶梯买入 #{symbol}，数量 #{orders.map(&:amount).sum.round(4)}, 资金 #{orders.map(&:total).sum.round(4)}"
+    # Notice.sms(tip)
   end
 
-  def kline_shape
-    if (self[0] + self[2]) >= 0 && self[1].abs > self[3] * 0.005
-      return '高实体线'
+  def step_price_ask(amount)
+    continue = true
+    sync_fund
+    ave_amount = amount / 10.0
+    total_amount = fund.balance
+    retain_amount = total_amount - amount
+    while total_amount > retain_amount && continue
+      ask_active_orders.each do |order|
+        undo_order(order['orderId'])
+      end
+      ask_price = ticker['askPrice'].to_f
+      ask_amount = (total_amount - retain_amount) > ave_amount ? ave_amount : (total_amount - retain_amount)
+      _ask_order = asks.create(price: ask_price, amount: ask_amount, category: 'limit', state: 'succ')
+      _result = sync_limit_order(:ask, _ask_order.amount, _ask_order.price)
+      if _result['state'] == 500
+        continue = false
+        _ask_order.update(state: _result['state'], cause: _result['cause'])
+      else
+        sleep 2
+        sync_fund
+        total_amount = fund.balance
+      end
     end
-    if self[1].abs > 0 && self[0] > self[1].abs * 2 && self[2] > self[1].abs * 2
-      return '长腿十字线'
-    end
-    if self[2] < self[3] * 0.00005 && self[1].abs > 0 &&self[0] > self[1].abs * 3
-      return '射击十字星'
-    end
-    if self[0] < self[3] * 0.00005 && self[1].abs > 0 && self[2] > self[1].abs * 3
-      return '锤头线'
-    end
-    if self[1].abs > 0 && self[1].abs > self[3] * 0.0025 && self[1].abs < self[3] * 0.005
-      return '中实体线'
-    end
-    if self[1].abs > 0 && self[1].abs < self[3] * 0.0025
-      return '低实体线'
-    end
-    return  '无特征线'
+    orders = asks.succ.last(10)
+    tip = "#{Time.now.to_s(:short)} 阶梯卖出 #{symbol}，数量 #{orders.map(&:amount).sum.round(4)}, 资金 #{orders.map(&:total).sum.round(4)}"
+    # Notice.sms(tip)
   end
+
 end
