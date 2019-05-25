@@ -249,7 +249,7 @@ class Binance < Market
     end
     orders = bids.succ.last(10)
     tip = "#{Time.now.to_s(:short)} 阶梯买入 #{symbol}，数量 #{orders.map(&:amount).sum.round(4)}, 资金 #{orders.map(&:total).sum.round(4)}"
-    # Notice.sms(tip)
+    Notice.sms(tip)
   end
 
   def step_price_ask(amount)
@@ -277,7 +277,7 @@ class Binance < Market
     end
     orders = asks.succ.last(10)
     tip = "#{Time.now.to_s(:short)} 阶梯卖出 #{symbol}，数量 #{orders.map(&:amount).sum.round(4)}, 资金 #{orders.map(&:total).sum.round(4)}"
-    # Notice.sms(tip)
+    Notice.sms(tip)
   end
 
 end
