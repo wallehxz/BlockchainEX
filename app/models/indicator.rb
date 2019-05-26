@@ -10,11 +10,11 @@
 
 class Indicator < ActiveRecord::Base
   belongs_to :market
-  after_save :market_buy_or_sell
+  after_save :step_buy_or_sell
   scope :recent, -> { order('created_at desc') }
   self.per_page = 10
 
-  def market_buy_or_sell
+  def step_buy_or_sell
     if name.include? 'step_buy'
       amount = market.regulate&.retain || 0
       market.sync_fund
@@ -34,4 +34,5 @@ class Indicator < ActiveRecord::Base
       end
     end
   end
+
 end
