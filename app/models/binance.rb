@@ -233,6 +233,7 @@ class Binance < Market
     while base_amount <= total_amount && continue
       bid_active_orders.each do |order|
         undo_order(order['orderId'])
+        bids.succ.last.destroy
       end
       bid_price = ticker['bidPrice'].to_f
       bid_amount = (total_amount - base_amount) > ave_amount ? ave_amount : (total_amount - base_amount)
@@ -242,7 +243,7 @@ class Binance < Market
         continue = false
         _bid_order.update(state: _result['state'], cause: _result['cause'])
       else
-        sleep 2
+        sleep 5
         sync_fund
         base_amount = fund.balance
       end
@@ -261,6 +262,7 @@ class Binance < Market
     while total_amount > retain_amount && continue
       ask_active_orders.each do |order|
         undo_order(order['orderId'])
+        asks.succ.last.destroy
       end
       ask_price = ticker['askPrice'].to_f
       ask_amount = (total_amount - retain_amount) > ave_amount ? ave_amount : (total_amount - retain_amount)
@@ -270,7 +272,7 @@ class Binance < Market
         continue = false
         _ask_order.update(state: _result['state'], cause: _result['cause'])
       else
-        sleep 2
+        sleep 5
         sync_fund
         total_amount = fund.balance
       end
@@ -279,5 +281,4 @@ class Binance < Market
     tip = "#{Time.now.to_s(:short)} 阶梯卖出 #{symbol}，数量 #{orders.map(&:amount).sum.round(4)}, 资金 #{orders.map(&:total).sum.round(4)}"
     Notice.sms(tip)
   end
-
 end
