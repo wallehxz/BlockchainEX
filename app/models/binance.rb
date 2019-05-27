@@ -268,7 +268,7 @@ class Binance < Market
           continue = false
           _bid_order.update(state: _result['state'], cause: _result['cause'])
         else
-          sleep 7
+          sleep 5
           sync_fund
           base_amount = fund.balance
         end
@@ -304,7 +304,7 @@ class Binance < Market
           continue = false
           _ask_order.update(state: _result['state'], cause: _result['cause'])
         else
-          sleep 7
+          sleep 5
           sync_fund
           total_amount = fund.balance
         end

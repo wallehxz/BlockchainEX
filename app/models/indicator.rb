@@ -27,7 +27,7 @@ class Indicator < ActiveRecord::Base
       market.sync_fund
       fund = market.fund&.balance || 0
       last_orders = market.bid_filled_orders.last(10)
-      bid_price = last_orders.map {|x| x['price'].to_f } / last_orders.size
+      bid_price = last_orders.map { |x| x['price'].to_f }.sum / last_orders.size
       recent_price = market.recent_price
       if fund > 0 && amount > 0 && recent_price > bid_price
         amount = fund > amount ? amount : fund
