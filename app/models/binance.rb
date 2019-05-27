@@ -225,66 +225,75 @@ class Binance < Market
   end
 
   def step_price_bid(amount)
-    continue = true
-    start_time = Time.now
-    sync_fund
-    ave_amount = amount / 10.0
-    base_amount = fund.balance
-    total_amount = base_amount + amount
-    while base_amount <= total_amount && continue
-      bid_active_orders.each do |order|
-        undo_order(order['orderId'])
-        bids.succ.last.destroy
+    begin
+      continue = true
+      start_time = Time.now
+      sync_fund
+      ave_amount = amount / 10.0
+      base_amount = fund.balance
+      total_amount = base_amount + amount
+      while base_amount <= total_amount && continue
+        bid_active_orders.each do |order|
+          undo_order(order['orderId'])
+          bids.succ.last.destroy
+        end
+        bid_price = ticker['bidPrice'].to_f
+        bid_amount = (total_amount - base_amount) > ave_amount ? ave_amount : (total_amount - base_amount)
+        _bid_order = bids.create(price: bid_price, amount: bid_amount, category: 'limit', state: 'succ')
+        _result = sync_limit_order(:bid, _bid_order.amount, _bid_order.price)
+        if _result['state'] == 500
+          continue = false
+          _bid_order.update(state: _result['state'], cause: _result['cause'])
+        else
+          sleep 5
+          sync_fund
+          base_amount = fund.balance
+        end
       end
-      bid_price = ticker['bidPrice'].to_f
-      bid_amount = (total_amount - base_amount) > ave_amount ? ave_amount : (total_amount - base_amount)
-      _bid_order = bids.create(price: bid_price, amount: bid_amount, category: 'limit', state: 'succ')
-      _result = sync_limit_order(:bid, _bid_order.amount, _bid_order.price)
-      if _result['state'] == 500
-        continue = false
-        _bid_order.update(state: _result['state'], cause: _result['cause'])
-      else
-        sleep 5
-        sync_fund
-        base_amount = fund.balance
+      orders = bids.succ.where("created_at > ?", start_time)
+      if orders.size > 0
+        tip = "#{Time.now.to_s(:short)} 阶梯买入 #{symbol}，数量 #{orders.map(&:amount).sum.round(4)}, 资金 #{orders.map(&:total).sum.round(4)}"
+        Notice.sms(tip)
       end
-    end
-    orders = bids.succ.where("created_at > ?", start_time)
-    if orders.size > 0
-      tip = "#{Time.now.to_s(:short)} 阶梯买入 #{symbol}，数量 #{orders.map(&:amount).sum.round(4)}, 资金 #{orders.map(&:total).sum.round(4)}"
-      Notice.sms(tip)
+    rescue => detail
+      Notice.dingding("阶梯价买入 错误提醒：\n 交易对：#{symbol} \n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")
     end
   end
 
   def step_price_ask(amount)
-    continue = true
-    start_time = Time.now
-    sync_fund
-    ave_amount = amount / 10.0
-    total_amount = fund.balance
-    retain_amount = total_amount - amount
-    while total_amount > retain_amount && continue
-      ask_active_orders.each do |order|
-        undo_order(order['orderId'])
-        asks.succ.last.destroy
+    begin
+      continue = true
+      start_time = Time.now
+      sync_fund
+      ave_amount = amount / 10.0
+      total_amount = fund.balance
+      retain_amount = total_amount - amount
+      while total_amount > retain_amount && continue
+        ask_active_orders.each do |order|
+          undo_order(order['orderId'])
+          asks.succ.last.destroy
+        end
+        ask_price = ticker['askPrice'].to_f
+        ask_amount = (total_amount - retain_amount) > ave_amount ? ave_amount : (total_amount - retain_amount)
+        _ask_order = asks.create(price: ask_price, amount: ask_amount, category: 'limit', state: 'succ')
+        _result = sync_limit_order(:ask, _ask_order.amount, _ask_order.price)
+        if _result['state'] == 500
+          continue = false
+          _ask_order.update(state: _result['state'], cause: _result['cause'])
+        else
+          sleep 5
+          sync_fund
+          total_amount = fund.balance
+        end
       end
-      ask_price = ticker['askPrice'].to_f
-      ask_amount = (total_amount - retain_amount) > ave_amount ? ave_amount : (total_amount - retain_amount)
-      _ask_order = asks.create(price: ask_price, amount: ask_amount, category: 'limit', state: 'succ')
-      _result = sync_limit_order(:ask, _ask_order.amount, _ask_order.price)
-      if _result['state'] == 500
-        continue = false
-        _ask_order.update(state: _result['state'], cause: _result['cause'])
-      else
-        sleep 5
-        sync_fund
-        total_amount = fund.balance
+      orders = asks.succ.where("created_at > ?", start_time)
+      if orders.size > 0
+        tip = "#{Time.now.to_s(:short)} 阶梯卖出 #{symbol}，数量 #{orders.map(&:amount).sum.round(4)}, 资金 #{orders.map(&:total).sum.round(4)}"
+        Notice.sms(tip)
       end
-    end
-    orders = asks.succ.where("created_at > ?", start_time)
-    if orders.size > 0
-      tip = "#{Time.now.to_s(:short)} 阶梯卖出 #{symbol}，数量 #{orders.map(&:amount).sum.round(4)}, 资金 #{orders.map(&:total).sum.round(4)}"
-      Notice.sms(tip)
+    rescue => detail
+      Notice.dingding("阶梯价卖出 错误提醒：\n 交易对：#{symbol} \n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")
     end
   end
+
 end
