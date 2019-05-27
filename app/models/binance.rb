@@ -226,6 +226,7 @@ class Binance < Market
 
   def step_price_bid(amount)
     continue = true
+    start_time = Time.now
     sync_fund
     ave_amount = amount / 10.0
     base_amount = fund.balance
@@ -248,13 +249,16 @@ class Binance < Market
         base_amount = fund.balance
       end
     end
-    orders = bids.succ.last(10)
-    tip = "#{Time.now.to_s(:short)} 阶梯买入 #{symbol}，数量 #{orders.map(&:amount).sum.round(4)}, 资金 #{orders.map(&:total).sum.round(4)}"
-    Notice.sms(tip)
+    orders = bids.succ.where("created_at > ?", start_time)
+    if orders.size > 0
+      tip = "#{Time.now.to_s(:short)} 阶梯买入 #{symbol}，数量 #{orders.map(&:amount).sum.round(4)}, 资金 #{orders.map(&:total).sum.round(4)}"
+      Notice.sms(tip)
+    end
   end
 
   def step_price_ask(amount)
     continue = true
+    start_time = Time.now
     sync_fund
     ave_amount = amount / 10.0
     total_amount = fund.balance
@@ -277,8 +281,10 @@ class Binance < Market
         total_amount = fund.balance
       end
     end
-    orders = asks.succ.last(10)
-    tip = "#{Time.now.to_s(:short)} 阶梯卖出 #{symbol}，数量 #{orders.map(&:amount).sum.round(4)}, 资金 #{orders.map(&:total).sum.round(4)}"
-    Notice.sms(tip)
+    orders = asks.succ.where("created_at > ?", start_time)
+    if orders.size > 0
+      tip = "#{Time.now.to_s(:short)} 阶梯卖出 #{symbol}，数量 #{orders.map(&:amount).sum.round(4)}, 资金 #{orders.map(&:total).sum.round(4)}"
+      Notice.sms(tip)
+    end
   end
 end
