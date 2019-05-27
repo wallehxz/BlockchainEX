@@ -134,6 +134,21 @@ class Binance < Market
     OpenSSL::HMAC.hexdigest(digest, key, data)
   end
 
+  def all_orders
+    order_url = 'https://api.binance.com/api/v3/allOrders'
+    timestamp = (Time.now.to_f * 1000).to_i - 2000
+    params_string = "recvWindow=10000&symbol=#{symbol}&timestamp=#{timestamp}"
+    res = Faraday.get do |req|
+      req.url order_url
+      req.headers['X-MBX-APIKEY'] = Settings.binance_key
+      req.params['symbol'] = symbol
+      req.params['recvWindow'] = 10000
+      req.params['timestamp'] = timestamp
+      req.params['signature'] = params_signed(params_string)
+    end
+    result = JSON.parse(res.body)
+  end
+
   def open_orders
     order_url = 'https://api.binance.com/api/v3/openOrders'
     timestamp = (Time.now.to_f * 1000).to_i - 2000
@@ -224,6 +239,14 @@ class Binance < Market
     open_orders.select {|o| o['side'] == 'SELL'}
   end
 
+  def bid_filled_orders
+    all_orders.select {|o| o['status'] == 'FILLED' && o['side'] == 'BUY'}
+  end
+
+  def ask_filled_orders
+    all_orders.select {|o| o['status'] == 'FILLED' && o['side'] == 'SELL'}
+  end
+
   def step_price_bid(amount)
     begin
       continue = true
@@ -245,7 +268,7 @@ class Binance < Market
           continue = false
           _bid_order.update(state: _result['state'], cause: _result['cause'])
         else
-          sleep 5
+          sleep 7
           sync_fund
           base_amount = fund.balance
         end
@@ -281,7 +304,7 @@ class Binance < Market
           continue = false
           _ask_order.update(state: _result['state'], cause: _result['cause'])
         else
-          sleep 5
+          sleep 7
           sync_fund
           total_amount = fund.balance
         end
