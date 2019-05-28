@@ -253,7 +253,7 @@ class Binance < Market
       start_time = Time.now
       sync_fund
       ave_amount = amount / 10.0
-      base_amount = fund.balance
+      base_amount = fund&.balance || 0
       total_amount = base_amount + amount
       while base_amount <= total_amount && continue
         bid_active_orders.each do |order|
@@ -289,14 +289,16 @@ class Binance < Market
       start_time = Time.now
       sync_fund
       ave_amount = amount / 10.0
-      total_amount = fund.balance
+      total_amount = fund&.balance
       retain_amount = total_amount - amount
+      bid_price = bid_filled_orders.last['price'].to_f
       while total_amount > retain_amount && continue
         ask_active_orders.each do |order|
           undo_order(order['orderId'])
           asks.succ.last.destroy
         end
         ask_price = ticker['askPrice'].to_f
+        break if ask_price < bid_price * 1.002
         ask_amount = (total_amount - retain_amount) > ave_amount ? ave_amount : (total_amount - retain_amount)
         _ask_order = asks.create(price: ask_price, amount: ask_amount, category: 'limit', state: 'succ')
         _result = sync_limit_order(:ask, _ask_order.amount, _ask_order.price)

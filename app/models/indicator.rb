@@ -19,7 +19,8 @@ class Indicator < ActiveRecord::Base
       amount = market.regulate&.retain || 0
       market.sync_fund
       fund = market.fund&.balance || 0
-      if amount > 0 && fund < amount * 0.98
+      if amount > 0 && fund < amount
+        amount = amount - fund
         market.step_price_bid(amount)
       end
     elsif name.include? 'step_sell'
