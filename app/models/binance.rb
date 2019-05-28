@@ -270,7 +270,7 @@ class Binance < Market
         else
           sleep 5
           sync_fund
-          base_amount = fund.balance
+          base_amount = fund&.balance
         end
       end
       orders = bids.succ.where("created_at > ?", start_time)
