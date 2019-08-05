@@ -16,23 +16,27 @@ class Indicator < ActiveRecord::Base
 
   def step_buy_or_sell
     if name.include? 'step_buy'
-      amount = market.regulate&.retain || 0
+      retain = market.regulate&.retain || 0
       market.sync_fund
       fund = market.fund&.balance || 0
-      if amount > 0 && fund < amount
-        amount = amount - fund
+      if retain > 0 && fund < retain * 0.1
+        amount = retain - fund
         market.step_price_bid(amount)
       end
     elsif name.include? 'step_sell'
-      amount = market.regulate&.retain || 0
+      retain = market.regulate&.retain || 0
       market.sync_fund
       fund = market.fund&.balance || 0
       last_orders = market.bid_filled_orders.last(10)
       bid_price = last_orders.map { |x| x['price'].to_f }.sum / last_orders.size
       recent_price = market.recent_price
-      if fund > (amount / 100) && amount > 0 && recent_price > bid_price
+      if fund > retain * 0.1 && retain > 0
         amount = fund > amount ? amount : fund
-        market.step_price_ask(amount)
+        if recent_price > bid_price
+          market.step_price_ask(amount)
+        elsif recent_price < bid_price
+          market.market_price_ask(amount)
+        end
       end
     end
   end

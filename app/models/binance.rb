@@ -182,7 +182,7 @@ class Binance < Market
   end
 
   def sync_fund
-    remote =Account.binace_sync(quote_unit)
+    remote =Account.binance_sync(quote_unit)
     if remote['free'].to_f > 0 || remote['locked'].to_f > 0
       locale = fund || build_fund
       locale.balance = remote['free'].to_f
@@ -192,7 +192,7 @@ class Binance < Market
   end
 
   def sync_cash
-    remote = Account.binace_sync(base_unit)
+    remote = Account.binance_sync(base_unit)
     if remote['free'].to_f > 0 || remote['locked'].to_f > 0
       locale = cash || build_cash
       locale.balance = remote['free'].to_f
@@ -266,9 +266,9 @@ class Binance < Market
         _result = sync_limit_order(:bid, _bid_order.amount, _bid_order.price)
         if _result['state'] == 500
           continue = false
-          _bid_order.update(state: _result['state'], cause: _result['cause'])
+          _bid_order.destroy
         else
-          sleep 5
+          sleep 3
           sync_fund
           base_amount = fund&.balance
         end
@@ -291,22 +291,20 @@ class Binance < Market
       ave_amount = amount / 10.0
       total_amount = fund&.balance
       retain_amount = total_amount - amount
-      bid_price = bid_filled_orders.last['price'].to_f
       while total_amount > retain_amount && continue
         ask_active_orders.each do |order|
           undo_order(order['orderId'])
           asks.succ.last.destroy
         end
         ask_price = ticker['askPrice'].to_f
-        break if ask_price < bid_price * 1.002
         ask_amount = (total_amount - retain_amount) > ave_amount ? ave_amount : (total_amount - retain_amount)
         _ask_order = asks.create(price: ask_price, amount: ask_amount, category: 'limit', state: 'succ')
         _result = sync_limit_order(:ask, _ask_order.amount, _ask_order.price)
         if _result['state'] == 500
           continue = false
-          _ask_order.update(state: _result['state'], cause: _result['cause'])
+          _ask_order.destroy
         else
-          sleep 5
+          sleep 3
           sync_fund
           total_amount = fund.balance
         end
@@ -318,6 +316,30 @@ class Binance < Market
       end
     rescue => detail
       Notice.dingding("阶梯价卖出 错误提醒：\n 交易对：#{symbol} \n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")
+    end
+  end
+
+  def market_price_bid(amount)
+    bid_price = ticker['askPrice'].to_f
+    _bid_order = bids.create(price: bid_price, amount: amount, category: 'limit', state: 'succ')
+    _result = sync_market_order(:bid, _bid_order.amount)
+    if _result['state'] == 200
+      tip = "#{Time.now.to_s(:short)} 市价买入 #{symbol}，数量 #{amount}, 资金 #{_bid_order.total}"
+      Notice.sms(tip)
+    else
+      _bid_order.destroy
+    end
+  end
+
+  def market_price_ask(amount)
+    ask_price = ticker['bidPrice'].to_f
+    _ask_order = asks.create(price: ask_price, amount: amount, category: 'limit', state: 'succ')
+    _result = sync_market_order(:ask, _ask_order.amount)
+    if _result['state'] == 200
+      tip = "#{Time.now.to_s(:short)} 市价卖出 #{symbol}，数量 #{amount}, 资金 #{_ask_order.total}"
+      Notice.sms(tip)
+    else
+      _ask_order.destroy
     end
   end
 

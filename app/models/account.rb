@@ -37,8 +37,8 @@ class Account < ActiveRecord::Base
     return OpenSSL::HMAC.hexdigest(digest, secret, data)
   end
 
-  # Account.binace_sync('USDT')
-  def self.binace_sync(currency)
+  # Account.binance_sync('USDT')
+  def self.binance_sync(currency)
     binance_balances.each do |item|
       return item if item['asset'] == currency.upcase
     end
