@@ -1,0 +1,20 @@
+default: &defaults
+  adapter: mysql2
+  encoding: utf8
+  host: 192.168.0.166
+  username: <%= ENV['DB_USER'] %>
+  password: <%= ENV['DB_PASSWD'] %>
+  pool: 10
+  reconnect: true
+
+development:
+  <<: *defaults
+  database: bcwallet_development
+
+test:
+  <<: *defaults
+  database: bcwallet_test
+
+production:
+  <<: *defaults
+  database: bcwallet_development
