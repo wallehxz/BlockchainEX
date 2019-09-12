@@ -60,14 +60,14 @@ namespace :deploy do
       end
     end
   end
-end
 
-desc "创建项目数据库"
-task :db_create do
-  on roles(fetch(:migration_role)) do
-    within release_path do
-      with rails_env: fetch(:rails_env) do
-        execute :rake, 'db:create'
+  desc "创建项目数据库"
+  task :db_create do
+    on roles(fetch(:migration_role)) do
+      within release_path do
+        with rails_env: fetch(:rails_env) do
+          execute :rake, 'db:create'
+        end
       end
     end
   end
@@ -101,4 +101,4 @@ end
 
 # after 'deploy:finished', 'daemons:stop'
 # after 'daemons:stop','daemons:start'
-before 'deploy:migrate', 'deploy:db_create'
+# before 'deploy:migrate', 'deploy:db_create'

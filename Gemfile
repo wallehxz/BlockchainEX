@@ -24,7 +24,7 @@ gem 'enumerize', '2.2.2' # 多标签选项
 gem 'aasm', '5.0.1' #状态管理
 gem 'pg', '0.20.0'
 gem 'mail', '2.7.1' #邮件管理
-
+gem 'pry-rails', '0.3.4'
 # gem 'descendants_tracker' # Track descendants of a class
 # gem 'mysql2', '0.4.5' # Use mysql as the database for Active Record
 
@@ -37,7 +37,6 @@ group :development do
   gem 'capistrano-bundler', '1.1.4'
   gem 'shoulda-matchers', '3.1.1' # provides RSpec- and Minitest-compatible one-liners that test common Rails functionality
   gem 'capistrano3-puma','1.2.1'
-  gem 'pry-rails', '0.3.4'
   gem 'pry-byebug', '3.3.0'
   gem 'guard-livereload', '2.5.2' #automatically reloads your browser when 'view' files are modified
 end
