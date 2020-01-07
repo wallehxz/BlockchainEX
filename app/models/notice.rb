@@ -29,12 +29,11 @@ class Notice
     end
 
     def wechat(content,title = '标题')
-      push_url = 'https://pushbear.ftqq.com/sub'
+      push_url = 'https://sc.ftqq.com/SCU16737T4c0332be0d95e0b7aba2a084c7c5b0995b13f4888b4d5.send'
       res = Faraday.get do |req|
         req.url push_url
-        req.params['sendkey'] = Settings.wechat_group_key
         req.params['text'] = title
-        req.params['desp'] = content
+        req.params['text'] = content
       end
     end
   end
