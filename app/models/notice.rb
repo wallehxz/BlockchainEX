@@ -32,7 +32,6 @@ class Notice
       push_url = 'https://sc.ftqq.com/SCU16737T4c0332be0d95e0b7aba2a084c7c5b0995b13f4888b4d5.send'
       res = Faraday.get do |req|
         req.url push_url
-        req.params['text'] = title
         req.params['text'] = content
       end
     end
