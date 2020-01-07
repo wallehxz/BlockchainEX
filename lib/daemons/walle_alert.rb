@@ -10,6 +10,7 @@ Dir.chdir(root)
 require File.join(root, "config", "environment")
 
 $running = true
+
 Signal.trap("TERM") do
   $running = false
 end
@@ -19,6 +20,7 @@ while($running) do
     alerts = Mail.all.select { |x| x.from[0] =~ /tradingview/ }
     alerts.each do |alert|
       if alert.subject.include? '|'
+        Notice.sms(string)
         string = alert.subject.split('|')[1..-1]
         quote = string[0].split('_')
         market = Market.where(quote_unit: quote[0], base_unit: quote[1]).first

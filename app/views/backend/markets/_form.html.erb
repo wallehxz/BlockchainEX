@@ -11,22 +11,22 @@
       </div>
     </div>
     <div class="form-group has-success">
-      <label>对标</label>
+      <label>货币</label>
       <div class="input-group">
         <div class="input-group-addon">
           <i class="fa fa-btc"></i>
         </div>
-        <%= f.text_field :quote_unit, class:'form-control', placeholder:'（必填* 对标报价币种）' %>
+        <%= f.text_field :quote_unit, class:'form-control', placeholder:'（必填* 市场货币）' %>
       </div>
       <%= model_errors(@market,'quote_unit') %>
     </div>
     <div class="form-group has-success">
-      <label>基准</label>
+      <label>标的</label>
       <div class="input-group">
         <div class="input-group-addon">
           <i class="fa fa-money"></i>
         </div>
-        <%= f.text_field :base_unit, class:'form-control', placeholder:'（必填* 基准货币）' %>
+        <%= f.text_field :base_unit, class:'form-control', placeholder:'（必填* 标的货币）' %>
       </div>
       <%= model_errors(@market,'quote_unit') %>
     </div>

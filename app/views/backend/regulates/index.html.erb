@@ -20,9 +20,9 @@
             <thead>
             <tr>
               <th tabindex="0" aria-controls="example1" style="text-align: center">交易所</th>
-              <th tabindex="0" aria-controls="example1" style="text-align: center">参数</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">指标</th>
               <th tabindex="0" aria-controls="example1" style="text-align: center">通知</th>
-              <th tabindex="0" aria-controls="example1" style="text-align: center">交易</th>
+              <!-- <th tabindex="0" aria-controls="example1" style="text-align: center">交易</th> -->
               <th tabindex="0" aria-controls="example1" style="width: 120px;">操作</th>
             </tr>
             </thead>
@@ -30,7 +30,7 @@
             <% @regulates.each do |item| %>
               <tr style="text-align: center">
                 <td>
-                  <%= item.market.class %><br>
+                  <%= item.market.class.to_s.upcase %><br>
                   <%= item.market.quote_unit + "-" + item.market.base_unit %><br><br>
                   价格精度：<%= item.price_precision %><br>
                   数量精度：<%= item.amount_precision %>
@@ -47,7 +47,7 @@
                   微信：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_wx %> onchange='switch_state(<%= item.id %>, "wx")'></br>
                   短信：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_sms %> onchange='switch_state(<%= item.id %>,"sms")'>
                 </td>
-                <td style="text-align: left">
+                <!-- <td style="text-align: left">
                   快频：<input type="checkbox" name="my-state" <%= 'checked' if item.fast_trade %> onchange='switch_state(<%= item.id %>, "fast")'>&nbsp;
                   现金： <%= item.fast_cash %><%= item.market.base_unit %>&nbsp;
                   收益： <%= item.fast_profit %>%&nbsp;<br>
@@ -55,7 +55,7 @@
                   现金： <%= item.range_cash %><%= item.market.base_unit %>&nbsp;
                   收益： <%= item.range_profit %>%&nbsp;
                 </td>
-                <td><br>
+ -->                <td><br>
                   <a href="<%= edit_backend_regulate_path(item) %>" class="btn bg-orange btn-flat">
                     <i class="glyphicon glyphicon-edit"></i>
                   </a>

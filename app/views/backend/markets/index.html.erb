@@ -19,9 +19,9 @@
           <table id="example1" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="example1_info">
             <thead>
             <tr>
-              <th tabindex="0" aria-controls="example1" style="text-align: center">市场</th>
-              <th tabindex="0" aria-controls="example1" style="text-align: center">货币</th>
-              <th tabindex="0" aria-controls="example1" style="text-align: center">对标</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">交易所</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">市场币</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">标的币</th>
               <th tabindex="0" aria-controls="example1" style="text-align: center;width: 240px">操作</th>
             </tr>
             </thead>
@@ -43,7 +43,7 @@
                 </td>
                 <td><br>
                   <label class="btn bg-black btn-flat" style="font-size: 16px;min-width: 100px">
-                    <%= item.recent_price rescue item.last_quote.c %> <%= item.base_unit %>
+                    <%= item.recent_price rescue item.last_quote&.c %> <%= item.base_unit %>
                   </label>
                 </td>
                 <td style="text-align: left">
