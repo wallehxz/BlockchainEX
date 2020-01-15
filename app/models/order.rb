@@ -21,14 +21,14 @@ class Order < ActiveRecord::Base
   self.per_page = 10
   scope :recent, -> { order('created_at desc') }
   enumerize :state, in: { init: 100, fail: 500, succ: 200, cancel: 0, rescue: 120 }, default: 100, scope: true
-  enumerize :category, in: ['limit', 'fast', 'range'], default: 'limit', scope: true
+  enumerize :category, in: ['limit', 'market'], default: 'limit', scope: true
   belongs_to :market
   after_create :fix_price
   before_save :calc_total
   after_save :push_limit_order
   scope :succ, -> { where(state: 'succ') }
-  scope :fast_order, -> { with_category(:fast) }
-  scope :range_order, -> { with_category(:range) }
+  scope :limit_order, -> { with_category(:limit) }
+  scope :market_order, -> { with_category(:market) }
 
   def calc_total
     unless self.total
@@ -46,6 +46,10 @@ class Order < ActiveRecord::Base
 
   def type_cn
     {'OrderAsk'=> '卖出', 'OrderBid'=> '买入'}[type]
+  end
+
+  def category_cn
+    {'limit'=> '限价', 'market'=> '市价'}[category]
   end
 
   def sms_order

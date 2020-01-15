@@ -265,10 +265,11 @@ class Binance < Market
         _bid_order = bids.create(price: bid_price, amount: bid_amount, category: 'limit', state: 'succ')
         _result = sync_limit_order(:bid, _bid_order.amount, _bid_order.price)
         if _result['state'] == 500
+          _bid_order.update(_result)
           continue = false
-          _bid_order.destroy
+          # _bid_order.destroy
         else
-          sleep 3
+          sleep 5
           sync_fund
           base_amount = fund&.balance
         end
@@ -301,8 +302,9 @@ class Binance < Market
         _ask_order = asks.create(price: ask_price, amount: ask_amount, category: 'limit', state: 'succ')
         _result = sync_limit_order(:ask, _ask_order.amount, _ask_order.price)
         if _result['state'] == 500
+          _ask_order.update(_result)
           continue = false
-          _ask_order.destroy
+          # _ask_order.destroy
         else
           sleep 3
           sync_fund
@@ -321,25 +323,27 @@ class Binance < Market
 
   def market_price_bid(amount)
     bid_price = ticker['askPrice'].to_f
-    _bid_order = bids.create(price: bid_price, amount: amount, category: 'limit', state: 'succ')
+    _bid_order = bids.create(price: bid_price, amount: amount, category: 'market', state: 'succ')
     _result = sync_market_order(:bid, _bid_order.amount)
     if _result['state'] == 200
       tip = "#{Time.now.to_s(:short)} 市价买入 #{symbol}，数量 #{amount}, 资金 #{_bid_order.total}"
       Notice.sms(tip)
     else
-      _bid_order.destroy
+      _bid_order.update(_result)
+      # _bid_order.destroy
     end
   end
 
   def market_price_ask(amount)
     ask_price = ticker['bidPrice'].to_f
-    _ask_order = asks.create(price: ask_price, amount: amount, category: 'limit', state: 'succ')
+    _ask_order = asks.create(price: ask_price, amount: amount, category: 'market', state: 'succ')
     _result = sync_market_order(:ask, _ask_order.amount)
     if _result['state'] == 200
       tip = "#{Time.now.to_s(:short)} 市价卖出 #{symbol}，数量 #{amount}, 资金 #{_ask_order.total}"
       Notice.sms(tip)
     else
-      _ask_order.destroy
+      _ask_order.update(_result)
+      # _ask_order.destroy
     end
   end
 

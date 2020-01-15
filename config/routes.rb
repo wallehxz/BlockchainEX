@@ -19,11 +19,13 @@ Rails.application.routes.draw do
   get '/trending/symbols', to: "trending#symbols"
   get '/trending/history', to: "trending#history"
   get '/trending/time',    to: "trending#time"
+  get '/webhook', to: "api/tickers#webhook"
 
   namespace :api do
     resources :tickers do
       collection do
         get 'fetch'
+        get 'clear_history'
       end
     end
   end
