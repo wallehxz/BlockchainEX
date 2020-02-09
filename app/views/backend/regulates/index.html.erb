@@ -22,7 +22,7 @@
               <th tabindex="0" aria-controls="example1" style="text-align: center">交易所</th>
               <th tabindex="0" aria-controls="example1" style="text-align: center">指标</th>
               <th tabindex="0" aria-controls="example1" style="text-align: center">通知</th>
-              <!-- <th tabindex="0" aria-controls="example1" style="text-align: center">交易</th> -->
+              <th tabindex="0" aria-controls="example1" style="text-align: center">交易</th>
               <th tabindex="0" aria-controls="example1" style="width: 120px;">操作</th>
             </tr>
             </thead>
@@ -47,15 +47,15 @@
                   微信：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_wx %> onchange='switch_state(<%= item.id %>, "wx")'></br>
                   短信：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_sms %> onchange='switch_state(<%= item.id %>,"sms")'>
                 </td>
-                <!-- <td style="text-align: left">
-                  快频：<input type="checkbox" name="my-state" <%= 'checked' if item.fast_trade %> onchange='switch_state(<%= item.id %>, "fast")'>&nbsp;
-                  现金： <%= item.fast_cash %><%= item.market.base_unit %>&nbsp;
-                  收益： <%= item.fast_profit %>%&nbsp;<br>
-                  支阻：<input type="checkbox" name="my-state" <%= 'checked' if item.range_trade %> onchange='switch_state(<%= item.id %>, "range")'>&nbsp;
-                  现金： <%= item.range_cash %><%= item.market.base_unit %>&nbsp;
+                <td style="text-align: left">
+                  快捷交易：<input type="checkbox" name="my-state" <%= 'checked' if item.fast_trade %> onchange='switch_state(<%= item.id %>, "fast")'><br>
+                  数量：<%= item.fast_cash %> &nbsp;&nbsp; <%= item.market.quote_unit %>&nbsp;<br>
+                  浮动交易：<input type="checkbox" name="my-state" <%= 'checked' if item.range_trade %> onchange='switch_state(<%= item.id %>, "range")'><br>
+                  数量： <%= item.range_cash %>&nbsp;&nbsp;<%= item.market.quote_unit %>
+<!--              收益：<%= item.fast_profit %> &nbsp;<br>
                   收益： <%= item.range_profit %>%&nbsp;
-                </td>
- -->                <td><br>
+ -->                </td>
+                <td><br>
                   <a href="<%= edit_backend_regulate_path(item) %>" class="btn bg-orange btn-flat">
                     <i class="glyphicon glyphicon-edit"></i>
                   </a>

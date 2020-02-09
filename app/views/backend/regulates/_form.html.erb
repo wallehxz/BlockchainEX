@@ -55,6 +55,24 @@
         <%= f.text_field :cost, class:'form-control', placeholder:'（必填* 交易分配的资金）' %>
       </div>
     </div>
+    <div class="form-group has-warning">
+      <label>快捷数量</label>
+      <div class="input-group">
+        <div class="input-group-addon">
+          <i class="fa fa-money"></i>
+        </div>
+        <%= f.text_field :fast_cash, class:'form-control', placeholder:'（必填* 快捷交易数量）' %>
+      </div>
+    </div>
+    <div class="form-group has-warning">
+      <label>浮动数量</label>
+      <div class="input-group">
+        <div class="input-group-addon">
+          <i class="fa fa-money"></i>
+        </div>
+        <%= f.text_field :range_cash, class:'form-control', placeholder:'（必填* 浮动交易数量）' %>
+      </div>
+    </div>
 <!--     <div class="form-group has-error">
       <label>快频收益</label>
       <div class="input-group">
@@ -64,15 +82,6 @@
         <%= f.text_field :fast_profit, class:'form-control', placeholder:'（必填* 快频交易最小收益率）' %>
       </div>
     </div>
-    <div class="form-group has-error">
-      <label>快频资金</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-money"></i>
-        </div>
-        <%= f.text_field :fast_cash, class:'form-control', placeholder:'（必填* 快频交易的投入资金）' %>
-      </div>
-    </div>
  --><!--     <div class="form-group has-warning">
       <label>支阻收益</label>
       <div class="input-group">
@@ -80,15 +89,6 @@
           <i class="fa fa-gift"></i>
         </div>
         <%= f.text_field :range_profit, class:'form-control', placeholder:'（必填* 支阻交易最小收益率）' %>
-      </div>
-    </div>
-    <div class="form-group has-warning">
-      <label>支阻资金</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-money"></i>
-        </div>
-        <%= f.text_field :range_cash, class:'form-control', placeholder:'（必填* 支阻交易的投入资金）' %>
       </div>
     </div>
  -->  </div>

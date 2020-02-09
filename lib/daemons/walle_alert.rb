@@ -15,20 +15,27 @@ Signal.trap("TERM") do
   $running = false
 end
 
+def start_trade(market, side)
+  amount = market.regulate.fast_cash || 1
+  market.send("step_price_#{side}".to_sym, amount)
+end
+
 while($running) do
   begin
     alerts = Mail.all.select { |x| x.from[0] =~ /tradingview/ }
     alerts.each do |alert|
       if alert.subject.include? '|'
         Notice.sms(alert.subject)
-        string = alert.subject.split('|')[1..-1]
+        string = alert.subject.split('|')
         quote = string[0].split('_')
+        side = string[-1]
         market = Market.where(quote_unit: quote[0], base_unit: quote[1]).first
-        market.indicators.create(name: string[1], created_at: alert.date) if market
+        trade = side.in?(['ask','bid']) && market.regulate.fast_trade
+        start_trade(market, side) if market && trade
       end
     end
   rescue => detail
     Notice.dingding("指标Robot：\n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")
   end
-  sleep 5
+  sleep 10
 end

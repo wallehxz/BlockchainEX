@@ -22,7 +22,7 @@ class Binance < Market
   end
 
   def generate_quote
-    t = latest_ticker('15m',120)
+    t = latest_ticker('5m',120)
     ticker = {}
     ticker[:o] = t[1]
     ticker[:h] = t[2]
@@ -36,12 +36,12 @@ class Binance < Market
 
   def batch_sync_quote
     if candles.count < 10
-      batch_quote(672) rescue nil
+      batch_quote(864) rescue nil
     end
   end
 
   def batch_quote(amount = 100)
-    t_100 = get_ticker('15m',amount)
+    t_100 = get_ticker('5m',amount)
     t_100.each do |t|
       ticker = {}
       ticker[:o] = t[1]

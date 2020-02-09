@@ -37,15 +37,15 @@ class Backend::RegulatesController < Backend::BaseController
 
   def change_state
     if params[:kind] == 'sms'
-      @regulate.update(notify_sms: !@regulate.notify_sms)
+      @regulate.toggle!(:notify_sms)
     elsif params[:kind] == 'wx'
-      @regulate.update(notify_wx: !@regulate.notify_wx)
+      @regulate.toggle!(:notify_wx)
     elsif params[:kind] == 'dd'
-      @regulate.update(notify_dd: !@regulate.notify_dd)
+      @regulate.toggle!(:notify_dd)
     elsif params[:kind] == 'fast'
-      @regulate.update(fast_trade: !@regulate.fast_trade)
+      @regulate.toggle!(:fast_trade)
     elsif params[:kind] == 'range'
-      @regulate.update(range_trade: !@regulate.range_trade)
+      @regulate.toggle!(:range_trade)
     end
     render json: { message: 'Success'}
   end

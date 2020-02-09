@@ -126,20 +126,26 @@ class Market < ActiveRecord::Base
     if min_96 == last_quote.c
       tip = "[#{Time.now.strftime('%H:%M')}] #{full_name}下跌 报价 #{last_quote.c} 成交量 #{last_quote.v}"
       quote_notice(tip)
-      amplitude = 1 - (max_96 / min_96)
-      regulate.update(amplitude: amplitude.round(2)) if regulate
+      if regulate&.range_trade
+        _amount = regulate.range_cash
+        _price = recent_price * 0.9985
+        new_bid(_price,_amount)
+      end
     elsif max_96 == last_quote.c
       tip = "[#{Time.now.strftime('%H:%M')}] #{full_name}上涨 报价 #{last_quote.c} 成交量 #{last_quote.v}"
       quote_notice(tip)
-      amplitude = (max_96 / min_96) - 1
-      regulate.update(amplitude: amplitude.round(2)) if regulate
+      if regulate&.range_trade
+        _amount = regulate.range_cash
+        _price = recent_price * 1.0015
+        new_ask(_price,_amount)
+      end
     end
   end
 
   def volume_report
-    if vol_48.max == last_quote.v
+    if vol_96.max == last_quote.v
       kline = last_quote.kline_info
-      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 12H最大成交量 #{last_quote.v}，报价 #{last_quote.c}，价格浮动 #{kline}"
+      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 8H最大成交量 #{last_quote.v}，报价 #{last_quote.c}，价格浮动 #{kline}"
       quote_notice(tip)
     end
   end

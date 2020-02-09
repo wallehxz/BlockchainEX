@@ -6,7 +6,7 @@ class Backend::DashboardController < Backend::BaseController
     @market = Market.find(params[:market]) rescue nil || Market.seq.first
     if @market
       tickers = @market.candles.history.where("ts >= ?",sta_time.to_time)
-      tickers = @market.candles.history.last(192) if tickers.count < 96
+      tickers = @market.candles.history.last(288) if tickers.count < 96
       @price_array = tickers.map {|x| [x.ms_t,x.c] }
       @volume_array = tickers.map {|x| x.v.to_i }
       @date_array = tickers.map {|x| x.ms_t }
@@ -21,7 +21,7 @@ class Backend::DashboardController < Backend::BaseController
     operate = params[:operate]
     Daemons::Rails::Monitoring.start("#{params[:daemon]}.rb") if operate == 'on'
     Daemons::Rails::Monitoring.stop("#{params[:daemon]}.rb") if operate == 'off'
-    flash[:notice] = "进程 #{params[:daemon].upcase} 已#{status[operate.to_sym]}"
+    flash[:notice] = "进程 #{params[:daemon]} 已#{status[operate.to_sym]}"
     redirect_to backend_daemon_path
   end
 end

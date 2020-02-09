@@ -1,4 +1,4 @@
-<%= content_for(:title,  '任务进程 | Exchange') %>
+<%= content_for(:title,  '任务进程 | Wyckoff') %>
 <section class="content-header">
   <h1>
     系统任务进程
@@ -40,10 +40,10 @@
                   </label>
                 </td>
                 <td>
-                  <a href="/backend/daemon_operate?daemon=<%= name.chomp('.rb') %>&operate=on" class="btn bg-green btn-flat" data-confirm="是否开启该进程！">
+                  <a href="/backend/daemon_operate?daemon=<%= name.chomp('.rb') %>&operate=on" class="btn bg-green btn-flat" data-confirm="是否开启该任务？">
                     <i class="fa fa-rocket"></i>
                   </a>
-                  <a href="/backend/daemon_operate?daemon=<%= name.chomp('.rb') %>&operate=off" class="btn bg-red btn-flat" data-confirm="是否关闭该进程！">
+                  <a href="/backend/daemon_operate?daemon=<%= name.chomp('.rb') %>&operate=off" class="btn bg-red btn-flat" data-confirm="是否关闭该任务？">
                     <i class="fa fa-power-off"></i>
                   </a>
                 </td>
