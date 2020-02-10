@@ -26,7 +26,7 @@ while($running) do
     alerts.each do |alert|
       if alert.subject.include? '|'
         Notice.sms(alert.subject)
-        string = alert.subject.split('|')
+        string = alert.subject.delete(' ').split('|')
         quote = string[0].split('_')
         side = string[-1]
         market = Market.where(quote_unit: quote[0], base_unit: quote[1]).first
