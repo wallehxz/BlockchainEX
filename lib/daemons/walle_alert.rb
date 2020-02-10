@@ -29,7 +29,7 @@ while($running) do
         string = alert.subject.delete(' ').split('|')
         quote = string[0].split('_')
         side = string[-1]
-        market = Market.where(quote_unit: quote[0], base_unit: quote[1]).first
+        market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
         trade = side.in?(['ask','bid']) && market.regulate.fast_trade
         start_trade(market, side) if market && trade
       end
