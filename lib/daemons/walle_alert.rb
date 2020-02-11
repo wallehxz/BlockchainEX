@@ -15,27 +15,43 @@ Signal.trap("TERM") do
   $running = false
 end
 
-def start_trade(market, side)
-  amount = market.regulate.fast_cash || 1
-  market.send("step_price_#{side}".to_sym, amount)
+def start_trade(subject)
+  str_arr = subject.delete(' ').split('|')
+  quote = str_arr[0].split(':').last.split('_')
+  market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
+  if market&.regulate&.fast_trade
+    amount = market&.regulate.fast_cash
+    side = str_arr[-1]
+    if side == 'bid'
+      bid_order(market, amount)
+    else
+      ask_order(market, amount)
+    end
+  end
+end
+
+def bid_order(market, amount)
+  price = market.recent_price * 0.996
+  market.new_bid(price, amount)
+end
+
+def ask_order(market,amount)
+  price = market.recent_price * 1.004
+  market.new_ask(price, amount)
 end
 
 while($running) do
   begin
-    alerts = Mail.all.select { |x| x.from[0] =~ /tradingview/ }
-    alerts.each do |alert|
-      if alert.subject.include? '|'
-        Notice.sms(alert.subject)
-        string = alert.subject.delete(' ').split('|')
-        quote = string[0].split('_')
-        side = string[-1]
-        market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
-        trade = side.in?(['ask','bid']) && market.regulate.fast_trade
-        start_trade(market, side) if market && trade
+    mails = Mail.all.select { |x| x.from[0] =~ /tradingview/ }
+    mails.each do |email|
+      if email.subject.include? '|'
+        subject = email.subject
+        Notice.sms(subject)
+        start_trade(subject) if subject =~ /(bid)|(ask)/
       end
     end
   rescue => detail
-    Notice.dingding("指标Robot：\n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")
+    Notice.dingding("指标Robot：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
   end
   sleep 10
 end

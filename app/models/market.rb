@@ -128,7 +128,7 @@ class Market < ActiveRecord::Base
       quote_notice(tip)
       if regulate&.range_trade
         _amount = regulate.range_cash
-        _price = recent_price * 0.9985
+        _price = recent_price * 0.995
         new_bid(_price,_amount)
       end
     elsif max_96 == last_quote.c
@@ -136,7 +136,7 @@ class Market < ActiveRecord::Base
       quote_notice(tip)
       if regulate&.range_trade
         _amount = regulate.range_cash
-        _price = recent_price * 1.0015
+        _price = recent_price * 1.003
         new_ask(_price,_amount)
       end
     end
