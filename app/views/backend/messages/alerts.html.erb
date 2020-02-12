@@ -19,8 +19,7 @@
             <thead>
             <tr>
               <th tabindex="0" aria-controls="example1" style="text-align: center">时间</th>
-              <th tabindex="0" aria-controls="example1" style="text-align: center">市场</th>
-              <th tabindex="0" aria-controls="example1" style="text-align: center">结果</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">提醒</th>
             </tr>
             </thead>
             <tbody>
@@ -32,8 +31,7 @@
                     <i class="fa fa-close"></i>
                   </a>
                 </td>
-                <td style="width: 200px"> <%= item.market.symbols %> </td>
-                <td style="text-align: left"><%= item.name %></td>
+                <td style="text-align: left"><b><%= item.name %></b></td>
               </tr>
             <% end %>
             </tbody>

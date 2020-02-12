@@ -55,7 +55,8 @@ while($running) do
     mails.each do |email|
       if email.subject.include? '|'
         subject = email.subject
-        Notice.sms(subject)
+        # Notice.sms(subject)
+        Indicator.create(subject)
         start_trade(subject) if subject =~ /(bid)|(ask)/
       end
     end
