@@ -21,23 +21,32 @@ def start_trade(subject)
   market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
   if market&.regulate&.fast_trade
     amount = market&.regulate.fast_cash
+    profit = market&.regulate.fast_profit || 0.002
     side = str_arr[-1]
     if side == 'bid'
-      bid_order(market, amount)
+      bid_order(market, amount, profit, subject)
     else
-      ask_order(market, amount)
+      ask_order(market, amount, profit, subject)
     end
   end
 end
 
-def bid_order(market, amount)
-  price = market.recent_price * 0.996
-  market.new_bid(price, amount)
+def bid_order(market, amount, profit, subject)
+  price = market.recent_price * (1 - profit)
+  if subject =~ /(step)|(market)/
+    market.send("#{$1}_price_bid".to_sym, amount)
+  else
+    market.new_bid(price, amount)
+  end
 end
 
-def ask_order(market,amount)
-  price = market.recent_price * 1.004
-  market.new_ask(price, amount)
+def ask_order(market,amount, profit, subject)
+  price = market.recent_price * (1 + profit)
+  if subject =~ /(step)|(market)/
+    market.send("#{$1}_price_ask".to_sym, amount)
+  else
+    market.new_ask(price, amount)
+  end
 end
 
 while($running) do

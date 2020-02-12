@@ -127,8 +127,9 @@ class Market < ActiveRecord::Base
       tip = "[#{Time.now.strftime('%H:%M')}] #{full_name}下跌 报价 #{last_quote.c} 成交量 #{last_quote.v}"
       quote_notice(tip)
       if regulate&.range_trade
+        _profit = regulate.range_profit || 0.0025
         _amount = regulate.range_cash
-        _price = recent_price * 0.995
+        _price = recent_price * (1 - _profit)
         new_bid(_price,_amount)
       end
     elsif max_96 == last_quote.c
@@ -136,7 +137,8 @@ class Market < ActiveRecord::Base
       quote_notice(tip)
       if regulate&.range_trade
         _amount = regulate.range_cash
-        _price = recent_price * 1.003
+        _profit = regulate.range_profit || 0.003
+        _price = recent_price * (1 + _profit)
         new_ask(_price,_amount)
       end
     end
