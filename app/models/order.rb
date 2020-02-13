@@ -54,7 +54,7 @@ class Order < ActiveRecord::Base
 
   def sms_order
     if state.succ?
-      content = "#{market.symbols} #{type_cn}-#{category}订单, 价格：#{price}, 数量: #{amount}, 小计：#{total} "
+      content = "#{market.symbols} #{self.class.name}, Price:#{price}, Amount:#{amount}, Funds:#{total} "
       Notice.sms(content) if Rails.env.production?
       market.messages.create(body: content)
     end

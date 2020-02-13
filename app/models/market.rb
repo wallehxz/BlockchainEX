@@ -124,16 +124,16 @@ class Market < ActiveRecord::Base
 
   def extreme_report
     if min_96 == last_quote.c
-      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name}下跌 报价 #{last_quote.c} 成交量 #{last_quote.v}"
+      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} DOWN Price #{last_quote.c} Vol #{last_quote.v}"
       quote_notice(tip)
       if regulate&.range_trade
-        _profit = regulate.range_profit || 0.0025
         _amount = regulate.range_cash
+        _profit = regulate.range_profit || 0.0025
         _price = recent_price * (1 - _profit)
         new_bid(_price,_amount)
       end
     elsif max_96 == last_quote.c
-      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name}上涨 报价 #{last_quote.c} 成交量 #{last_quote.v}"
+      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} UP Price #{last_quote.c} Vol #{last_quote.v}"
       quote_notice(tip)
       if regulate&.range_trade
         _amount = regulate.range_cash
@@ -147,7 +147,7 @@ class Market < ActiveRecord::Base
   def volume_report
     if vol_96.max == last_quote.v
       kline = last_quote.kline_info
-      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 8H最大成交量 #{last_quote.v}，报价 #{last_quote.c}，价格浮动 #{kline}"
+      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 8H MaxVols #{last_quote.v} Price #{last_quote.c}，Float #{kline}"
       quote_notice(tip)
     end
   end
