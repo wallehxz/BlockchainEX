@@ -15,8 +15,7 @@ Signal.trap("TERM") do
 end
 
 
-def start_btc_hunter
-  btc = Market.first
+def start_hunter(btc)
   amount = btc.regulate.fast_cash
   quote_90 = btc.get_ticker('1m', 90)
   quote_90_c = quote_90.map{|x| x[4].to_f }
@@ -39,16 +38,18 @@ def price_min_bid(btc,amount,quote_90_c)
 end
 
 def price_max_ask(btc,amount,quote_90_c,quote_90_flow)
-  profit = btc.bids.succ.last.price + 100
+  min_order = btc.bids.succ.order(price: :desc).last
+  profit = min_order.price + 100
   if quote_90_flow[-1] < 0 && quote_90_c[-1] > profit
     btc.market_price_ask(amount)
-    btc.bids.succ.last.update(state: 120)
+    min_order.update(state: 120)
   end
 end
 
 while($running) do
   begin
-    start_btc_hunter
+    btc = Market.first
+    start_hunter(btc) if btc&.regulate&.fast_trade
   rescue => detail
     Notice.dingding("羊毛党 Robot：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
   end
