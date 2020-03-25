@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
   root 'welcome#index'
-
   devise_for :users
   devise_scope :user do
     get 'sign_in',          to:'users/sessions#new'
@@ -19,7 +18,7 @@ Rails.application.routes.draw do
   get '/trending/symbols', to: "trending#symbols"
   get '/trending/history', to: "trending#history"
   get '/trending/time',    to: "trending#time"
-  get '/webhook', to: "api/tickers#webhook"
+  get '/webhook',          to: "api/tickers#webhook"
 
   namespace :api do
     resources :tickers do

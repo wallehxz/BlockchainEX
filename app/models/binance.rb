@@ -258,11 +258,12 @@ class Binance < Market
       while base_amount <= total_amount && continue
         bid_active_orders.each do |order|
           undo_order(order['orderId'])
-          bids.succ.last.destroy
+          bids.succ&.last&.destroy
         end
         bid_price = ticker['bidPrice'].to_f
         bid_amount = (total_amount - base_amount) > ave_amount ? ave_amount : (total_amount - base_amount)
         _bid_order = bids.create(price: bid_price, amount: bid_amount, category: 'limit', state: 'succ')
+        return continue = false if _bid_order.state == 500
         _result = sync_limit_order(:bid, _bid_order.amount, _bid_order.price)
         if _result['state'] == 500
           _bid_order.update(_result)
@@ -276,11 +277,11 @@ class Binance < Market
       end
       orders = bids.succ.where("created_at > ?", start_time)
       if orders.size > 0
-        tip = "#{Time.now.to_s(:short)} 阶梯买入 #{symbol}，数量 #{orders.map(&:amount).sum.round(4)}, 资金 #{orders.map(&:total).sum.round(4)}"
+        tip = "#{Time.now.to_s(:short)} Limit Bid #{symbol}、Amount : #{orders.map(&:amount).sum.round(4)}、 Funds : #{orders.map(&:total).sum.round(4)}"
         Notice.sms(tip)
       end
     rescue => detail
-      Notice.dingding("阶梯价买入 错误提醒：\n 交易对：#{symbol} \n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")
+      Notice.dingding("Limit Bid Errors：\n Market: #{symbol} \n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")
     end
   end
 
@@ -313,20 +314,21 @@ class Binance < Market
       end
       orders = asks.succ.where("created_at > ?", start_time)
       if orders.size > 0
-        tip = "#{Time.now.to_s(:short)} 阶梯卖出 #{symbol}，数量 #{orders.map(&:amount).sum.round(4)}, 资金 #{orders.map(&:total).sum.round(4)}"
+        tip = "#{Time.now.to_s(:short)} Limit Ask #{symbol}、Amount #{orders.map(&:amount).sum.round(4)}、Funds #{orders.map(&:total).sum.round(4)}"
         Notice.sms(tip)
       end
     rescue => detail
-      Notice.dingding("阶梯价卖出 错误提醒：\n 交易对：#{symbol} \n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")
+      Notice.dingding("Limit Ask Errors：\n Market：#{symbol} \n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")
     end
   end
 
   def market_price_bid(amount)
     bid_price = ticker['askPrice'].to_f
     _bid_order = bids.create(price: bid_price, amount: amount, category: 'market', state: 'succ')
+    return nil if _bid_order.state == 500
     _result = sync_market_order(:bid, _bid_order.amount)
     if _result['state'] == 200
-      tip = "#{Time.now.to_s(:short)} 市价买入 #{symbol}，数量 #{amount}, 资金 #{_bid_order.total}"
+      tip = "#{Time.now.to_s(:short)} Market Bid #{symbol}、Amount #{amount}、Funds #{_bid_order.total}"
       Notice.sms(tip)
     else
       _bid_order.update(_result)
@@ -339,7 +341,7 @@ class Binance < Market
     _ask_order = asks.create(price: ask_price, amount: amount, category: 'market', state: 'succ')
     _result = sync_market_order(:ask, _ask_order.amount)
     if _result['state'] == 200
-      tip = "#{Time.now.to_s(:short)} 市价卖出 #{symbol}，数量 #{amount}, 资金 #{_ask_order.total}"
+      tip = "#{Time.now.to_s(:short)} Market Ask #{symbol}、Amount #{amount}、Funds #{_ask_order.total}"
       Notice.sms(tip)
     else
       _ask_order.update(_result)

@@ -17,6 +17,8 @@
 
 class OrderBid < Order
 
+  before_validation :check_fund_exceed
+
   def push_limit_order
     if state.init?
       if Rails.env.production?
@@ -33,4 +35,14 @@ class OrderBid < Order
     market.sync_market_order(:bid, amount)
   end
 
+  def check_fund_exceed
+    if quota = market&.regulate&.retain
+      market.sync_fund
+      curr_fund = market.fund.balance
+      if curr_fund > quota
+        self.state = 500
+        self.cause = "#{market.quote_unit} funds has exceed quota #{quota}"
+      end
+    end
+  end
 end

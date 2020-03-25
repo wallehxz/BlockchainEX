@@ -39,7 +39,7 @@ while($running) do
     end
     Notice.dingding(tip)
   rescue => detail
-    Notice.dingding("价格波动提醒：\n 交易对：#{$market.symbols} \n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")
+    Notice.dingding("价格波动 Robo：\n 交易对：#{$market.symbols} \n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")
   end
   sleep 60 * 60
 end

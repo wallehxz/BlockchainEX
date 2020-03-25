@@ -17,6 +17,8 @@
 
 class OrderAsk < Order
 
+  before_validation :check_amount_exceed
+
   def push_limit_order
     if state.init?
       if Rails.env.production?
@@ -31,6 +33,18 @@ class OrderAsk < Order
 
   def push_market_order
     market.sync_market_order(:ask, amount)
+  end
+
+  def check_amount_exceed
+    market.sync_fund
+    curr_fund = market.fund.balance
+    if amount > curr_fund
+      self.amount = curr_fund
+    end
+    if curr_fund == 0
+      self.state = 500
+      self.cause = "#{market.quote_unit} Insufficient balance"
+    end
   end
 
 end

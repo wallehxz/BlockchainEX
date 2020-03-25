@@ -1,4 +1,5 @@
 class Backend::BaseController < ApplicationController
+  before_action :authenticate_user!, :cookie_sign_in
   load_and_authorize_resource
   layout 'admin'
 

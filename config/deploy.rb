@@ -5,7 +5,7 @@ set :application, 'ExTrade'
 set :repo_url, 'https://github.com/kooogle/Exchange_Trade.git'
 set :ssh_options, { keys: %w{~/.ssh/id_rsa}, forward_agent: true, auth_methods: %w(publickey) }
 set :scm, :git
-set :format, :pretty
+# set :format, :pretty
 set :log_level, :debug
 set :keep_assets, 2
 set :keep_releases, 3
