@@ -26,13 +26,14 @@ def start_hunter(btc)
 end
 
 def price_min_bid(btc,amount,quote_90_c)
+  profit = btc.regulate.fast_profit || 0.0015
   if quote_90_c.min == quote_90_c[-1]
-    _price = quote_90_c[-1] * (1 - 0.0015)
+    _price = quote_90_c[-1] * (1 - profit)
     btc.new_bid(_price, amount)
   end
 
   if quote_90_c.min == quote_90_c[-2]
-    _price = quote_90_c[-2] * (1 - 0.001)
+    _price = quote_90_c[-2] * (1 - profit * 0.75)
     btc.new_bid(_price, amount)
   end
 end
