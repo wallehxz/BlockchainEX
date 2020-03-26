@@ -57,7 +57,7 @@
             <% @orders.each do |item| %>
               <tr style="text-align: center">
                 <td><%= item.market&.full_name %><br>
-                  <%= item.created_at.to_s(:short) %>
+                  <%= item.updated_at.to_s(:short) %>
                 </td>
                 <td><%= item.type_cn %><br>
                   <%= item.category.camelize %>

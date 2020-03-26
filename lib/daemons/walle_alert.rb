@@ -25,7 +25,7 @@ def start_trade(subject)
     side = str_arr[-1]
     if side == 'bid'
       bid_order(market, amount, profit, subject)
-    else
+    elsif side == 'ask'
       ask_order(market, amount, profit, subject)
     end
   end
@@ -47,6 +47,7 @@ def ask_order(market,amount, profit, subject)
   else
     market.new_ask(price, amount)
   end
+  market.bids.succ.order(price: :desc).last&.update(state: 120)
 end
 
 while($running) do
@@ -56,6 +57,7 @@ while($running) do
       if email.subject.include? '|'
         subject = email.subject
         Indicator.create(name: subject)
+        Notice.dingding("[#{Time.now.strftime('%H:%M')}] \n #{subject}")
         start_trade(subject) if subject =~ /(bid)|(ask)/
       end
     end
