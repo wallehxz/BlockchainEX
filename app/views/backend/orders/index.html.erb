@@ -12,26 +12,26 @@
   <div class="box box-primary">
     <div class="box-header">
       <a href="<%= new_backend_order_path %>" class="btn bg-primary btn-flat"><i class="ion-plus"></i> 新增订单</a>
+      <a href="/backend/orders?type=<%= params[:type] %>&cate=<%= params[:cate] %>&state=<%= params[:state] %>&actions=destroy" class="btn btn-danger btn-flat" data-confirm="批量删除操作请慎重！"><i class="fa fa-trash"></i> 按查询批量删除</a>
       <row>
         <div class="col-sm-2">
           <select onchange="javascript:location.href = this.value;" class="form-control" style="display: inline;">
             <option value="?">类别</option>
-            <option value="?type=OrderAsk" <%= 'selected' if params[:type] == 'OrderAsk' %>>卖出</option>
-            <option value="?type=OrderBid" <%= 'selected' if params[:type] == 'OrderBid' %>>买入</option>
+            <option value="?type=OrderBid" <%= 'selected' if params[:type] == 'OrderBid' %>>BID-买</option>
+            <option value="?type=OrderAsk" <%= 'selected' if params[:type] == 'OrderAsk' %>>ASK-卖</option>
           </select>
         </div>
         <div class="col-sm-2">
           <select onchange="javascript:location.href = this.value;" class="form-control" style="display: inline;">
             <option value="?">类型</option>
-            <option value="?cate=limit&type=<%= params[:type] %>" <%= 'selected' if params[:cate] == 'limit' %>>限价</option>
-            <option value="?cate=fast&type=<%= params[:type] %>" <%= 'selected' if params[:cate] == 'fast' %>>快频</option>
-            <option value="?cate=range&type=<%= params[:type] %>" <%= 'selected' if params[:cate] == 'range' %>>量价</option>
+            <option value="?cate=limit&type=<%= params[:type] %>" <%= 'selected' if params[:cate] == 'limit' %>>Limit-限价</option>
+            <option value="?cate=range&type=<%= params[:type] %>" <%= 'selected' if params[:cate] == 'market' %>>Market-市价</option>
           </select>
         </div>
         <div class="col-sm-2">
           <select onchange="javascript:location.href = this.value;" class="form-control" style="display: inline;">
             <option value="?">状态</option>
-            <% ['init','succ','rescue', 'fail'].each do |state|%>
+            <% ['init', 'fail', 'succ', 'rescue', 'cancel'].each do |state|%>
               <option value="?type=<%= params[:type] %>&cate=<%= params[:cate] %>&state=<%= state %>" <%= 'selected' if params[:state] == state %>><%= state.upcase %></option>
             <% end %>
           </select>
