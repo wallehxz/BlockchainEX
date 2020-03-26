@@ -56,7 +56,6 @@ while($running) do
     mails.each do |email|
       if email.subject.include? '|'
         subject = email.subject
-        Indicator.create(name: subject)
         Notice.dingding("[#{Time.now.strftime('%H:%M')}] \n #{subject}")
         start_trade(subject) if subject =~ /(bid)|(ask)/
       end
