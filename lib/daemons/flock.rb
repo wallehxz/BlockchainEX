@@ -33,11 +33,20 @@ def price_min_bid(btc,amount,quote_90_c)
   if quote_90_c.min == quote_90_c[-1]
     _price = quote_90_c[-1] * (1 - profit)
     btc.new_bid(_price, amount)
+    btc.market_price_bid(amount)
   end
 
   if quote_90_c.min == quote_90_c[-2]
-    _price = quote_90_c[-2] * (1 - profit * 0.75)
+    _price = quote_90_c[-1] * (1 - profit * 0.75)
     btc.new_bid(_price, amount)
+    supplement_funds(btc, amount)
+  end
+end
+
+def supplement_funds(btc, amount)
+  btc.sync_fund
+  if btc.fund.balance < btc.regulate.retain * 0.5
+    btc.market_price_bid(amount)
   end
 end
 
@@ -90,7 +99,7 @@ def bear_stop_loss(btc)
   if min_order
     recent_price = btc.recent_price
     order_price = min_order.price
-    if recent_price < order_price * (1 - 0.02)
+    if recent_price < order_price * (1 - 0.025)
       btc.market_price_ask(min_order.amount)
       min_order.update(state: 120)
     end
