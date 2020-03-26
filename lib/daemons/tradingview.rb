@@ -15,14 +15,17 @@ Signal.trap("TERM") do
   $running = false
 end
 
+# tradingview 通知格式 #BTC_USDT|RSI1 <=> 70|market|ask
+
 def start_trade(subject)
-  str_arr = subject.delete(' ').split('|')
-  quote = str_arr[0].split(':').last.split('_')
+  puts "[#{Time.now.to_s(:long)}] # #{subject}"
+  trading = subject.delete(' ').split('#')[-1].split('|')
+  quote = trading[0].split('_')
   market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
   if market&.regulate&.fast_trade
-    amount = market&.regulate.fast_cash
-    profit = market&.regulate.fast_profit || 0.002
-    side = str_arr[-1]
+    amount = market.regulate.fast_cash
+    profit = market.regulate.fast_profit || 0.002
+    side = trading[-1]
     if side == 'bid'
       bid_order(market, amount, profit, subject)
     elsif side == 'ask'

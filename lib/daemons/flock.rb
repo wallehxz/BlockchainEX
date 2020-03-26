@@ -90,7 +90,7 @@ def bear_stop_loss(btc)
   if min_order
     recent_price = btc.recent_price
     order_price = min_order.price
-    if recent_price < order_price * (1 - 0.01)
+    if recent_price < order_price * (1 - 0.02)
       btc.market_price_ask(min_order.amount)
       min_order.update(state: 120)
     end
