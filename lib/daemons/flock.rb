@@ -23,6 +23,8 @@ def start_hunter(btc)
 
   price_min_bid(btc,amount,quote_90_c)
   price_max_ask(btc,amount,quote_90_c,quote_90_flow)
+  undo_exceed_orders(btc)
+  bear_stop_loss(btc)
 end
 
 def price_min_bid(btc,amount,quote_90_c)
@@ -40,10 +42,36 @@ end
 
 def price_max_ask(btc,amount,quote_90_c,quote_90_flow)
   min_order = btc.bids.succ.order(price: :desc).last
-  profit = min_order.price + 100
-  if quote_90_flow[-1] < 0 && quote_90_c[-1] > profit
-    btc.market_price_ask(amount)
-    min_order.update(state: 120)
+  if min_order
+    profit = min_order.price + 100
+    if quote_90_flow[-1] < 0 && quote_90_c[-1] > profit
+      btc.market_price_ask(amount)
+      min_order.update(state: 120)
+    end
+  end
+end
+
+def undo_exceed_orders(btc)
+  btc.sync_fund
+  fund = btc.fund.balance
+  quota = btc.regulate.retain
+  if fund > quota
+    btc.bid_active_orders.map do |order|
+      btc.undo_order(order['orderId'])
+      btc.bids.succ.where(price: order['price'].to_f).first&.update(state: 0)
+    end
+  end
+end
+
+def bear_stop_loss(btc)
+  min_order = btc.bids.succ.order(price: :desc).first
+  if min_order
+    recent_price = btc.recent_price
+    order_price = min_order.price
+    if recent_price < order_price * (1 - 0.02)
+      btc.market_price_ask(min_order.amount)
+      min_order.update(state: 120)
+    end
   end
 end
 
