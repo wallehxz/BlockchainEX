@@ -17,6 +17,7 @@
 
 class OrderAsk < Order
 
+  before_validation :check_legal_profit
   before_validation :check_amount_exceed
 
   def push_limit_order
@@ -27,7 +28,7 @@ class OrderAsk < Order
       else
         mock_push
       end
-      sms_order
+      notice_order
     end
   end
 
@@ -44,6 +45,23 @@ class OrderAsk < Order
     if curr_fund == 0
       self.state = 500
       self.cause = "#{market.quote_unit} Insufficient balance"
+    end
+  end
+
+  def check_legal_profit
+    if ['limit', 'market'].include? category
+      bid_order = market.bids.succ.order(price: :asc).first
+      if bid_order
+        cash_profit = market.regulate&.cash_profit || bid_order.price * 0.01
+        price_profit = cash_profit + bid_order.price
+        if price < price_profit
+          self.state = 500
+          self.cause = "Ask price must more than #{price_profit}"
+        end
+      else
+        self.state = 500
+        self.cause = "No legal bid order match"
+      end
     end
   end
 

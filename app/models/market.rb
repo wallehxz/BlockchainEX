@@ -113,13 +113,13 @@ class Market < ActiveRecord::Base
 
   def quote_notice(content)
     messages.create(body: content)
-    Notice.wechat(content) if regulate&.notify_wx
     Notice.dingding(content) if regulate&.notify_dd
   end
 
   def trade_notice(content)
     messages.create(body: content)
     Notice.sms(content) if regulate&.notify_sms
+    Notice.dingding(content) if regulate&.notify_dd
   end
 
   def extreme_report

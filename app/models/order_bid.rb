@@ -27,7 +27,7 @@ class OrderBid < Order
       else
         mock_push
       end
-      sms_order
+      notice_order
     end
   end
 

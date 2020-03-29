@@ -7,6 +7,7 @@
 #  amplitude        :float
 #  retain           :float
 #  cost             :float
+#  cash_profit      :float
 #  notify_wx        :boolean
 #  notify_sms       :boolean
 #  notify_dd        :boolean

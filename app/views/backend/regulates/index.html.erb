@@ -36,15 +36,14 @@
                   数量精度：<%= item.amount_precision %>
                 </td>
                 <td style="text-align: left">
-                   24H浮动： <%= item.amplitude %><br>
+                   行情波动： <%= item.amplitude %><br>
                    持有头寸： <%= item.retain %> <%= item.market.quote_unit %><br>
-                   交易资金： <%= item.cost %> <%= item.market.base_unit %><br>
+                   卖出收益： <%= item.cash_profit %> <%= item.market.base_unit %><br>
                    阻力位价： <%= item.resistance %><br>
                    支撑位价： <%= item.support %><br>
                 </td>
                 <td>
-                  钉钉：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_dd %> onchange='switch_state(<%= item.id %>, "dd")'></br>
-                  微信：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_wx %> onchange='switch_state(<%= item.id %>, "wx")'></br>
+                  钉钉：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_dd %> onchange='switch_state(<%= item.id %>, "dd")'></br></br>
                   短信：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_sms %> onchange='switch_state(<%= item.id %>,"sms")'>
                 </td>
                 <td style="text-align: left">

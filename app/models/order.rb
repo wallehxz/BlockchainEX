@@ -17,11 +17,11 @@
 
 class Order < ActiveRecord::Base
   extend Enumerize
-
+  validates_presence_of :price, :amount
   self.per_page = 10
   scope :recent, -> { order('created_at desc') }
   enumerize :state, in: { init: 100, fail: 500, succ: 200, cancel: 0, rescue: 120 }, default: 100, scope: true
-  enumerize :category, in: ['limit', 'market'], default: 'limit', scope: true
+  enumerize :category, in: ['limit', 'market', 'chives'], default: 'limit', scope: true
   belongs_to :market
   after_create :fix_price
   before_save :calc_total
@@ -49,14 +49,14 @@ class Order < ActiveRecord::Base
   end
 
   def category_cn
-    {'limit'=> '限价', 'market'=> '市价'}[category]
+    {'limit'=> '限价', 'market'=> '市价', 'chives'=> '韭菜价' }[category]
   end
 
-  def sms_order
+  def notice_order
     if state.succ?
-      content = "#{market.symbols} #{self.class.name}, Price:#{price}, Amount:#{amount}, Funds:#{total} "
+      content = "#{market.symbols} #{category} #{self.class.name}, Price:#{price}, Amount:#{amount}, Funds:#{total} "
       market.messages.create(body: content)
-      Notice.sms(content) if Rails.env.production?
+      market.trade_notice(content)
     end
   end
 

@@ -46,7 +46,7 @@ class Backend::OrdersController < Backend::BaseController
 private
 
   def order_params
-    params.require(:order).permit(:market_id, :type, :price, :amount)
+    params.require(:order).permit(:market_id, :type, :price, :amount, :category)
   end
 
   def order_side_params

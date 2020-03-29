@@ -7,7 +7,7 @@
         <div class="input-group-addon">
           <i class="fa fa-btc"></i>
         </div>
-        <%= f.select(:market_id, Market.seq.map{ |x| [x.full_name,x.id] }, {prompt:'请选择市场'},{:class => 'form-control'}) %>
+        <%= f.select(:market_id, Market.seq.map{ |x| [x.full_name,x.id] }, {prompt:'请选择市场'}, {:class => 'form-control'}) %>
       </div>
     </div>
     <div class="form-group has-error">
@@ -16,7 +16,7 @@
         <div class="input-group-addon">
           <i class="fa fa-thermometer-half"></i>
         </div>
-        <%= f.select(:category, [['限价', 'limit'],['快频', 'fast'],['支撑', 'range']], {prompt:'请选择交易'},{:class => 'form-control'}) %>
+        <%= f.select(:category, [['限价', 'limit'],['市价', 'market'],['韭菜价', 'chives']], {prompt:'请选择价格'}, {:class => 'form-control'}) %>
       </div>
     </div>
     <div class="form-group has-error">
@@ -25,7 +25,7 @@
         <div class="input-group-addon">
           <i class="fa fa-thermometer-half"></i>
         </div>
-        <%= f.select(:type, [['买入', 'OrderBid'],['卖出', 'OrderAsk']], {prompt:'请选择交易'},{:class => 'form-control'}) %>
+        <%= f.select(:type, [['买入', 'OrderBid'],['卖出', 'OrderAsk']], {prompt:'请选择属性'}, {:class => 'form-control'}) %>
       </div>
     </div>
     <div class="form-group has-success">
@@ -34,7 +34,7 @@
         <div class="input-group-addon">
           <i class="fa fa-money"></i>
         </div>
-        <%= f.text_field :price, class:'form-control', placeholder:'（必填* 期望交易价格）' %>
+        <%= f.text_field :price, class:'form-control', placeholder:'（必填* 交易价格）' %>
       </div>
     </div>
     <div class="form-group has-success">
@@ -43,7 +43,7 @@
         <div class="input-group-addon">
           <i class="fa fa-book"></i>
         </div>
-        <%= f.text_field :amount, class:'form-control', placeholder:'（必填* 欲购买数量）' %>
+        <%= f.text_field :amount, class:'form-control', placeholder:'（必填* 交易数量）' %>
       </div>
     </div>
     <% if action_name == 'edit' %>
