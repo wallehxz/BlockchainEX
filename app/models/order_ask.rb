@@ -25,6 +25,7 @@ class OrderAsk < Order
       if Rails.env.production?
         result = market.sync_limit_order(:ask, amount, price)
         self.update_attributes(state: result['state'], cause: result['cause'])
+        market.bids.succ.order(price: :asc).first&.update(state: 120) if self.state == 200
       else
         mock_push
       end
@@ -49,10 +50,10 @@ class OrderAsk < Order
   end
 
   def check_legal_profit
-    if ['limit', 'market'].include? category
+    if ['limit', 'market'].include?(category)
       bid_order = market.bids.succ.order(price: :asc).first
+      cash_profit = market.regulate&.cash_profit
       if bid_order
-        cash_profit = market.regulate&.cash_profit || bid_order.price * 0.01
         price_profit = cash_profit + bid_order.price
         if price < price_profit
           self.state = 500

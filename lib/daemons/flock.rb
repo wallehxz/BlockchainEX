@@ -22,53 +22,48 @@ def start_hunter(btc)
   quote_90_flow = quote_90.map {|k| (k[4].to_f - k[1].to_f).round(2)}
 
   price_min_bid(btc,amount,quote_90_c)
-  price_max_ask(btc,amount,quote_90_c,quote_90_flow)
+  price_max_ask(btc,quote_90_c)
   undo_exceed_orders(btc)
-  bear_stop_loss(btc)
   bids_min30_not_match(btc)
+  # bear_stop_loss(btc)
 end
 
 def price_min_bid(btc,amount,quote_90_c)
-  profit = btc.regulate.fast_profit || 0.0015
   if quote_90_c.min == quote_90_c[-1]
-    _price = quote_90_c[-1] * (1 - profit)
-    btc.new_bid(_price, amount)
-    btc.market_price_bid(amount)
+    profit = btc.regulate.fast_profit || 0.0015
+    price = quote_90_c.min * (1 - profit)
+    btc.new_bid(price, amount)
   end
 
   if quote_90_c.min == quote_90_c[-2]
-    _price = quote_90_c[-1] * (1 - profit * 0.75)
-    btc.new_bid(_price, amount)
+    btc.step_price_bid(amount)
+  end
+
+  if quote_90_c.min == quote_90_c[-3]
     supplement_funds(btc, amount)
   end
 end
 
 def supplement_funds(btc, amount)
   btc.sync_fund
-  if btc.fund.balance < btc.regulate.retain * 0.5
-    btc.market_price_bid(amount)
+  if btc.fund.balance < btc.regulate.retain * 0.6
+    num = (btc.regulate.retain * 0.6 - btc.fund.balance) / amount
+    num.ceil.times {|i| btc.market_price_bid(amount) }
   end
 end
 
-def price_max_ask(btc,amount,quote_90_c,quote_90_flow)
-  min_order = btc.bids.succ.order(price: :desc).last
-  if min_order
-    profit = min_order.price + 100
-    if quote_90_flow[-1] < 0 && quote_90_c[-1] > profit
-      btc.market_price_ask(amount)
-      min_order.update(state: 120)
-      batch_ask_orders(btc)
-    end
+def price_max_ask(btc,quote_90_c)
+  if quote_90_c[-2] == quote_90_c.max
+    batch_ask_orders(btc)
   end
 end
 
 def batch_ask_orders(btc)
   bids_orders = btc.bids.succ.order(price: :asc)
-  recent_price = btc.recent_price
   bids_orders.each do |order|
+    recent_price = btc.recent_price
     if recent_price > order.price + 100
       btc.market_price_ask(amount)
-      order.update(state: 120)
     end
   end
 end
@@ -99,7 +94,7 @@ def bear_stop_loss(btc)
   if min_order
     recent_price = btc.recent_price
     order_price = min_order.price
-    if recent_price < order_price * (1 - 0.025)
+    if recent_price < order_price * (1 - 0.01)
       btc.market_price_ask(min_order.amount)
       min_order.update(state: 120)
     end

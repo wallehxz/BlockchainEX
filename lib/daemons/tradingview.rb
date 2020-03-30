@@ -16,9 +16,9 @@ Signal.trap("TERM") do
 end
 
 # tradingview 通知格式 #BTC_USDT|RSI1 <=> 70|market|ask
-
+# subject= "#BTC_USDT|RSI1 <=> 70|step|bid"
 def start_trade(subject)
-  puts "[#{Time.now.to_s(:long)}] # #{subject}"
+  puts "[#{Time.now.to_s(:short)}] #{subject}"
   trading = subject.delete(' ').split('#')[-1].split('|')
   quote = trading[0].split('_')
   market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
@@ -27,8 +27,10 @@ def start_trade(subject)
     profit = market.regulate.fast_profit || 0.002
     side = trading[-1]
     if side == 'bid'
+      puts "[#{Time.now.to_s(:short)}] staring new bid order"
       bid_order(market, amount, profit, subject)
     elsif side == 'ask'
+      puts "[#{Time.now.to_s(:short)}] staring ask bid order"
       ask_order(market, amount, profit, subject)
     end
   end
@@ -37,8 +39,10 @@ end
 def bid_order(market, amount, profit, subject)
   price = market.recent_price * (1 - profit)
   if subject =~ /(step)|(market)/
+    puts "[#{Time.now.to_s(:short)}] #{market.full_name} bid #{$1} amount: #{amount}"
     market.send("#{$1}_price_bid".to_sym, amount)
   else
+    puts "[#{Time.now.to_s(:short)}] #{market.full_name} bid limit amount: #{amount}"
     market.new_bid(price, amount)
   end
 end
@@ -46,11 +50,12 @@ end
 def ask_order(market,amount, profit, subject)
   price = market.recent_price * (1 + profit)
   if subject =~ /(step)|(market)/
+    puts "[#{Time.now.to_s(:short)}] #{market.full_name} ask #{$1} amount: #{amount}"
     market.send("#{$1}_price_ask".to_sym, amount)
   else
-    market.new_ask(price, amount)
+    puts "[#{Time.now.to_s(:short)}] #{market.full_name} ask limit amount: #{amount}"
+    aks_order = market.new_ask(price, amount)
   end
-  market.bids.succ.order(price: :desc).last&.update(state: 120)
 end
 
 while($running) do
@@ -59,7 +64,7 @@ while($running) do
     mails.each do |email|
       if email.subject.include? '|'
         subject = email.subject
-        Notice.dingding("[#{Time.now.strftime('%H:%M')}] \n #{subject}")
+        Notice.dingding("[#{Time.now.to_s(:short)}] \n #{subject}")
         start_trade(subject) if subject =~ /(bid)|(ask)/
       end
     end
