@@ -42,7 +42,7 @@ end
 
 def supplement_funds(btc, amount)
   btc.sync_fund
-  if btc.fund.balance < btc.regulate.retain * 0.6
+  if btc.fund.balance < btc.regulate.retain * 0.4
     num = (btc.regulate.retain * 0.6 - btc.fund.balance) / amount
     num.ceil.times {|i| btc.market_price_bid(amount) }
   end
@@ -59,7 +59,7 @@ def batch_ask_orders(btc)
   bids_orders.each do |order|
     recent_price = btc.recent_price
     if recent_price > order.price + 100
-      btc.market_price_ask(amount)
+      btc.market_price_ask(order.amount)
     end
   end
 end
