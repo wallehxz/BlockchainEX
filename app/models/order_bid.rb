@@ -17,7 +17,7 @@
 
 class OrderBid < Order
 
-  before_validation :check_fund_exceed
+  before_create :check_fund_exceed
 
   def push_limit_order
     if state.init?

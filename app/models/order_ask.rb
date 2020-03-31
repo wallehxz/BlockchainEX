@@ -17,8 +17,8 @@
 
 class OrderAsk < Order
 
-  before_validation :check_legal_profit
-  before_validation :check_amount_exceed
+  before_create :check_legal_profit
+  before_create :check_amount_exceed
 
   def push_limit_order
     if state.init?
