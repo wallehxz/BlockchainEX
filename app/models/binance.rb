@@ -273,11 +273,8 @@ class Binance < Market
           balance = fund&.balance
         end
       end
-      bid_amount = balance - base_fund
-      sync_cash
-      bid_cash = base_cash - fund&.balance
-      bid_price = bid_cash / bid_amount
-      bid_order.update(amount: bid_amount, price:bid_price, total: bid_cash)
+      bid_amount = (balance - base_fund).round(4)
+      bid_order.update(amount: bid_amount, total: bid_amount * bid_order.price)
       bid_order.notice_order
     rescue => detail
       Notice.dingding("Limit Bid Errors：\n Market: #{symbol} \n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")
@@ -311,10 +308,7 @@ class Binance < Market
         end
       end
       ask_amount = base_fund - balance
-      sync_cash
-      ask_cash = cash.balance - base_cash
-      ask_price = ask_cash / ask_amount
-      ask_order.updaate(amount: ask_amount, price:ask_price, total: ask_cash)
+      ask_order.updaate(amount: ask_amount, total: ask_amount * ask_order.price )
       bids.succ.order(price: :asc).first&.update(state: 120)
       ask_order.notice_order
     rescue => detail
