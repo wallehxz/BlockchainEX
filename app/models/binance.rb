@@ -307,7 +307,7 @@ class Binance < Market
           balance = fund.balance
         end
       end
-      ask_amount = base_fund - balance
+      ask_amount = (base_fund - balance).round(4)
       ask_order.updaate(amount: ask_amount, total: ask_amount * ask_order.price )
       bids.succ.order(price: :asc).first&.update(state: 120)
       ask_order.notice_order

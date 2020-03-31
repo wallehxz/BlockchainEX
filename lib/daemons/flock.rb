@@ -31,16 +31,12 @@ end
 def price_min_bid(btc,amount,quote_90_c)
   if quote_90_c.min == quote_90_c[-1]
     profit = btc.regulate.fast_profit || 0.0015
-    price = quote_90_c.min * (1 - profit)
+    price = quote_90_c[-1] * (1 - profit)
     btc.new_bid(price, amount)
   end
 
   if quote_90_c.min == quote_90_c[-2]
     btc.step_price_bid(amount)
-  end
-
-  if quote_90_c.min == quote_90_c[-3]
-    supplement_funds(btc, amount)
   end
 end
 
