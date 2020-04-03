@@ -275,7 +275,7 @@ class Binance < Market
       end
       bid_amount = (balance - base_fund).round(4)
       bid_order.update(amount: bid_amount, total: bid_amount * bid_order.price)
-      bid_order.notice_order
+      bid_order.notice
     rescue => detail
       Notice.dingding("Limit Bid Errors：\n Market: #{symbol} \n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")
     end
@@ -310,7 +310,7 @@ class Binance < Market
       ask_amount = (base_fund - balance).round(4)
       ask_order.update(amount: ask_amount, total: ask_amount * ask_order.price )
       bids.succ.order(price: :asc).first&.update(state: 120)
-      ask_order.notice_order
+      ask_order.notice
     rescue => detail
       Notice.dingding("Limit Ask Errors：\n Market：#{symbol} \n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")
     end
@@ -322,7 +322,7 @@ class Binance < Market
     return nil if bid_order.state == 500
     push_order = sync_market_order(:bid, amount)
     if push_order['state'] == 200
-      bid_order.notice_order
+      bid_order.notice
     else
       bid_order.update(push_order)
     end
@@ -334,7 +334,7 @@ class Binance < Market
     return nil if ask_order.state == 500
     push_order = sync_market_order(:ask, amount)
     if push_order['state'] == 200
-      ask_order.notice_order
+      ask_order.notice
       bids.succ.order(price: :asc).first&.update(state: 120)
     else
       ask_order.update(push_order)

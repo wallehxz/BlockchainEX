@@ -27,6 +27,5 @@ class Notice
         req.body = body_params.to_json
       end
     end
-
   end
 end

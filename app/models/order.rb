@@ -52,18 +52,23 @@ class Order < ActiveRecord::Base
     {'limit'=> '限价', 'market'=> '市价', 'chives'=> '韭菜价' }[category]
   end
 
-  def notice_order
+  def notice
     if state.succ?
-      content = "#{market.symbols} #{category} #{self.class.name}, Price:#{price}, Amount:#{amount}, Funds:#{total} "
-      market.messages.create(body: content)
-      market.trade_notice(content)
+      push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Settings.trading_bot}"
+      body_params ={ msgtype:'markdown', markdown:{ title: "#{type_cn}订单" } }
+      body_params[:markdown][:text] =
+        "#### #{market.type} #{type_cn}订单\n\n" +
+        "> 时间：#{updated_at.to_s(:short)}\n\n" +
+        "> 价格：#{price} #{market.base_unit}\n\n" +
+        "> 数量：#{amount} #{market.quote_unit}\n\n" +
+        "> 成交额 #{total.round(4)} #{market.base_unit}\n\n" +
+        "> ![screenshot](https://source.unsplash.com/random/400x200)\n"
+      res = Faraday.post do |req|
+        req.url push_url
+        req.headers['Content-Type'] = 'application/json'
+        req.body = body_params.to_json
+      end
     end
-  end
-
-  def sold_tip_with(ask_order)
-    content = "#{market.symbols} #{type_cn}-#{category} 出售成交, 成交数量: #{amount}，交易收益: #{(ask_order.total - total).round(2)}"
-    Notice.sms(content) if Rails.env.production?
-    market.messages.create(body: content)
   end
 
   def mock_push
