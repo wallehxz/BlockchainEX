@@ -74,6 +74,17 @@ def stop_loss(subject)
   end
 end
 
+def jiancang(subject)
+  trading = subject.split('|')
+  quote = trading[0].split('_')
+  market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
+  unless market&.regulate&.fast_trade
+    market.regulate.update(fast_trade: true)
+    amount = market.regulate.retain * 0.5
+    market.step_price_bid(amount)
+  end
+end
+
 while($running) do
   begin
     mails = Mail.all.select { |x| x.from[0] =~ /tradingview/ }
@@ -84,6 +95,7 @@ while($running) do
         Notice.dingding("[#{Time.now.to_s(:short)}] \n #{topic}")
         start_trade(topic) if topic =~ /(bid)|(ask)/
         stop_loss(topic) if topic =~ /stop_loss/
+        jiancang(topic) if topic =~ /jiancang/
       end
     end
   rescue => detail
