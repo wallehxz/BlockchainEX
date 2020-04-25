@@ -6,8 +6,15 @@
  font-style: normal;
 }
 
+@font-face {
+ font-family: 'QXYG';
+ src: asset_url('lte/fonts/QXYG.ttf') format('truetype');
+ font-weight: normal;
+ font-style: normal;
+}
+
 body {
- font-family: sans-serif;
+ font-family: 'QXYG';
  line-height: 20px;
  color: #999999;
  font-size: 300;

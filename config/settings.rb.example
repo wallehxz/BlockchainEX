@@ -1,4 +1,5 @@
 #[development,production]
+
 settings.env = 'development'
 settings.host = 'http://tt.tt'
 settings.receive_email = '*****@qq.com'
@@ -16,6 +17,7 @@ settings.default_mobile = '13812345678'
 settings.wechat_group_key = 'xxxxxxxx'
 #https://open-doc.dingtalk.com/docs/doc.htm?treeId=257&articleId=105735&docType=1
 settings.dingding_bot = 'xxxxxxxx'
+settings.trading_bot = 'xxxxxxx'
 settings.yunpian_key = 'xxxxxxxx'
 settings.yunpian_tpl = '123456'
 #交易所接口

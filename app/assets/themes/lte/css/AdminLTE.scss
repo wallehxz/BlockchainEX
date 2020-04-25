@@ -8,10 +8,26 @@ body {
   height: 100%;
 }
 
+@font-face {
+  font-family: 'QXYG';
+  src: asset_url('lte/fonts/QXYG.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+ font-family: 'QXYG' !important;
+ line-height: 20px;
+ color: #999999;
+ font-size: 300;
+ font-size: 16px;
+}
+
+
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  /*font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
   font-weight: 400;
   overflow-x: hidden;
   overflow-y: auto;
