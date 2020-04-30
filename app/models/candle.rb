@@ -17,7 +17,7 @@ class Candle < ActiveRecord::Base
   belongs_to :market
   scope :recent, -> { order(t: :desc) }
   scope :history, -> { order(:ts) }
-  after_create :calc_ts, :update_resistance_level, :update_support_level
+  after_create :calc_ts
 
   self.per_page = 15
 
@@ -44,18 +44,6 @@ class Candle < ActiveRecord::Base
 
   def short_date
     Time.at(int_t).to_s(:short)
-  end
-
-  def update_support_level
-    if market.regulate && market.min_96 == self.c
-      market.regulate.update(support: market.min_96)
-    end
-  end
-
-  def update_resistance_level
-    if market.regulate && market.max_96 == self.c
-      market.regulate.update(resistance: market.max_96)
-    end
   end
 
   def index(amount = 48)

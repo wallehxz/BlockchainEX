@@ -43,14 +43,10 @@ class OrderAsk < Order
     if amount > curr_fund
       self.amount = curr_fund
     end
-    if curr_fund == 0
-      self.state = 500
-      self.cause = "#{market.quote_unit} Insufficient balance"
-    end
   end
 
   def check_legal_profit
-    if ['limit', 'market'].include?(category)
+    if category == 'limit'
       bid_order = market.bids.succ.order(price: :asc).first
       cash_profit = market.regulate&.cash_profit
       if bid_order
@@ -59,9 +55,6 @@ class OrderAsk < Order
           self.state = 500
           self.cause = "Ask price must more than #{price_profit}"
         end
-      else
-        self.state = 500
-        self.cause = "No legal bid order match"
       end
     end
   end

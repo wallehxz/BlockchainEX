@@ -80,7 +80,7 @@ def jiancang(subject)
   market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
   unless market&.regulate&.fast_trade
     market.regulate.update(fast_trade: true)
-    amount = market.regulate.retain * 0.5
+    amount = market.regulate.retain * 0.3
     market.step_price_bid(amount)
   end
 end

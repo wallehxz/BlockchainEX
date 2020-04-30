@@ -39,9 +39,8 @@ class OrderBid < Order
     if quota = market&.regulate&.retain
       market.sync_fund
       curr_fund = market.fund.balance
-      if curr_fund > quota
-        self.state = 500
-        self.cause = "#{market.quote_unit} funds has exceed quota #{quota}"
+      if curr_fund + amount > quota
+        self.amount = quota - curr_fund
       end
     end
   end

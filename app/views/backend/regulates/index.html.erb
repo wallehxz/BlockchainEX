@@ -1,11 +1,11 @@
-<%= content_for(:title,  '行情监管 | BLOCK') %>
+<%= content_for(:title,  '行情秘书 | BLOCK') %>
 <section class="content-header">
   <h1>
-    行情监管 <small>预览</small>
+    行情秘书 <small>预览</small>
   </h1>
   <ol class="breadcrumb">
     <li><a href="#"><i class="fa fa-btc"></i> Dashboard</a></li>
-    <li class="active"><i class="fa fa-balance-scale"></i> 行情监管</li>
+    <li class="active"><i class="fa fa-balance-scale"></i> 行情秘书</li>
   </ol>
 </section>
 <section class="content">
@@ -36,11 +36,10 @@
                   数量精度：<%= item.amount_precision %>
                 </td>
                 <td style="text-align: left">
-                   行情波动： <%= item.amplitude %><br>
                    持有头寸： <%= item.retain %> <%= item.market.quote_unit %><br>
                    卖出收益： <%= item.cash_profit %> <%= item.market.base_unit %><br>
-                   阻力位价： <%= item.resistance %><br>
-                   支撑位价： <%= item.support %><br>
+                   盈利位价： <%= item.resistance %><br>
+                   亏损位价： <%= item.support %><br>
                 </td>
                 <td>
                   钉钉：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_dd %> onchange='switch_state(<%= item.id %>, "dd")'></br></br>
