@@ -27,6 +27,7 @@ def start_hunter(btc)
 end
 
 def stop_profit(btc)
+  btc.bids.update_all(state: 120)
   amount = btc.regulate.fast_cash
   btc.step_price_ask(amount)
 end
@@ -34,17 +35,30 @@ end
 def stop_loss(btc)
   btc.sync_fund
   amount = btc.fund&.balance
-  ask_order = market.asks.create(price: price, amount: amount, category: 'chives', state: 'succ')
-  ask_order.push_market_order
-  ask_order.notice
   btc.bids.update_all(state: 120)
-  btc.regulate.update(fast_trade: false)
+  btc.step_price_ask(amount)
+end
+
+def stop_top_down(btc)
+  if btc.max_96 == btc.last_quote.c
+    btc.sync_fund
+    amount = btc.fund&.balance
+    _latest = btc.recent_price
+    if amount > 0.01
+      if _latest < btc.last_quote.c * (1 - 0.003)
+        stop_loss(btc)
+      end
+    end
+  end
 end
 
 while($running) do
   begin
     btc = Market.first
-    start_hunter(btc) if btc&.regulate&.fast_trade
+    if btc&.regulate&.fast_trade
+      start_hunter(btc)
+      stop_top_down(btc)
+    end
   rescue => detail
     Notice.dingding("羊毛党 Robot：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
   end
