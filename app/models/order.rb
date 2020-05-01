@@ -23,25 +23,19 @@ class Order < ActiveRecord::Base
   enumerize :state, in: { init: 100, fail: 500, succ: 200, cancel: 0, rescue: 120 }, default: 100, scope: true
   enumerize :category, in: ['limit', 'market', 'chives'], default: 'limit', scope: true
   belongs_to :market
-  after_create :fix_price
-  before_save :calc_total
+  after_save :fix_price_amount
   after_save :push_limit_order
   scope :succ, -> { where(state: 'succ') }
   scope :limit_order, -> { with_category(:limit) }
   scope :market_order, -> { with_category(:market) }
 
-  def calc_total
-    unless self.total
-      if self.price && self.amount
-        self.total = (self.price * self.amount).to_d.round(4, :down)
-        save
-      end
+  def fix_price_amount
+    if total.nil? || total != (price * amount).to_d.round(4, :down).to_f
+      self.price = price.to_d.round(market&.regulate&.price_precision || 4, :down)
+      self.amount = amount.to_d.round(market&.regulate&.amount_precision || 4, :down)
+      self.total = (price * amount).to_d.round(4, :down)
+      save
     end
-  end
-
-  def fix_price
-    self.price = self.price.to_d.round(self.market&.regulate&.price_precision || 4, :down)
-    self.amount = self.amount.to_d.round(self.market&.regulate&.amount_precision || 4, :down)
   end
 
   def type_cn

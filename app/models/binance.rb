@@ -254,11 +254,11 @@ class Binance < Market
       continue = true
       start_ms = (Time.now.to_f * 1000).to_i
       sync_fund;sync_cash
-      ave_amount = amount / 10.0
+      ave_amount = bid_order.amount / 10.0
       balance = fund&.balance
       base_cash = cash&.balance
       base_fund = balance
-      total_fund = base_fund + amount
+      total_fund = base_fund + bid_order.amount
       while balance < total_fund && continue
         curr_orders = bid_active_orders.select { |o| o['time'] > start_ms }
         curr_orders.map { |o| undo_order(o['orderId']) }
@@ -320,7 +320,7 @@ class Binance < Market
     bid_price = ticker['askPrice'].to_f
     bid_order = bids.create(price: bid_price, amount: amount, category: 'market', state: 'succ')
     return nil if bid_order.state == 500
-    push_order = sync_market_order(:bid, amount)
+    push_order = sync_market_order(:bid, bid_order.amount)
     if push_order['state'] == 200
       bid_order.notice
     else
