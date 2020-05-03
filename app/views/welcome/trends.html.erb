@@ -12,7 +12,7 @@
     var widget = window.tvWidget = new TradingView.widget({
       datafeed: new window.Datafeeds.UDFCompatibleDatafeed(url,60000),
       symbol: "<%= params[:symbol] %>",
-      interval: '60',
+      interval: '5',
       theme: 'Grey',
       container_id: 'tv_chart_container',
       library_path: '/trading_library/',
@@ -79,6 +79,7 @@
 
     widget.onChartReady(() => {
       //添加K线时间分辨
+      widget.createButton().on('click', function(e){ widget.chart().setResolution('5')}).append('M5');
       widget.createButton().on('click', function(e){ widget.chart().setResolution('15')}).append('M15');
       widget.createButton().on('click', function(e){ widget.chart().setResolution('30')}).append('M30');
       widget.createButton().on('click', function(e){ widget.chart().setResolution('60')}).append('H1');

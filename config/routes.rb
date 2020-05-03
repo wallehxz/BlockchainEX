@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   get '/trending/symbols', to: "trending#symbols"
   get '/trending/history', to: "trending#history"
   get '/trending/time',    to: "trending#time"
+  get '/trending/marks',   to: "trending#marks"
   get '/webhook',          to: "api/tickers#webhook"
 
   namespace :api do

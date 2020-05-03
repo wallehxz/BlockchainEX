@@ -67,12 +67,14 @@ class Binance < Market
     "#{quote_unit}#{base_unit}"
   end
 
-  def get_ticker(interval,amount)
-    market_url = 'https://api.binance.com/api/v1/klines'
+  def get_ticker(interval,amount, start_t: nil, end_t: nil)
+    market_url = 'https://api.binance.com/api/v3/klines'
     res = Faraday.get do |req|
       req.url market_url
       req.params['symbol'] = symbol
       req.params['interval'] = interval
+      req.params['startTime'] = start_t if start_t
+      req.params['endTime'] = end_t if end_t
       req.params['limit'] = amount
     end
     current = JSON.parse(res.body)
@@ -137,12 +139,13 @@ class Binance < Market
   def all_orders
     order_url = 'https://api.binance.com/api/v3/allOrders'
     timestamp = (Time.now.to_f * 1000).to_i - 2000
-    params_string = "recvWindow=10000&symbol=#{symbol}&timestamp=#{timestamp}"
+    params_string = "limit=1000&recvWindow=10000&symbol=#{symbol}&timestamp=#{timestamp}"
     res = Faraday.get do |req|
       req.url order_url
       req.headers['X-MBX-APIKEY'] = Settings.binance_key
       req.params['symbol'] = symbol
       req.params['recvWindow'] = 10000
+      req.params['limit'] = 1000
       req.params['timestamp'] = timestamp
       req.params['signature'] = params_signed(params_string)
     end
