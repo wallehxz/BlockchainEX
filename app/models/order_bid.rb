@@ -19,16 +19,15 @@ class OrderBid < Order
 
   before_create :check_fund_exceed
   before_create :check_support_price
-  after_save :preset_loss
 
   def push_limit_order
     if state.init?
-      if Rails.env.production?
+      # if Rails.env.production?
         result = market.sync_limit_order(:bid, amount, price)
         self.update_attributes(state: result['state'], cause: result['cause'])
-      else
-        mock_push
-      end
+      # else
+      #   mock_push
+      # end
       notice
     end
   end
@@ -39,7 +38,7 @@ class OrderBid < Order
 
   def check_fund_exceed
     if quota = market&.regulate&.retain
-      total_fund = market.all_funds
+      total_fund = market.all_funds rescue 0
       if total_fund >= quota
         self.state = 500
         self.cause = "Quota has fulled"
