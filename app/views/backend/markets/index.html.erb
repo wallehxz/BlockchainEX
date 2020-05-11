@@ -22,6 +22,7 @@
               <th tabindex="0" aria-controls="example1" style="text-align: center">交易所</th>
               <th tabindex="0" aria-controls="example1" style="text-align: center">市场币</th>
               <th tabindex="0" aria-controls="example1" style="text-align: center">标的币</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">平均成本</th>
               <th tabindex="0" aria-controls="example1" style="text-align: center;width: 240px">操作</th>
             </tr>
             </thead>
@@ -44,6 +45,11 @@
                 <td><br>
                   <label class="btn bg-black btn-flat" style="font-size: 16px;min-width: 100px">
                     <%= item.recent_price rescue item.last_quote&.c %> <%= item.base_unit %>
+                  </label>
+                </td>
+                <td><br>
+                  <label class="btn bg-black btn-flat" style="font-size: 16px;min-width: 100px">
+                    <%= item.avg_cost&.round(4) %>
                   </label>
                 </td>
                 <td style="text-align: left">

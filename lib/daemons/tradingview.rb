@@ -69,7 +69,6 @@ def stop_loss(subject)
     ask_order = market.asks.create(price: price, amount: funds, category: 'chives', state: 'succ')
     ask_order.push_market_order
     ask_order.notice
-    market.bids.update_all(state: 120)
     market.regulate.update(fast_trade: false)
   end
 end
@@ -80,7 +79,7 @@ def jiancang(subject)
   market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
   unless market&.regulate&.fast_trade
     market.regulate.update(fast_trade: true)
-    amount = market.regulate.retain * 0.3
+    amount = market.regulate.retain * 0.35
     market.step_price_bid(amount)
   end
 end

@@ -194,6 +194,25 @@ class Binance < Market
     end
   end
 
+  def all_funds
+    sync_fund
+    fund.balance + fund.freezing
+  end
+
+  def avg_cost
+    total = all_funds
+    _fund = 0
+    _cost = 0
+    _a = []
+    time_bids = all_orders.select {|o| o['side'] == 'BUY' && o['executedQty'].to_f > 0 }.reverse
+    time_bids.each do |item|
+      next if total.round(2) <= _fund.round(2)
+      _cost += item["cummulativeQuoteQty"].to_f
+      _fund += item["executedQty"].to_f
+    end
+    _cost / _fund
+  end
+
   def sync_cash
     remote = Account.binance_sync(base_unit)
     if remote['free'].to_f > 0 || remote['locked'].to_f > 0
@@ -312,7 +331,6 @@ class Binance < Market
       end
       ask_amount = (base_fund - balance).round(4)
       ask_order.update(amount: ask_amount, total: ask_amount * ask_order.price )
-      bids.succ.order(price: :asc).first&.update(state: 120)
       ask_order.notice
     rescue => detail
       Notice.dingding("Limit Ask Errors：\n Market：#{symbol} \n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")
@@ -338,7 +356,6 @@ class Binance < Market
     push_order = sync_market_order(:ask, amount)
     if push_order['state'] == 200
       ask_order.notice
-      bids.succ.order(price: :asc).first&.update(state: 120)
     else
       ask_order.update(push_order)
     end

@@ -1,12 +1,12 @@
 class Backend::OrdersController < Backend::BaseController
   def index
     @orders = Order.recent
-    @orders = @orders.where(type: params[:type])if params[:type].present?
-    @orders = @orders.where(category: params[:cate])if params[:cate].present?
-    @orders = @orders.where(state: params[:state])if params[:state].present?
+    @orders = @orders.where(type: params[:type]) if params[:type].present?
+    @orders = @orders.where(category: params[:cate]) if params[:cate].present?
+    @orders = @orders.where(state: params[:state] || 'succ')
     if params[:actions] == 'destroy'
       @orders.destroy_all
-      flash[:warn] = "已清空所有条件数据！"
+      flash[:warn] = "已清空筛选条件数据！"
       return redirect_to :back
     end
     @orders = @orders.paginate(page:params[:page])

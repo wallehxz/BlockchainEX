@@ -39,14 +39,13 @@ class OrderBid < Order
 
   def check_fund_exceed
     if quota = market&.regulate&.retain
-      market.sync_fund
-      curr_fund = market.fund.balance
-      if curr_fund > quota
+      total_fund = market.all_funds
+      if total_fund >= quota
         self.state = 500
         self.cause = "Quota has fulled"
       end
-      if curr_fund < quota && curr_fund + amount > quota
-        self.amount = quota - curr_fund
+      if total_fund < quota && total_fund + amount > quota
+        self.amount = quota - total_fund
       end
     end
   end
@@ -60,16 +59,4 @@ class OrderBid < Order
     end
   end
 
-  def preset_loss
-    succ_orders = market.bids.succ
-    if succ_orders.count > 0 && state == 'succ'
-      ave_price = succ_orders.map(&:price).sum / succ_orders.count
-      support = ave_price * (1 - 0.00618)
-      support_price = market&.regulate&.support
-      if support < support_price
-        market&.regulate.update(support: support)
-        Notice.dingding("[#{Time.now.to_s(:short)}] \n 止损价更新为：#{support}")
-      end
-    end
-  end
 end

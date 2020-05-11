@@ -13,11 +13,11 @@
 #  notify_dd        :boolean
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
-#  fast_profit      :float
 #  fast_trade       :boolean          default(FALSE)
+#  fast_cash        :float
+#  fast_profit      :float
 #  support          :float
 #  resistance       :float
-#  fast_cash        :float
 #  range_trade      :boolean          default(FALSE)
 #  range_cash       :float
 #  range_profit     :float
