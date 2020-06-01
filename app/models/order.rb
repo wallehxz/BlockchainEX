@@ -73,7 +73,7 @@ class Order < ActiveRecord::Base
       "> 数量：#{amount} #{market.quote_unit}\n" +
       "> 成交额 #{total.round(2)} #{market.base_unit}\n"
       Notice.sms(content)
-    # end
+    end
   end
 
   def mock_push
