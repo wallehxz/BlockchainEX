@@ -150,6 +150,11 @@ class Market < ActiveRecord::Base
       kline = last_quote.kline_info
       tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 8H MaxVols #{last_quote.v} Price #{last_quote.c}，Float #{kline}"
       quote_notice(tip)
+
+      if regulate&.range_trade && kline[1] > 0
+        _amount = regulate.range_cash
+        new_bid(recent_price * 0.9975,_amount)
+      end
     end
   end
 
