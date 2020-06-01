@@ -82,7 +82,7 @@
         <%= f.text_field :range_profit, class:'form-control', placeholder:'（必填* 浮动交易成交收益）' %>
       </div>
     </div>
-    <div class="form-group has-success">
+    <div class="form-group has-warning">
       <label>盈利价位</label>
       <div class="input-group">
         <div class="input-group-addon">
@@ -91,13 +91,22 @@
         <%= f.text_field :resistance, class:'form-control', placeholder:'（必填* 盈利价位）' %>
       </div>
     </div>
-    <div class="form-group has-success">
+    <div class="form-group has-error">
       <label>亏损价位</label>
       <div class="input-group">
         <div class="input-group-addon">
           <i class="fa fa-arrow-up"></i>
         </div>
         <%= f.text_field :support, class:'form-control', placeholder:'（必填* 亏损价位）' %>
+      </div>
+    </div>
+    <div class="form-group has-success">
+      <label>建仓价位</label>
+      <div class="input-group">
+        <div class="input-group-addon">
+          <i class="fa fa-arrow-up"></i>
+        </div>
+        <%= f.text_field :cost, class:'form-control', placeholder:'（必填* 建仓价位）' %>
       </div>
     </div>
 

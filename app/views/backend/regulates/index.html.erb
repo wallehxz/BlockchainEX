@@ -40,6 +40,7 @@
                    卖出收益： <%= item.cash_profit %> <%= item.market.base_unit %><br>
                    盈利位价： <%= item.resistance %><br>
                    亏损位价： <%= item.support %><br>
+                   建仓位价： <%= item.cost %><br>
                 </td>
                 <td>
                   钉钉：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_dd %> onchange='switch_state(<%= item.id %>, "dd")'></br></br>

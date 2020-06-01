@@ -48,6 +48,7 @@ class Order < ActiveRecord::Base
 
   def notice
     if state.succ?
+      sms_notice if market.regulate.notify_sms
       push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Settings.trading_bot}"
       body_params ={ msgtype:'markdown', markdown:{ title: "#{type_cn}订单" } }
       body_params[:markdown][:text] =
@@ -63,6 +64,16 @@ class Order < ActiveRecord::Base
         req.body = body_params.to_json
       end
     end
+  end
+
+  def sms_notice
+    if Time.now.hour.in? [*9..22]
+      content = "\n> #{market.symbols} #{type_cn}订单\n" +
+      "> 价格：#{price} #{market.base_unit}\n" +
+      "> 数量：#{amount} #{market.quote_unit}\n" +
+      "> 成交额 #{total.round(2)} #{market.base_unit}\n"
+      Notice.sms(content)
+    # end
   end
 
   def mock_push

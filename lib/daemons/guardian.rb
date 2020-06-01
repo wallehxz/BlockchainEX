@@ -17,30 +17,39 @@ end
 def start_hunter(btc)
   _profit = btc.regulate.resistance
   _loss   = btc.regulate.support
+  _cost   = btc.regulate.cost
   _latest = btc.recent_price
 
   if _latest > _profit
     stop_profit(btc)
+    btc.regulate.update(resistance: _latest)
   end
 
   if _latest < _loss
-    stop_loss(btc)
+    all_out(btc)
   end
 
-  if _latest < (btc.avg_cost - btc.regulate.fast_cash)
-    stop_loss(btc)
+  if _latest <= _cost
+    amount = btc.regulate.fast_cash
+    quota = btc.regulate.retain
+    funds = btc.all_funds
+    if funds < quota * 0.5
+      amount = quota * 0.6 - funds
+    end
+    btc.step_price_bid(amount)
   end
 end
 
 def stop_profit(btc)
   amount = btc.regulate.fast_cash
-  btc.step_price_ask(amount)
+  btc.market_price_ask(amount)
 end
 
-def stop_loss(btc)
+def all_out(btc)
   btc.sync_fund
   amount = btc.fund&.balance
-  btc.step_price_ask(amount)
+  btc.market_price_ask(amount)
+  btc.regulate.toggle(:fast_trade)
 end
 
 while($running) do
