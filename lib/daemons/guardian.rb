@@ -20,17 +20,22 @@ def start_hunter(btc)
   _cost   = btc.regulate.cost
   _latest = btc.recent_price
 
-  if _latest > _profit
-    stop_profit(btc)
+  if _latest < _loss
+    btc.sync_fund
+    amount = btc.fund&.balance
+    btc.market_price_ask(amount)
+    Notice.sms("\n行情价格低于止损线#{_loss}，开启止损操作 \n> 数量:#{amount} \n> 价格: #{_latest}")
+    btc.regulate.update(fast_trade: false, range_trade: false)
+  end
+
+  if _latest > _profit && btc&.regulate&.fast_trade
+    amount = btc.regulate.fast_cash
+    btc.market_price_ask(amount)
     btc.regulate.update(resistance: _latest)
     btc.regulate.update(support: _latest * 0.997)
   end
 
-  if _latest < _loss
-    all_out(btc)
-  end
-
-  if _latest < _cost
+  if _latest < _cost && btc&.regulate&.fast_trade
     amount = btc.regulate.fast_cash
     quota = btc.regulate.retain
     funds = btc.all_funds
@@ -42,18 +47,6 @@ def start_hunter(btc)
   end
 end
 
-def stop_profit(btc)
-  amount = btc.regulate.fast_cash
-  btc.market_price_ask(amount)
-end
-
-def all_out(btc)
-  btc.sync_fund
-  amount = btc.fund&.balance
-  btc.market_price_ask(amount)
-  btc.regulate.update(fast_trade: false, range_trade: false)
-end
-
 while($running) do
   begin
     btc = Market.first
@@ -63,5 +56,5 @@ while($running) do
   rescue => detail
     Notice.dingding("羊毛党 Robot：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
   end
-  sleep 30
+  sleep 45
 end
