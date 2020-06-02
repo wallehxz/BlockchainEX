@@ -51,8 +51,7 @@ def all_out(btc)
   btc.sync_fund
   amount = btc.fund&.balance
   btc.market_price_ask(amount)
-  btc.regulate.toggle(:fast_trade)
-  btc.regulate.toggle(:range_trade)
+  btc.regulate.update(fast_trade: false, range_trade: false)
 end
 
 while($running) do

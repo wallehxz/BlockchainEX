@@ -18,7 +18,6 @@
 class OrderBid < Order
 
   before_create :check_fund_exceed
-  before_create :check_support_price
 
   def push_limit_order
     if state.init?
@@ -48,6 +47,7 @@ class OrderBid < Order
     end
   end
 
+  # before_create :check_support_price
   def check_support_price
     if support_price = market&.regulate&.support
       if price < support_price
