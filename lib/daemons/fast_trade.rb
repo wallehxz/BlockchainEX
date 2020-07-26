@@ -48,5 +48,5 @@ while($running) do
   rescue => detail
     Notice.dingding("TradeBot：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
   end
-  sleep 10
+  sleep 30
 end
