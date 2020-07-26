@@ -64,7 +64,7 @@ def stop_loss(subject)
   market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
   if market&.regulate&.fast_trade
     market.sync_fund
-    funds = market.fund&.balance
+    funds = market.fund&.balance * 0.999
     price = market.recent_price
     ask_order = market.asks.create(price: price, amount: funds, category: 'chives', state: 'succ')
     ask_order.push_market_order
@@ -73,13 +73,13 @@ def stop_loss(subject)
   end
 end
 
-def jiancang(subject)
+def build(subject)
   trading = subject.split('|')
   quote = trading[0].split('_')
   market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
   unless market&.regulate&.fast_trade
-    market.regulate.update(fast_trade: true)
-    amount = market.regulate.retain * 0.35
+    market.regulate.update(fast_trade: true, support: market.recent_price * 0.9975)
+    amount = market.regulate.retain
     market.step_price_bid(amount)
   end
 end
@@ -94,7 +94,7 @@ while($running) do
         Notice.dingding("[#{Time.now.to_s(:short)}] \n #{topic}")
         start_trade(topic) if topic =~ /(bid)|(ask)/
         stop_loss(topic) if topic =~ /stop_loss/
-        jiancang(topic) if topic =~ /jiancang/
+        build(topic) if topic =~ /build/
       end
     end
   rescue => detail

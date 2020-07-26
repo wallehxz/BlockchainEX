@@ -14,47 +14,39 @@ Signal.trap("TERM") do
   $running = false
 end
 
-def start_hunter(btc)
-  _profit = btc.regulate.resistance
-  _loss   = btc.regulate.support
-  _cost   = btc.regulate.cost
-  _latest = btc.recent_price
+def start_hunter(coin)
+  _profit = coin.regulate.resistance
+  _cost   = coin.regulate.cost
+  _latest = coin.recent_price
 
-  if _latest < _loss
-    btc.sync_fund
-    amount = btc.fund&.balance
-    btc.market_price_ask(amount)
-    Notice.sms("\n行情价格低于止损线#{_loss}，开启止损操作 \n> 数量:#{amount} \n> 价格: #{_latest}")
-    btc.regulate.update(fast_trade: false, range_trade: false)
+  if _latest > _profit
+    amount = coin.regulate.fast_cash
+    coin.step_price_ask(amount)
+    coin.regulate.update(resistance: _latest)
+    coin.regulate.update(support: _latest * 0.998)
   end
 
-  if _latest > _profit && btc&.regulate&.fast_trade
-    amount = btc.regulate.fast_cash
-    btc.market_price_ask(amount)
-    btc.regulate.update(resistance: _latest)
-    btc.regulate.update(support: _latest * 0.997)
-  end
-
-  if _latest < _cost && btc&.regulate&.fast_trade
-    amount = btc.regulate.fast_cash
-    quota = btc.regulate.retain
-    funds = btc.all_funds
+  if _latest < _cost
+    amount = coin.regulate.fast_cash
+    quota = coin.regulate.retain
+    funds = coin.all_funds
     if funds < quota * 0.5
       amount = quota * 0.6 - funds
     end
-    btc.step_price_bid(amount)
-    btc.regulate.update(cost: _latest)
+    coin.step_price_bid(amount)
+    coin.regulate.update(cost: _latest * 0.999)
   end
 end
 
 while($running) do
   begin
-    btc = Market.first
-    if btc&.regulate&.fast_trade
-      start_hunter(btc)
+    Market.all.each do |coin|
+      if coin&.regulate&.fast_trade
+        start_hunter(coin)
+      end
     end
   rescue => detail
-    Notice.dingding("羊毛党 Robot：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
+    Notice.dingding("TradeBot：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
   end
-  sleep 45
+  sleep 10
 end

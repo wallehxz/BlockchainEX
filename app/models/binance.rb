@@ -185,13 +185,9 @@ class Binance < Market
   end
 
   def sync_fund
-    remote =Account.binance_sync(quote_unit)
-    if remote['free'].to_f > 0 || remote['locked'].to_f > 0
-      locale = fund || build_fund
-      locale.balance = remote['free'].to_f
-      locale.freezing = remote['locked'].to_f
-      locale.save
-    end
+    remote = Account.binance_sync(quote_unit)
+    locale = fund || build_fund
+    locale.update(balance: remote['free'].to_f, freezing: remote['locked'].to_f)
   end
 
   def all_funds
