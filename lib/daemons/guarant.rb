@@ -30,7 +30,7 @@ while($running) do
       end
     end
   rescue => detail
-    Notice.dingding("TradeBot：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
+    Notice.dingding("Guarant：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
   end
   sleep 10
 end

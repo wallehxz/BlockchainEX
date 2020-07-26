@@ -29,10 +29,6 @@ def start_hunter(coin)
   if _latest < _cost
     amount = coin.regulate.fast_cash
     quota = coin.regulate.retain
-    funds = coin.all_funds
-    if funds < quota * 0.5
-      amount = quota * 0.6 - funds
-    end
     coin.step_price_bid(amount)
     coin.regulate.update(cost: _latest * 0.999)
   end
@@ -46,7 +42,7 @@ while($running) do
       end
     end
   rescue => detail
-    Notice.dingding("TradeBot：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
+    Notice.dingding("FastTrade：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
   end
   sleep 30
 end
