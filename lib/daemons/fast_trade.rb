@@ -20,8 +20,15 @@ def start_hunter(coin)
   _latest = coin.recent_price
 
   if _latest > _profit
+    coin.sync_fund
+    coin.sync_fund
+    balance = coin.fund.balance
     amount = coin.regulate.fast_cash
-    coin.step_price_ask(amount)
+    if balance > amount
+      coin.step_price_ask(amount)
+    else
+      coin.market_price_ask(balance * 0.999)
+    end
     coin.regulate.update(resistance: _latest)
     coin.regulate.update(support: _latest * 0.998)
   end
