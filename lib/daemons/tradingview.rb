@@ -78,7 +78,7 @@ def build(subject)
   quote = trading[0].split('_')
   market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
   unless market&.regulate&.fast_trade
-    market.regulate.update(fast_trade: true, support: market.recent_price * 0.9975)
+    market.regulate.update(fast_trade: true, support: market.recent_price * 0.9975, resistance: market.recent_price * 1.0075)
     amount = market.regulate.retain
     market.step_price_bid(amount)
   end

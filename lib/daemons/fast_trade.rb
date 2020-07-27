@@ -29,7 +29,7 @@ def start_hunter(coin)
     else
       coin.market_price_ask(balance * 0.999)
     end
-    coin.regulate.update(resistance: _latest)
+    coin.regulate.update(resistance: _latest * 1.001)
     coin.regulate.update(support: _latest * 0.998)
   end
 
