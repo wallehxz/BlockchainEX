@@ -31,7 +31,7 @@ Rails.application.routes.draw do
   end
   namespace :backend do
     get 'quote', to:'dashboard#index', as: :quote
-    get 'daemon', to: 'dashboard#daemon', as: :daemon
+    get 'daemons', to: 'dashboard#daemons', as: :daemons
     get 'daemon_operate', to: 'dashboard#daemon_operate'
     resources :markets do
       get :sync_balance, on: :member

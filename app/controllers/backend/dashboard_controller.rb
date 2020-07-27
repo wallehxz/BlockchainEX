@@ -14,7 +14,7 @@ class Backend::DashboardController < Backend::BaseController
     end
   end
 
-  def daemon; end
+  def daemons; end
 
   def daemon_operate
     status = {'on': '开启', 'off': '关闭'}
