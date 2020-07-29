@@ -46,12 +46,10 @@ class OrderAsk < Order
 
   def check_legal_profit
     if category == 'limit'
-      cash_profit = market.regulate&.cash_profit
       avg_cost = market.avg_cost
-      price_profit = cash_profit + avg_cost
-      if price < price_profit
+      if price < avg_cost
         self.state = 500
-        self.cause = "Limit Ask price must > average cost #{avg_cost}"
+        self.cause = "Limit ask price must > average cost #{avg_cost}"
       end
     end
   end

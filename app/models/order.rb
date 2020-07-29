@@ -76,6 +76,24 @@ class Order < ActiveRecord::Base
     end
   end
 
+  after_save :failed_notice
+  def failed_notice
+    if state.fail?
+      push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Settings.trading_bot}"
+      body_params ={ msgtype:'markdown', markdown:{ title: "#{type_cn}订单" } }
+      body_params[:markdown][:text] =
+        "#### #{market.type} #{type_cn}订单\n\n" +
+        "> 价格：#{price} #{market.base_unit}\n\n" +
+        "> 数量：#{amount} #{market.quote_unit}\n\n" +
+        "> 失败：#{cause}\n"
+      res = Faraday.post do |req|
+        req.url push_url
+        req.headers['Content-Type'] = 'application/json'
+        req.body = body_params.to_json
+      end
+    end
+  end
+
   def mock_push
     self.update_attributes(state: 200)
   end
