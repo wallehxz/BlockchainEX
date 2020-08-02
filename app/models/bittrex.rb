@@ -69,22 +69,14 @@ class Bittrex < Market
 
   def sync_fund
     remote =Account.bittrex_sync(quote_unit)
-    if remote['Balance'].to_f > 0.01 || remote['Pending'].to_f > 0.01
-      locale = fund || build_fund
-      locale.balance = remote['Balance'].to_f
-      locale.freezing = remote['Pending'].to_f
-      locale.save
-    end
+    locale = fund || build_fund
+    locale.update(balance: remote['Balance'].to_f, freezing: remote['Pending'].to_f)
   end
 
   def sync_cash
     remote = Account.bittrex_sync(base_unit)
-    if remote['Balance'].to_f > 0.01 || remote['Pending'].to_f > 0.01
-      locale = cash || build_cash
-      locale.balance = remote['Balance'].to_f
-      locale.freezing = remote['Pending'].to_f
-      locale.save
-    end
+    locale = cash || build_cash
+    locale.update(balance: remote['Balance'].to_f, freezing: remote['Pending'].to_f)
   end
 
   def sync_limit_order(side, amount, price)

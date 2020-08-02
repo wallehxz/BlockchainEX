@@ -47,13 +47,12 @@ class OrderBid < Order
     end
   end
 
-  # before_create :check_support_price
-  def check_support_price
-    if support_price = market&.regulate&.support
-      if price < support_price
-        self.state = 500
-        self.cause = "Bid price more than #{support_price}"
-      end
+  before_create :check_insufficient_cash
+  def check_insufficient_cash
+    market.sync_cash
+    cash = market.cash.balance
+    if amount * price > cash
+      self.amount = cash / price
     end
   end
 

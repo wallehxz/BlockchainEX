@@ -34,7 +34,6 @@ class Order < ActiveRecord::Base
       self.price = price.to_d.round(market&.regulate&.price_precision || 4, :down)
       self.amount = amount.to_d.round(market&.regulate&.amount_precision || 4, :down)
       self.total = (price * amount).to_d.round(4, :down)
-      self.state = 0 if total == 0
       save
     end
   end
@@ -92,6 +91,14 @@ class Order < ActiveRecord::Base
         req.headers['Content-Type'] = 'application/json'
         req.body = body_params.to_json
       end
+    end
+  end
+
+  after_save :zero_cancel
+  def zero_cancel
+    if amount == 0 && state != 0
+      self.state = 0
+      save
     end
   end
 
