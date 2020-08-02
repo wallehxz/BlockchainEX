@@ -39,7 +39,7 @@ end
 def bid_order(market, amount, profit, subject)
   _latest = market.recent_price
   price = _latest * (1 - profit)
-  market.regulate.update(cost: _latest)
+  market.regulate.update(cost: _latest * 0.999)
   if subject =~ /(step)|(market)/
     puts "[#{Time.now.to_s(:short)}] #{market.full_name} bid #{$1} amount: #{amount}"
     market.send("#{$1}_price_bid".to_sym, amount)
