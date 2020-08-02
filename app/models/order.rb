@@ -82,7 +82,7 @@ class Order < ActiveRecord::Base
       push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Settings.trading_bot}"
       body_params ={ msgtype:'markdown', markdown:{ title: "#{type_cn}订单" } }
       body_params[:markdown][:text] =
-        "#### #{market.type} #{type_cn}订单\n\n" +
+        "#### #{market.type} 失效订单\n\n" +
         "> 价格：#{price} #{market.base_unit}\n\n" +
         "> 数量：#{amount} #{market.quote_unit}\n\n" +
         "> 失败：#{cause}\n"

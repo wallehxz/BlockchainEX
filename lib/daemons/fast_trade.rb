@@ -24,20 +24,33 @@ def start_hunter(coin)
     coin.sync_fund
     balance = coin.fund.balance
     amount = coin.regulate.fast_cash
-    if balance > amount
-      coin.step_price_ask(amount)
-    else
-      coin.market_price_ask(balance * 0.999)
+    if balance > 0.01
+      if balance > amount
+        coin.step_price_ask(amount)
+      else
+        coin.market_price_ask(balance * 0.998)
+      end
+      coin.regulate.update(resistance: _latest * 1.001)
+      coin.regulate.update(support: _latest * 0.998)
+      if _latest * 0.998 > coin.avg_cost
+        switch_guarant
+      end
     end
-    coin.regulate.update(resistance: _latest * 1.001)
-    coin.regulate.update(support: _latest * 0.998)
   end
 
   if _latest < _cost
     amount = coin.regulate.fast_cash
     quota = coin.regulate.retain
     coin.step_price_bid(amount)
-    coin.regulate.update(cost: _latest * 0.999)
+    coin.regulate.update(cost: _latest)
+  end
+end
+
+def switch_guarant
+  status = Daemons::Rails::Monitoring.statuses
+  unless status['guarant.rb'] == :running
+    Daemons::Rails::Monitoring.start('guarant.rb')
+    Notice.dingding("开启止损操作")
   end
 end
 
