@@ -31,8 +31,8 @@ def start_hunter(coin)
         coin.market_price_ask(balance * 0.998)
       end
       coin.regulate.update(resistance: _latest * 1.001)
-      coin.regulate.update(support: _latest * 0.998)
-      if _latest * 0.998 > coin.avg_cost
+      coin.regulate.update(support: _latest * 0.9975)
+      if _latest * 0.9975 > coin.avg_cost
         switch_guarant
       end
     end
