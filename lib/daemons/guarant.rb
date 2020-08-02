@@ -24,11 +24,9 @@ while($running) do
         coin.sync_fund
         balance = coin.fund.balance
         if balance > 1
-          coin.step_price_ask(balance / 4)
-          Notice.sms("\n 开启止损操作：\n> 数量: #{balance / 3} \n> 价格: #{_latest} \n")
+          coin.market_price_ask(regul.fast_cash * 2)
         else
-          coin.step_price_ask(balance * 0.998)
-          Notice.sms("\n 开启止损操作：\n> 数量: #{balance} \n> 价格: #{_latest} \n")
+          coin.market_price_ask(balance * 0.998)
           regul.update(fast_trade: false)
         end
       end
@@ -36,5 +34,5 @@ while($running) do
   rescue => detail
     Notice.dingding("Guarant：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
   end
-  sleep 15
+  sleep 10
 end
