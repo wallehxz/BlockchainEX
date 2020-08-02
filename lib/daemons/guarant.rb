@@ -24,10 +24,10 @@ while($running) do
         coin.sync_fund
         balance = coin.fund.balance
         if balance > 1
-          coin.market_price_ask(balance / 3)
+          coin.step_price_ask(balance / 4)
           Notice.sms("\n 开启止损操作：\n> 数量: #{balance / 3} \n> 价格: #{_latest} \n")
         else
-          coin.market_price_ask(balance * 0.998)
+          coin.step_price_ask(balance * 0.998)
           Notice.sms("\n 开启止损操作：\n> 数量: #{balance} \n> 价格: #{_latest} \n")
           regul.update(fast_trade: false)
         end
