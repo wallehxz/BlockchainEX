@@ -85,7 +85,16 @@ class Binance < Market
       side = {'bid': 'BUY', 'ask': 'SELL'}[side]
       order_url = 'https://api.binance.com/api/v3/order'
       timestamp = (Time.now.to_f * 1000).to_i - 2000
-      params_string = "price=#{price.to_d}&quantity=#{quantity.to_d}&recvWindow=10000&side=#{side}&symbol=#{symbol}&timeInForce=GTC&timestamp=#{timestamp}&type=LIMIT"
+      reqs = []
+      reqs << ['symbol', symbol]
+      reqs << ['side', side]
+      reqs << ['type', 'LIMIT']
+      reqs << ['price', price.to_d]
+      reqs << ['quantity', quantity.to_d]
+      reqs << ['recvWindow', 10000]
+      reqs << ['timestamp', timestamp]
+      reqs << ['timeInForce', 'GTC']
+      reqs_string = reqs.sort.map {|x| x.join('=')}.join('&')
       res = Faraday.post do |req|
         req.url order_url
         req.headers['X-MBX-APIKEY'] = Settings.binance_key
@@ -97,7 +106,7 @@ class Binance < Market
         req.params['recvWindow'] = 10000
         req.params['timeInForce'] = 'GTC'
         req.params['timestamp'] = timestamp
-        req.params['signature'] = params_signed(params_string)
+        req.params['signature'] = params_signed(reqs_string)
       end
       result = JSON.parse(res.body)
       result['code'] ? { 'state'=> 500, 'cause'=> result['msg'] } : { 'state'=> 200 }
@@ -111,7 +120,14 @@ class Binance < Market
       side = { 'bid': 'BUY', 'ask': 'SELL' }[side]
       order_url = 'https://api.binance.com/api/v3/order'
       timestamp = (Time.now.to_f * 1000).to_i - 2000
-      params_string = "quantity=#{quantity.to_d}&recvWindow=10000&side=#{side}&symbol=#{symbol}&timestamp=#{timestamp}&type=MARKET"
+      reqs = []
+      reqs << ['symbol', symbol]
+      reqs << ['side', side]
+      reqs << ['type', 'MARKET']
+      reqs << ['timestamp', timestamp]
+      reqs << ['quantity', quantity.to_d]
+      reqs << ['recvWindow', 10000]
+      reqs_string = reqs.sort.map {|x| x.join('=')}.join('&')
       res = Faraday.post do |req|
         req.url order_url
         req.headers['X-MBX-APIKEY'] = Settings.binance_key
@@ -121,7 +137,7 @@ class Binance < Market
         req.params['quantity'] = quantity.to_d
         req.params['recvWindow'] = 10000
         req.params['timestamp'] = timestamp
-        req.params['signature'] = params_signed(params_string)
+        req.params['signature'] = params_signed(reqs_string)
       end
       result = JSON.parse(res.body)
       result['code'] ? { 'state'=> 500, 'cause'=> result['msg'] } : { 'state'=> 200 }
