@@ -16,11 +16,11 @@ end
 
 while($running) do
   begin
-    Regulate.where(fast_trade: true).each do |regul|
+    Regulate.all.each do |regul|
       coin    = regul.market
-      _loss   = regul.support
       _latest = coin.recent_price
-      if _latest < _loss
+      _average = coin.avg_cost
+      if _latest < _average * 0.995
         coin.sync_fund
         balance = coin.fund.balance
         if balance > 1

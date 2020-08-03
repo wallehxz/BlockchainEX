@@ -21,17 +21,11 @@ def start_hunter(coin)
 
   if _latest > _profit
     coin.sync_fund
-    coin.sync_fund
     balance = coin.fund.balance
     amount = coin.regulate.fast_cash
     if balance > 0.01
-      if balance > amount
-        coin.step_price_ask(amount)
-      else
-        coin.market_price_ask(balance * 0.998)
-      end
-      coin.regulate.update(resistance: _latest * 1.001)
-      coin.regulate.update(support: _latest * 0.9975)
+      coin.step_price_ask(amount)
+      coin.regulate.update(resistance: _latest * 1.001, cost: _latest * 0.9985)
       if _latest * 0.9975 > coin.avg_cost
         switch_guarant
       end
@@ -42,7 +36,7 @@ def start_hunter(coin)
     amount = coin.regulate.fast_cash
     quota = coin.regulate.retain
     coin.step_price_bid(amount)
-    coin.regulate.update(cost: _latest)
+    coin.regulate.update(cost: _latest * 0.9995)
   end
 end
 

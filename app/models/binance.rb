@@ -11,7 +11,7 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 
-# https://api.binance.com/api/v1/exchangeInfo
+# https://api.binance.com/api/v3/exchangeInfo
 
 class Binance < Market
   after_create :batch_sync_quote
@@ -222,7 +222,7 @@ class Binance < Market
       _cost += item["cummulativeQuoteQty"].to_f
       _fund += item["executedQty"].to_f
     end
-    _cost / _fund
+    _cost / _fund rescue 0
   end
 
   def sync_cash
