@@ -20,14 +20,15 @@ while($running) do
       coin    = regul.market
       _latest = coin.recent_price
       _average = coin.avg_cost
-      if _latest < _average * 0.995
+      if _latest < _average
+        regul.update(fast_trade: false)
         coin.sync_fund
         balance = coin.fund.balance
         if balance > 1
           coin.market_price_ask(regul.fast_cash * 2)
         else
           coin.market_price_ask(balance * 0.998)
-          regul.update(fast_trade: false)
+          coin.stop_daemon('stoploss')
         end
       end
     end

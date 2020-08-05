@@ -173,4 +173,23 @@ class Market < ActiveRecord::Base
   def new_ask(price, amount, category = 'limit')
     asks.create(price: price, amount: amount, category: category)
   end
+
+  #["tradingview.rb", "guarant.rb", "fluctuation.rb", "fast_trade.rb"]
+  def start_daemon(daemon)
+    title = "#{daemon}.rb"
+    status = Daemons::Rails::Monitoring.statuses
+    unless status[title] == :running
+      Daemons::Rails::Monitoring.start(title)
+      Notice.dingding("开启#{daemon.camelcase}守护进程")
+    end
+  end
+
+  def stop_daemon(daemon)
+    title = "#{daemon}.rb"
+    status = Daemons::Rails::Monitoring.statuses
+    if status[title] == :running
+      Daemons::Rails::Monitoring.stop(title)
+      Notice.dingding("停用#{daemon.camelcase}守护进程")
+    end
+  end
 end

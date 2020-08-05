@@ -64,15 +64,7 @@ def stop_loss(subject)
   trading = subject.split('|')
   quote = trading[0].split('_')
   market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
-  if market&.regulate&.fast_trade
-    market.sync_fund
-    funds = market.fund&.balance * 0.999
-    price = market.recent_price
-    ask_order = market.asks.create(price: price, amount: funds, category: 'chives', state: 'succ')
-    ask_order.push_market_order
-    ask_order.notice
-    market.regulate.update(fast_trade: false)
-  end
+  market.start_daemon('stoploss')
 end
 
 def build(subject)
