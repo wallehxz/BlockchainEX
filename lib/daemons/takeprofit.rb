@@ -19,9 +19,8 @@ while($running) do
     Regulate.all.each do |regul|
       coin    = regul.market
       _latest = coin.recent_price
-      _profit = coin.support
+      _profit = regul.support
       if _latest < _profit
-        regul.update(fast_trade: false)
         coin.sync_fund
         balance = coin.fund.balance
         if balance > 1
