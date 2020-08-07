@@ -25,7 +25,8 @@ def start_hunter(coin)
     amount = coin.regulate.fast_cash
     if balance > 0.01
       coin.step_price_ask(amount)
-      coin.regulate.update(resistance: _latest * 1.001, cost: _latest * 0.999)
+      coin.regulate.update(resistance: _latest * 1.001, support: _latest * 0.998)
+      coin.start_daemon('takeprofit')
     end
   end
 
@@ -33,7 +34,7 @@ def start_hunter(coin)
     amount = coin.regulate.fast_cash
     quota = coin.regulate.retain
     coin.step_price_bid(amount)
-    coin.regulate.update(cost: _latest * 0.9995)
+    coin.regulate.update(cost: _latest * 0.999)
   end
 end
 

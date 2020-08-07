@@ -283,7 +283,7 @@ class Binance < Market
 
   def step_price_bid(amount)
     begin
-      bid_order = bids.create(price: ticker['bidPrice'].to_f, amount: amount, category: 'limit', state: 'succ')
+      bid_order = bids.create(price: ticker['bidPrice'].to_f, amount: amount, category: 'step', state: 'succ')
       return nil if bid_order.state == 500
       continue = true
       start_ms = (Time.now.to_f * 1000).to_i
@@ -317,7 +317,7 @@ class Binance < Market
 
   def step_price_ask(amount)
     begin
-      ask_order = asks.create(price: ticker['askPrice'].to_f, amount: amount, category: 'limit', state: 'succ')
+      ask_order = asks.create(price: ticker['askPrice'].to_f, amount: amount, category: 'step', state: 'succ')
       return nil if ask_order.state == 500
       continue = true
       start_ms = (Time.now.to_f * 1000).to_i

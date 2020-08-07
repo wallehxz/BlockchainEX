@@ -17,10 +17,8 @@
 
 class OrderBid < Order
 
-  before_create :check_fund_exceed
-
   def push_limit_order
-    if state.init?
+    if state.init? && category.limit?
       if Rails.env.production?
         result = market.sync_limit_order(:bid, amount, price)
         self.update_attributes(state: result['state'], cause: result['cause'])
@@ -35,6 +33,15 @@ class OrderBid < Order
     market.sync_market_order(:bid, amount)
   end
 
+  after_create :push_step_order
+  def push_step_order
+    if state.init? && category.step?
+      self.errors.add(:cause, 'errors')
+      market.step_price_bid(amount)
+    end
+  end
+
+  before_create :check_fund_exceed
   def check_fund_exceed
     if quota = market&.regulate&.retain
       total_fund = market.all_funds rescue 0

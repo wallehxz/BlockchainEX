@@ -26,6 +26,7 @@
             <option value="?">类型</option>
             <option value="?cate=limit&type=<%= params[:type] %>" <%= 'selected' if params[:cate] == 'limit' %>>Limit-限价</option>
             <option value="?cate=range&type=<%= params[:type] %>" <%= 'selected' if params[:cate] == 'market' %>>Market-市价</option>
+            <option value="?cate=range&type=<%= params[:type] %>" <%= 'selected' if params[:cate] == 'step' %>>Step-阶梯价</option>
           </select>
         </div>
         <div class="col-sm-2">
@@ -56,11 +57,13 @@
             <tbody>
             <% @orders.each do |item| %>
               <tr style="text-align: center">
-                <td><%= item.market&.full_name %><br>
-                  <%= item.updated_at.to_s(:short) %>
+                <td>
+                  <%= item.updated_at.to_s(:short) %></br>
+                  <%= item.market&.symbol %><br>
                 </td>
-                <td><%= item.type_cn %><br>
-                  <%= item.category.camelize %>
+                <td>
+                  <%= item.category.camelize %></br>
+                  <%= item.type_cn %><br>
                 </td>
                 <td><%= item.price %></td>
                 <td><%= item.amount %></td>

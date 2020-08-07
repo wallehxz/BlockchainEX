@@ -17,11 +17,8 @@
 
 class OrderAsk < Order
 
-  before_create :check_legal_profit
-  before_create :check_amount_exceed
-
   def push_limit_order
-    if state.init?
+    if state.init? && category.limit?
       if Rails.env.production?
         result = market.sync_limit_order(:ask, amount, price)
         self.update_attributes(state: result['state'], cause: result['cause'])
@@ -36,6 +33,15 @@ class OrderAsk < Order
     market.sync_market_order(:ask, amount)
   end
 
+  after_create :push_step_order
+  def push_step_order
+    if state.init? && category.step?
+      self.errors.add(:cause, '重置阶梯订单')
+      market.step_price_ask(amount)
+    end
+  end
+
+  before_create :check_amount_exceed
   def check_amount_exceed
     market.sync_fund
     curr_fund = market.fund.balance
@@ -44,12 +50,13 @@ class OrderAsk < Order
     end
   end
 
+  before_create :check_legal_profit
   def check_legal_profit
     if category == 'limit'
-      avg_cost = market.avg_cost
-      if price < avg_cost
+      average = market.avg_cost
+      if price < average
         self.state = 500
-        self.cause = "Limit ask price must > average cost #{avg_cost}"
+        self.cause = "Limit ask price must > cost #{average}"
       end
     end
   end

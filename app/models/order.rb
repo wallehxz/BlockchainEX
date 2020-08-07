@@ -21,7 +21,7 @@ class Order < ActiveRecord::Base
   self.per_page = 10
   scope :recent, -> { order('created_at desc') }
   enumerize :state, in: { init: 100, fail: 500, succ: 200, cancel: 0, rescue: 120 }, default: 100, scope: true
-  enumerize :category, in: ['limit', 'market', 'chives'], default: 'limit', scope: true
+  enumerize :category, in: ['limit', 'market', 'step'], default: 'limit', scope: true
   belongs_to :market
   after_save :fix_price_amount
   after_save :push_limit_order
@@ -43,7 +43,7 @@ class Order < ActiveRecord::Base
   end
 
   def category_cn
-    {'limit'=> '限价', 'market'=> '市价', 'chives'=> '韭菜价' }[category]
+    {'limit'=> '限价', 'market'=> '市价', 'step'=> '阶梯价' }[category]
   end
 
   def notice
