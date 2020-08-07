@@ -52,7 +52,7 @@ class Order < ActiveRecord::Base
       push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Settings.trading_bot}"
       body_params ={ msgtype:'markdown', markdown:{ title: "#{type_cn}订单" } }
       body_params[:markdown][:text] =
-        "#### #{market.type} #{type_cn}订单\n\n" +
+        "#### #{category_cn} #{type_cn}订单\n\n" +
         "> 时间：#{updated_at.to_s(:short)}\n\n" +
         "> 价格：#{price} #{market.base_unit}\n\n" +
         "> 数量：#{amount} #{market.quote_unit}\n\n" +
@@ -68,7 +68,7 @@ class Order < ActiveRecord::Base
 
   def sms_notice
     if Time.now.hour.in? [*9..22]
-      content = "\n> #{market.symbols} #{type_cn}订单\n" +
+      content = "\n> #{category_cn} #{type_cn}订单\n" +
       "> 价格：#{price} #{market.base_unit}\n" +
       "> 数量：#{amount} #{market.quote_unit}\n" +
       "> 成交额 #{total.round(2)} #{market.base_unit}\n"
