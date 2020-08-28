@@ -26,7 +26,7 @@ def start_hunter(coin)
     if balance > 0.01
       coin.step_price_ask(amount)
       coin.regulate.update(resistance: _latest * 1.001, support: _latest * 0.998)
-      coin.start_daemon('takeprofit')
+      Daemon.start('takeprofit')
     end
   end
 

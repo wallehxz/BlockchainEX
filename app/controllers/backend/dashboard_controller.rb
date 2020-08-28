@@ -19,9 +19,14 @@ class Backend::DashboardController < Backend::BaseController
   def daemon_operate
     status = {'on': '开启', 'off': '关闭'}
     operate = params[:operate]
-    Daemons::Rails::Monitoring.start("#{params[:daemon]}.rb") if operate == 'on'
-    Daemons::Rails::Monitoring.stop("#{params[:daemon]}.rb") if operate == 'off'
-    flash[:notice] = "进程 #{params[:daemon]} 已#{status[operate.to_sym]}"
+    if operate == 'on'
+      Daemon.start(params[:daemon])
+    end
+
+    if operate == 'off'
+      Daemon.stop(params[:daemon])
+    end
+    flash[:notice] = "进程 #{params[:daemon]} 已 #{status[operate.to_sym]}"
     redirect_to backend_daemons_path
   end
 end

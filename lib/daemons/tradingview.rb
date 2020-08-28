@@ -60,11 +60,8 @@ def ask_order(market,amount, profit, subject)
   end
 end
 
-def stop_loss(subject)
-  trading = subject.split('|')
-  quote = trading[0].split('_')
-  market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
-  market.start_daemon('stoploss')
+def stop_loss
+  Daemon.start('stoploss')
 end
 
 def build(subject)
@@ -100,7 +97,7 @@ while($running) do
         start_trade(topic) if topic =~ /(bid)|(ask)/
         build(topic) if topic =~ /build/
         all_in(topic) if topic =~ /all_in/
-        stop_loss(topic) if topic =~ /stop_loss/
+        stop_loss if topic =~ /stop_loss/
       end
     end
   rescue => detail

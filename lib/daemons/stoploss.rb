@@ -28,7 +28,7 @@ while($running) do
           coin.market_price_ask(regul.fast_cash * 2)
         else
           coin.market_price_ask(balance * 0.998)
-          coin.stop_daemon('stoploss')
+          Daemon.stop('stoploss')
         end
       end
     end

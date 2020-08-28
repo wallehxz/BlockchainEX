@@ -27,7 +27,10 @@ while($running) do
           coin.step_price_ask(regul.fast_cash)
         else
           coin.step_price_ask(balance * 0.998)
-          coin.stop_daemon('takeprofit')
+          Daemon.stop('takeprofit')
+        end
+        if _latest < coin.avg_cost
+          Daemon.start('stoploss')
         end
       end
     end
