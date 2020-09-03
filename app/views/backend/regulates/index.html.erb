@@ -32,7 +32,7 @@
                 <td>
                   <%= item.market.class.to_s.upcase %><br>
                   <%= item.market.quote_unit + "-" + item.market.base_unit %><br>
-                  平均成本：<%= item.market.avg_cost %><br>
+                  平均成本：<%#= item.market.avg_cost %><br>
                   价格精度：<%= item.price_precision %><br>
                   数量精度：<%= item.amount_precision %>
                 </td>
@@ -48,12 +48,10 @@
                   短信：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_sms %> onchange='switch_state(<%= item.id %>,"sms")'>
                 </td>
                 <td style="text-align: left">
-                  快捷交易：<input type="checkbox" name="my-state" <%= 'checked' if item.fast_trade %> onchange='switch_state(<%= item.id %>, "fast")'><br>
-                  数量：<%= item.fast_cash %> &nbsp;&nbsp; <%= item.market.quote_unit %>&nbsp;|&nbsp;
-                  收益：<%= item.fast_profit %> &nbsp;&nbsp;%<br>
-                  浮动交易：<input type="checkbox" name="my-state" <%= 'checked' if item.range_trade %> onchange='switch_state(<%= item.id %>, "range")'><br>
-                  数量： <%= item.range_cash %>&nbsp;&nbsp;<%= item.market.quote_unit %>&nbsp;|&nbsp;
-                  收益：<%= item.range_profit %> &nbsp;&nbsp;%<br>
+                  止损：<input type="checkbox" name="my-state" <%= 'checked' if item.stoploss %> onchange='switch_state(<%= item.id %>, "stoploss")'>&nbsp;&nbsp;
+                  止盈：<input type="checkbox" name="my-state" <%= 'checked' if item.takeprofit %> onchange='switch_state(<%= item.id %>, "takeprofit")'></br></br>
+                  高频：<input type="checkbox" name="my-state" <%= 'checked' if item.fast_trade %> onchange='switch_state(<%= item.id %>, "fast")'>&nbsp;&nbsp;
+                  低频：<input type="checkbox" name="my-state" <%= 'checked' if item.range_trade %> onchange='switch_state(<%= item.id %>, "range")'>
                 </td>
                 <td><br>
                   <a href="<%= edit_backend_regulate_path(item) %>" class="btn bg-orange btn-flat">
@@ -87,6 +85,6 @@
     function switch_state(id,kind) {
       $.get('/backend/regulates/' + id +'/change_state?kind=' + kind);
     }
-    $("[name='my-state']").bootstrapSwitch({onColor:'success',offColor:'danger', onText: '开', offText: '关'});
+    $("[name='my-state']").bootstrapSwitch({onColor:'success',offColor:'danger', onText: 'ONN', offText: 'OFF'});
   </script>
 <% end %>

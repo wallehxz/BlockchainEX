@@ -16,26 +16,24 @@ end
 
 while($running) do
   begin
-    Regulate.all.each do |regul|
+    Regulate.where(takeprofit: true).each do |regul|
       coin    = regul.market
       _latest = coin.recent_price
       _profit = regul.support
+      amount = regul.retain / 5
       if _latest < _profit
         coin.sync_fund
         balance = coin.fund.balance
-        if balance > 1
-          coin.step_price_ask(regul.fast_cash)
+        if balance > amount
+          coin.step_price_ask(amount)
         else
-          coin.step_price_ask(balance * 0.998)
-          Daemon.stop('takeprofit')
-        end
-        if _latest < coin.avg_cost
-          Daemon.start('stoploss')
+          coin.step_price_ask(balance)
+          regul.toggle!('takeprofit')
         end
       end
     end
   rescue => detail
-    Notice.dingding("Guarant：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
+    Notice.dingding("TakeProfit：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
   end
   sleep 10
 end

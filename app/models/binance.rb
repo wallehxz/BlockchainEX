@@ -212,17 +212,19 @@ class Binance < Market
   end
 
   def avg_cost
-    total = all_funds
-    _fund = 0
-    _cost = 0
-    _a = []
-    time_bids = all_orders.select {|o| o['side'] == 'BUY' && o['executedQty'].to_f > 0 }.reverse
-    time_bids.each do |item|
-      next if total.round(2) <= _fund.round(2)
-      _cost += item["cummulativeQuoteQty"].to_f
-      _fund += item["executedQty"].to_f
-    end
-    _cost / _fund rescue 0
+      total = all_funds
+      _fund = 0
+      _cost = 0
+      _a = []
+      time_bids = all_orders.select {|o| o['side'] == 'BUY' && o['executedQty'].to_f > 0 }.reverse
+      time_bids.each do |item|
+        next if total.round(2) <= _fund.round(2)
+        _cost += item["cummulativeQuoteQty"].to_f
+        _fund += item["executedQty"].to_f
+      end
+      _cost / _fund
+    rescue
+      0
   end
 
   def sync_cash

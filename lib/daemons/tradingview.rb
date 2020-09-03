@@ -61,6 +61,10 @@ def ask_order(market,amount, profit, subject)
 end
 
 def stop_loss
+  trading = subject.split('|')
+  quote = trading[0].split('_')
+  market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
+  market.regulate.toggle!(:stoploss)
   Daemon.start('stoploss')
 end
 

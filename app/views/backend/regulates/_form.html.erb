@@ -46,40 +46,14 @@
         <%= f.text_field :cash_profit, class:'form-control', placeholder:'（必填* 最小卖出收益）' %>
       </div>
     </div>
-    <div class="form-group has-warning">
-      <label>闪电交易数量</label>
+
+    <div class="form-group has-success">
+      <label>建仓价位</label>
       <div class="input-group">
         <div class="input-group-addon">
-          <i class="fa fa-money"></i>
+          <i class="fa fa-arrow-up"></i>
         </div>
-        <%= f.text_field :fast_cash, class:'form-control', placeholder:'（必填* 闪电交易数量）' %>
-      </div>
-    </div>
-    <div class="form-group has-warning">
-      <label>闪电盈亏比率</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-gift"></i>
-        </div>
-        <%= f.text_field :fast_profit, class:'form-control', placeholder:'（必填* 闪电交易成交收益）' %>
-      </div>
-    </div>
-    <div class="form-group has-error">
-      <label>浮动交易数量</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-money"></i>
-        </div>
-        <%= f.text_field :range_cash, class:'form-control', placeholder:'（必填* 浮动交易数量）' %>
-      </div>
-    </div>
-    <div class="form-group has-error">
-      <label>浮动盈亏比率</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-gift"></i>
-        </div>
-        <%= f.text_field :range_profit, class:'form-control', placeholder:'（必填* 浮动交易成交收益）' %>
+        <%= f.text_field :cost, class:'form-control', placeholder:'（必填* 建仓价位）' %>
       </div>
     </div>
     <div class="form-group has-warning">
@@ -100,13 +74,41 @@
         <%= f.text_field :support, class:'form-control', placeholder:'（必填* 亏损价位）' %>
       </div>
     </div>
-    <div class="form-group has-success">
-      <label>建仓价位</label>
+
+    <div class="form-group has-warning">
+      <label>高频交易数量</label>
       <div class="input-group">
         <div class="input-group-addon">
-          <i class="fa fa-arrow-up"></i>
+          <i class="fa fa-money"></i>
         </div>
-        <%= f.text_field :cost, class:'form-control', placeholder:'（必填* 建仓价位）' %>
+        <%= f.text_field :fast_cash, class:'form-control', placeholder:'（必填* 高频交易数量）' %>
+      </div>
+    </div>
+    <div class="form-group has-warning">
+      <label>高频盈亏比率</label>
+      <div class="input-group">
+        <div class="input-group-addon">
+          <i class="fa fa-gift"></i>
+        </div>
+        <%= f.text_field :fast_profit, class:'form-control', placeholder:'（必填* 高频交易成交收益）' %>
+      </div>
+    </div>
+    <div class="form-group has-error">
+      <label>低频交易数量</label>
+      <div class="input-group">
+        <div class="input-group-addon">
+          <i class="fa fa-money"></i>
+        </div>
+        <%= f.text_field :range_cash, class:'form-control', placeholder:'（必填* 低频交易数量）' %>
+      </div>
+    </div>
+    <div class="form-group has-error">
+      <label>低频盈亏比率</label>
+      <div class="input-group">
+        <div class="input-group-addon">
+          <i class="fa fa-gift"></i>
+        </div>
+        <%= f.text_field :range_profit, class:'form-control', placeholder:'（必填* 低频交易成交收益）' %>
       </div>
     </div>
 
