@@ -23,6 +23,7 @@ class Order < ActiveRecord::Base
   enumerize :state, in: { init: 100, fail: 500, succ: 200, cancel: 0, rescue: 120 }, default: 100, scope: true
   enumerize :category, in: ['limit', 'market', 'step'], default: 'limit', scope: true
   belongs_to :market
+  has_one :regulate, primary_key: 'market_id', foreign_key: 'market_id'
   after_save :fix_price_amount
   after_save :push_limit_order
   scope :succ, -> { where(state: 'succ') }
@@ -48,15 +49,16 @@ class Order < ActiveRecord::Base
 
   def notice
     if state.succ?
+      regulate.take_profit_cost
       sms_notice if market.regulate.notify_sms
       push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Settings.trading_bot}"
       body_params ={ msgtype:'markdown', markdown:{ title: "#{type_cn}订单" } }
       body_params[:markdown][:text] =
-        "#### #{category_cn} #{type_cn}订单\n\n" +
-        "> 时间：#{updated_at.to_s(:short)}\n\n" +
-        "> 价格：#{price} #{market.base_unit}\n\n" +
-        "> 数量：#{amount} #{market.quote_unit}\n\n" +
-        "> 成交额 #{total.round(4)} #{market.base_unit}\n\n" +
+        "#### #{category_cn} #{type_cn}订单\n" +
+        "> 时间：#{updated_at.to_s(:short)}\n" +
+        "> 价格：#{price} #{market.base_unit}\n" +
+        "> 数量：#{amount} #{market.quote_unit}\n" +
+        "> 成交额 #{total.round(4)} #{market.base_unit}\n" +
         "> ![screenshot](https://source.unsplash.com/random/400x200)\n"
       res = Faraday.post do |req|
         req.url push_url
@@ -70,6 +72,7 @@ class Order < ActiveRecord::Base
     if Time.now.hour.in? [*9..22]
       content = "\n> #{category_cn} #{type_cn}订单\n" +
       "> 价格：#{price} #{market.base_unit}\n" +
+      "> 时间：#{updated_at.to_s(:short)}\n" +
       "> 数量：#{amount} #{market.quote_unit}\n" +
       "> 成交额 #{total.round(2)} #{market.base_unit}\n"
       Notice.sms(content)

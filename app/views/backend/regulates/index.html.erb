@@ -32,7 +32,7 @@
                 <td>
                   <%= item.market.class.to_s.upcase %><br>
                   <%= item.market.quote_unit + "-" + item.market.base_unit %><br>
-                  平均成本：<%= item.market.avg_cost %><br>
+                  平均成本：<%= item.market.avg_cost.to_d.round(item.price_precision, :down) %><br>
                   价格精度：<%= item.price_precision %><br>
                   数量精度：<%= item.amount_precision %>
                 </td>

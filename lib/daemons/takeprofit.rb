@@ -25,9 +25,9 @@ while($running) do
         coin.sync_fund
         balance = coin.fund.balance
         if balance > amount
-          coin.step_price_ask(amount)
+          coin.market_price_ask(amount)
         else
-          coin.step_price_ask(balance)
+          coin.market_price_ask(balance)
           regul.toggle!('takeprofit')
         end
       end

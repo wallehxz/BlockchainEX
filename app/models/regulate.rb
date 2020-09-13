@@ -30,4 +30,14 @@ class Regulate < ActiveRecord::Base
   belongs_to :market
 
   self.per_page = 10
+
+  def take_profit_cost
+    average = market.avg_cost
+    if average > 0
+      self.resistance = average + cash_profit
+      save
+      content = "#{market.symbols} 收益价位更新 #{resistance}"
+      Notice.dingding(content)
+    end
+  end
 end
