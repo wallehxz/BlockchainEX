@@ -33,7 +33,7 @@ def start_hunter(coin)
     amount = coin.regulate.fast_cash
     quota = coin.regulate.retain
     coin.step_price_bid(amount)
-    coin.regulate.update(cost: _latest * 0.999)
+    coin.regulate.update(cost: _latest * 0.998)
   end
 end
 
