@@ -14,7 +14,7 @@ class Daemon
         start_daemon ="bundle exec rake daemon:#{daemon}:start"
         shell_cmd = "cd #{root_path} && #{start_daemon}"
         system("#{shell_cmd}")
-        Notice.dingding("开启#{daemon.camelcase} 进程")
+        Notice.dingding("开启 #{daemon.camelcase} 进程")
       end
     end
 
@@ -26,7 +26,7 @@ class Daemon
         start_daemon ="bundle exec rake daemon:#{daemon}:stop"
         shell_cmd = "cd #{root_path} && #{start_daemon}"
         system("#{shell_cmd}")
-        Notice.dingding("停用#{daemon.camelcase} 进程")
+        Notice.dingding("关闭 #{daemon.camelcase} 进程")
       end
     end
 

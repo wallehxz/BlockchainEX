@@ -26,7 +26,22 @@ class Backend::DashboardController < Backend::BaseController
     if operate == 'off'
       Daemon.stop(params[:daemon])
     end
-    flash[:notice] = "进程 #{params[:daemon]} 已 #{status[operate.to_sym]}"
+
+    if operate == 'all_on'
+      root_path = Rails.root
+      start_daemon ="bundle exec rake daemons:start"
+      shell_cmd = "cd #{root_path} && #{start_daemon}"
+      system("#{shell_cmd}")
+    end
+
+    if operate == 'all_off'
+      root_path = Rails.root
+      start_daemon ="bundle exec rake daemons:stop"
+      shell_cmd = "cd #{root_path} && #{start_daemon}"
+      system("#{shell_cmd}")
+    end
+    flash[:notice] = "守护进程状态更新"
     redirect_to backend_daemons_path
   end
+
 end
