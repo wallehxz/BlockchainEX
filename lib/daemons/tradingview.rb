@@ -60,13 +60,15 @@ def ask_order(market,amount, profit, subject)
   end
 end
 
-def stoploss
+def stoploss(subject)
   trading = subject.split('|')
   quote = trading[0].split('_')
   market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
-  market.regulate.toggle!(:stoploss)
-  content = "#{market.symbols} 开启止损 #{Time.now.to_s(:short)}"
-  Notice.dingding(content)
+  unless market.regulate.stoploss
+    market.regulate.toggle!(:stoploss)
+    content = "#{market.symbols} 开启止损 #{Time.now.to_s(:short)}"
+    Notice.dingding(content)
+  end
   Daemon.start('stoploss')
 end
 
@@ -75,8 +77,10 @@ def build(subject)
   quote = trading[0].split('_')
   market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
   unless market&.regulate&.fast_trade
-    market.regulate.update(fast_trade: true, support: market.recent_price * 0.9975, resistance: market.recent_price * 1.0075)
-    amount = market.regulate.retain
+    market.regulate.toggle!(:fast_trade)
+    content = "#{market.symbols} 开启高频交易 #{Time.now.to_s(:short)}"
+    Notice.dingding(content)
+    amount = market.regulate.retain / 4.0
     market.step_price_bid(amount)
   end
 end
@@ -87,8 +91,7 @@ def all_in(subject)
   market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
   if market&.regulate&.fast_trade
     amount = market.regulate.retain
-    market.step_price_bid(amount)
-    market.regulate.update(support: market.recent_price * 0.9975, resistance: market.recent_price * 1.0075)
+    market.market_price_bid(amount)
   end
 end
 
@@ -96,14 +99,14 @@ while($running) do
   begin
     mails = Mail.all.select { |x| x.from[0] =~ /tradingview/ }
     mails.each do |email|
-      if email.subject.include? '|'
+      if email.subject.include? '#'
         subject = email.subject
         topic = subject.delete(' ').split('#')[-1]
         Notice.dingding("[#{Time.now.to_s(:short)}] \n #{topic}")
         start_trade(topic) if topic =~ /(bid)|(ask)/
         build(topic) if topic =~ /build/
         all_in(topic) if topic =~ /all_in/
-        stoploss if topic =~ /stoploss/
+        stoploss(topic) if topic =~ /stoploss/
       end
     end
   rescue => detail

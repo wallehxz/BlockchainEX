@@ -63,13 +63,4 @@ class OrderBid < Order
     end
   end
 
-  before_create :half_ware_house
-  def half_ware_house
-    amount = market&.regulate&.retain
-    balance = market.cash.balance
-    if balance < amount * 0.2
-      self.amount = amount / 2
-    end
-  end
-
 end

@@ -61,4 +61,17 @@ class OrderAsk < Order
     end
   end
 
+  after_save :fine_tuning_precision
+  def fine_tuning_precision
+    if category == 'market' && state == 'fail'
+      cur_precision = amount.to_s.split('.')[1].size rescue 0
+      if cur_precision > 1
+        content = "#{market.symbols} 市价卖出订单数量 #{amount} 精度降维"
+        Notice.dingding(content)
+        new_amount = amount.to_d.round(cur_precision - 1, :down).to_f
+        market.market_price_ask(new_amount)
+      end
+    end
+  end
+
 end

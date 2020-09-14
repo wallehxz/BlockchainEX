@@ -26,7 +26,7 @@ while($running) do
         balance = coin.fund.balance
         if balance < regul.retain / 20.0
           regul.toggle!('takeprofit')
-          content = "#{market.symbols} 关闭止盈 #{Time.now.to_s(:short)}"
+          content = "#{regul.market.symbols} 关闭止盈 #{Time.now.to_s(:short)}"
           Notice.dingding(content)
         end
         if balance > amount

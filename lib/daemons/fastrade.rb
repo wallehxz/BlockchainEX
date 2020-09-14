@@ -27,7 +27,7 @@ def start_hunter(coin)
       coin.regulate.update(resistance: _latest * 1.001, support: _latest * 0.9975)
       unless coin.regulate.takeprofit
         coin.regulate.toggle!('takeprofit')
-        content = "#{market.symbols} 开启止盈 #{Time.now.to_s(:short)}"
+        content = "#{coin.symbols} 开启止盈 #{Time.now.to_s(:short)}"
         Notice.dingding(content)
       end
     end
@@ -43,8 +43,8 @@ end
 
 while($running) do
   begin
-    Regulate.where(fast_trade: true).each do |regu|
-      start_hunter(regu.market)
+    Regulate.where(fast_trade: true).each do |regul|
+      start_hunter(regul.market)
     end
   rescue => detail
     Notice.dingding("FastTrade：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
