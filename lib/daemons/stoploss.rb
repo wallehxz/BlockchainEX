@@ -21,15 +21,21 @@ while($running) do
       _latest = coin.recent_price
       _average = coin.avg_cost rescue 0
       if _latest < _average
-        regul.toggle!(:fast_trade) if regul.fast_trade
-        amount = regul.retain / 10
+        if regul.fast_trade
+          regul.toggle!(:fast_trade)
+          content = "#{regul.market.symbols} 关闭高频交易 #{Time.now.to_s(:short)}"
+          Notice.dingding(content)
+        end
+        amount = regul.retain / 10.0
         coin.sync_fund
         balance = coin.fund.balance
         if balance > amount
           coin.market_price_ask(amount)
         else
-          coin.market_price_ask(balance * 0.99)
+          coin.market_price_ask(balance)
           regul.toggle!(:stoploss)
+          content = "#{regul.market.symbols} 关闭止损 #{Time.now.to_s(:short)}"
+          Notice.dingding(content)
         end
       end
     end

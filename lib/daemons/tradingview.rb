@@ -42,7 +42,7 @@ def bid_order(market, amount, profit, subject)
   market.regulate.update(cost: _latest * 0.998)
   if subject =~ /(step)|(market)/
     puts "[#{Time.now.to_s(:short)}] #{market.full_name} bid #{$1} amount: #{amount}"
-    market.send("#{$1}_price_bid".to_sym, amount)
+    market.send("#{$1 || $2}_price_bid".to_sym, amount)
   else
     puts "[#{Time.now.to_s(:short)}] #{market.full_name} bid limit amount: #{amount}"
     market.new_bid(price, amount)
@@ -53,18 +53,20 @@ def ask_order(market,amount, profit, subject)
   price = market.recent_price * (1 + profit)
   if subject =~ /(step)|(market)/
     puts "[#{Time.now.to_s(:short)}] #{market.full_name} ask #{$1} amount: #{amount}"
-    market.send("#{$1}_price_ask".to_sym, amount)
+    market.send("#{$1 || $2}_price_ask".to_sym, amount)
   else
     puts "[#{Time.now.to_s(:short)}] #{market.full_name} ask limit amount: #{amount}"
     aks_order = market.new_ask(price, amount)
   end
 end
 
-def stop_loss
+def stoploss
   trading = subject.split('|')
   quote = trading[0].split('_')
   market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
   market.regulate.toggle!(:stoploss)
+  content = "#{market.symbols} 开启止损 #{Time.now.to_s(:short)}"
+  Notice.dingding(content)
   Daemon.start('stoploss')
 end
 
@@ -101,7 +103,7 @@ while($running) do
         start_trade(topic) if topic =~ /(bid)|(ask)/
         build(topic) if topic =~ /build/
         all_in(topic) if topic =~ /all_in/
-        stop_loss if topic =~ /stop_loss/
+        stoploss if topic =~ /stoploss/
       end
     end
   rescue => detail

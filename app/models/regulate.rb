@@ -34,7 +34,7 @@ class Regulate < ActiveRecord::Base
   def take_profit_cost
     average = market.avg_cost
     if average > 0
-      self.resistance = average + cash_profit
+      self.resistance = average.to_d.round(price_precision, :down) + cash_profit
       save
       content = "#{market.symbols} 收益价位更新 #{resistance}"
       Notice.dingding(content)

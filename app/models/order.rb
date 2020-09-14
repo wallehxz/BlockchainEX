@@ -54,11 +54,11 @@ class Order < ActiveRecord::Base
       push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Settings.trading_bot}"
       body_params ={ msgtype:'markdown', markdown:{ title: "#{type_cn}订单" } }
       body_params[:markdown][:text] =
-        "#### #{category_cn} #{type_cn}订单\n" +
-        "> 时间：#{updated_at.to_s(:short)}\n" +
-        "> 价格：#{price} #{market.base_unit}\n" +
-        "> 数量：#{amount} #{market.quote_unit}\n" +
-        "> 成交额 #{total.round(4)} #{market.base_unit}\n" +
+        "#### #{category_cn} #{type_cn}订单\n\n" +
+        "> 时间：#{updated_at.to_s(:short)}\n\n" +
+        "> 价格：#{price} #{market.base_unit}\n\n" +
+        "> 数量：#{amount} #{market.quote_unit}\n\n" +
+        "> 成交额 #{total.round(4)} #{market.base_unit}\n\n" +
         "> ![screenshot](https://source.unsplash.com/random/400x200)\n"
       res = Faraday.post do |req|
         req.url push_url
@@ -72,7 +72,6 @@ class Order < ActiveRecord::Base
     if Time.now.hour.in? [*9..22]
       content = "\n> #{category_cn} #{type_cn}订单\n" +
       "> 价格：#{price} #{market.base_unit}\n" +
-      "> 时间：#{updated_at.to_s(:short)}\n" +
       "> 数量：#{amount} #{market.quote_unit}\n" +
       "> 成交额 #{total.round(2)} #{market.base_unit}\n"
       Notice.sms(content)
@@ -88,7 +87,8 @@ class Order < ActiveRecord::Base
         "#### #{market.type} 失效订单\n\n" +
         "> 价格：#{price} #{market.base_unit}\n\n" +
         "> 数量：#{amount} #{market.quote_unit}\n\n" +
-        "> 失败：#{cause}\n"
+        "> 时间：#{updated_at.to_s(:short)}\n\n" +
+        "> 失败原因：#{cause}\n"
       res = Faraday.post do |req|
         req.url push_url
         req.headers['Content-Type'] = 'application/json'

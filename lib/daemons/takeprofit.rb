@@ -20,15 +20,19 @@ while($running) do
       coin    = regul.market
       _latest = coin.recent_price
       _profit = regul.support
-      amount = regul.retain / 5
+      amount = regul.retain / 5.0
       if _latest < _profit
         coin.sync_fund
         balance = coin.fund.balance
+        if balance < regul.retain / 20.0
+          regul.toggle!('takeprofit')
+          content = "#{market.symbols} 关闭止盈 #{Time.now.to_s(:short)}"
+          Notice.dingding(content)
+        end
         if balance > amount
           coin.market_price_ask(amount)
         else
           coin.market_price_ask(balance)
-          regul.toggle!('takeprofit')
         end
       end
     end
