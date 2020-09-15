@@ -78,7 +78,7 @@ class Order < ActiveRecord::Base
     end
   end
 
-  after_save :failed_notice
+  #after_save :failed_notice
   def failed_notice
     if state.fail?
       push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Settings.trading_bot}"
