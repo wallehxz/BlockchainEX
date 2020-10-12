@@ -72,6 +72,21 @@ def stoploss(subject)
   Daemon.start('stoploss')
 end
 
+def takeprofit(subject)
+  trading = subject.split('|')
+  quote = trading[0].split('_')
+  market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
+  regul = market.regulate
+  unless regul.takeprofit
+    cur_price = market.recent_price
+    regul.toggle!(:takeprofit)
+    regul.update(support: cur_price, resistance: cur_price * 1.005)
+    content = "#{market.symbols} 开启止盈 #{Time.now.to_s(:short)} 止损价更新为 #{cur_price}"
+    Notice.dingding(content)
+  end
+  Daemon.start('stoploss')
+end
+
 def build(subject)
   trading = subject.split('|')
   quote = trading[0].split('_')
@@ -107,6 +122,7 @@ while($running) do
         build(topic) if topic =~ /build/
         all_in(topic) if topic =~ /all_in/
         stoploss(topic) if topic =~ /stoploss/
+        takeprofit(topic) if topic =~ /take/
       end
     end
   rescue => detail

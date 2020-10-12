@@ -24,7 +24,7 @@ def start_hunter(coin)
     balance = coin.fund.balance
     amount = coin.regulate.fast_cash
     if balance > 0.01
-      coin.regulate.update(resistance: _latest * 1.001, support: _latest * 0.9975)
+      coin.regulate.update(resistance: _latest * 1.0025, support: _latest * 0.9975)
       unless coin.regulate.takeprofit
         coin.regulate.toggle!('takeprofit')
         content = "#{coin.symbols} 开启止盈 #{Time.now.to_s(:short)}"
