@@ -20,7 +20,7 @@ while($running) do
       coin    = regul.market
       _latest = coin.recent_price
       _profit = regul.support
-      amount = regul.retain / 5.0
+      amount = regul.retain / 2.0
       if _latest < _profit
         coin.sync_fund
         balance = coin.fund.balance

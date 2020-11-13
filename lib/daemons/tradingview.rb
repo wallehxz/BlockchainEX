@@ -64,9 +64,16 @@ def stoploss(subject)
   trading = subject.split('|')
   quote = trading[0].split('_')
   market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
-  unless market.regulate.stoploss
-    market.regulate.toggle!(:stoploss)
+  regul = market.regulate
+  unless regul.stoploss
+    regul.toggle!(:stoploss)
     content = "#{market.symbols} 开启止损 #{Time.now.to_s(:short)}"
+    Notice.dingding(content)
+  end
+
+  if regul.fast_trade
+    regul.toggle!(:fast_trade)
+    content = "#{market.symbols} 关闭高频交易 #{Time.now.to_s(:short)}"
     Notice.dingding(content)
   end
   Daemon.start('stoploss')
@@ -121,7 +128,7 @@ while($running) do
         start_trade(topic) if topic =~ /(bid)|(ask)/
         build(topic) if topic =~ /build/
         all_in(topic) if topic =~ /all_in/
-        stoploss(topic) if topic =~ /stoploss/
+        stoploss(topic) if topic =~ /stop/
         takeprofit(topic) if topic =~ /take/
       end
     end
