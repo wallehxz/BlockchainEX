@@ -38,7 +38,7 @@ class Regulate < ActiveRecord::Base
       self.resistance = new_average + cash_profit
       self.support = new_average - cash_profit
       save
-      content = "#{market.symbols} 预期止盈线价格： #{resistance} 预期止损线价格： #{support}"
+      content = "[#{Time.now.to_s(:short)}] #{market.symbols} Cost: #{new_average} \nProfit： #{resistance} \nLoss： #{support}"
       Notice.dingding(content)
     end
   end

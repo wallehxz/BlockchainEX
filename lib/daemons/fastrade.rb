@@ -15,29 +15,29 @@ Signal.trap("TERM") do
 end
 
 def start_hunter(coin)
-  _profit = coin.regulate.resistance
-  _cost   = coin.regulate.cost
+  _regu   = coin.regulate
+  _profit = _regu.resistance
+  _cost   = _regu.cost
   _latest = coin.recent_price
+  _retain = _regu.retain
 
   if _latest > _profit
     coin.sync_fund
     balance = coin.fund.balance
-    amount = coin.regulate.fast_cash
-    if balance > 0.01
+    if balance > _retain / 10.0
       coin.regulate.update(resistance: _latest * 1.0025, support: _latest * 0.9975)
       unless coin.regulate.takeprofit
         coin.regulate.toggle!('takeprofit')
-        content = "#{coin.symbols} 开启止盈 #{Time.now.to_s(:short)}"
+        content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 开启止盈"
         Notice.dingding(content)
       end
     end
   end
 
   if _latest < _cost
-    amount = coin.regulate.fast_cash
-    quota = coin.regulate.retain
+    amount = _regu.fast_cash
     coin.step_price_bid(amount)
-    coin.regulate.update(cost: _latest * 0.998)
+    coin.regulate.update(cost: _latest * 0.995)
   end
 end
 
