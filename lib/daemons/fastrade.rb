@@ -29,7 +29,7 @@ def start_hunter(coin)
     Notice.dingding(content)
   end
 
-  if _latest < _cost
+  if _latest < _cost && _regu.chasedown
     amount = _regu.fast_cash
     coin.step_price_bid(amount)
     coin.regulate.update(cost: _latest * 0.995)

@@ -50,6 +50,8 @@ class Backend::RegulatesController < Backend::BaseController
       @regulate.toggle!(:stoploss)
     elsif params[:kind] == 'takeprofit'
       @regulate.toggle!(:takeprofit)
+    elsif params[:kind] == 'chasedown'
+      @regulate.toggle!(:chasedown)
     end
     render json: { message: 'Success'}
   end
