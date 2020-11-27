@@ -21,9 +21,10 @@ while($running) do
       coin.sync_fund
       balance = coin.fund.balance
       _latest = coin.recent_price
-      _profit = regul.resistance
-      _loss   = regul.support
+      _cost   = coin.avg_cost
+      _profit = _cost + regul.cash_profit
       _retain = regul.retain
+      trends  = market.get_ticker('1m', 2).kline_trends
 
       if balance < _retain / 20.0
         regul.toggle!('takeprofit')
@@ -31,17 +32,17 @@ while($running) do
         Notice.dingding(content)
       end
 
-      if _latest > _profit
-        #如何当前价格已经大于预期收益，则通过小量阶梯价慢慢卖出止盈
-        _amount = _retain / 10.0
+      if _latest > _profit && trends[0] > 0 && trends[-1] < 0
+        #如果价格大于预期收益，且开始下跌，则批量卖出
+        _amount = _retain / 8
         if balance > _amount
           coin.step_price_ask(_amount)
         else
           coin.market_price_ask(balance)
         end
-      elsif _latest < _loss
-        #如果价格已经已经跌幅过大，则通过大量阶梯卖出止损
-        _amount = _retain / 5.0
+      elsif _latest < _cost && trends.max < 0
+        #如果价格已经跌过成本，则通过大量阶梯卖出止损
+        _amount = _retain / 4
         if balance > _amount
           coin.step_price_ask(_amount)
         else

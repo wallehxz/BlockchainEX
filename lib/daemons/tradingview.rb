@@ -117,6 +117,12 @@ def all_in(subject)
   end
 end
 
+def macd(subject)
+  if subject.match(/macd-?\d+/)
+    subject.match(/macd-?\d+/)[0].match(/-?\d+/)[0].to_i
+  end
+end
+
 while($running) do
   begin
     mails = Mail.all.select { |x| x.from[0] =~ /tradingview/ }

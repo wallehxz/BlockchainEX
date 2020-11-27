@@ -32,4 +32,12 @@ class Array
     end
     return  '无特征线'
   end
+
+  def kline_trends
+    array = []
+    self.each do |item|
+      array << item[4].to_f - item[1].to_f
+    end
+    array
+  end
 end

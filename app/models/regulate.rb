@@ -40,6 +40,7 @@ class Regulate < ActiveRecord::Base
       new_average = average.to_d.round(price_precision, :down)
       self.resistance = new_average + cash_profit
       self.support = new_average - cash_profit
+      self.cost = new_average
       save
       content = "[#{Time.now.to_s(:short)}] #{market.symbols} Cost: #{new_average} \nProfit： #{resistance} \nLoss： #{support}"
       Notice.dingding(content)
