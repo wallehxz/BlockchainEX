@@ -36,5 +36,5 @@ while($running) do
   rescue => detail
     Notice.dingding("FastTrade：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
   end
-  sleep 30
+  sleep 60
 end

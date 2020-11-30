@@ -25,7 +25,8 @@ def chase_order(market)
     market.new_bid(price, amount)
   elsif trends[0] < 0 && trends[1] > 0
     amount = market.regulate.fast_cash / 4.0
-    market.step_price_bid(amount)
+    price  = market.recent_price * (1 - market.regulate.fast_profit / 2)
+    market.new_bid(price, amount)
   end
 end
 

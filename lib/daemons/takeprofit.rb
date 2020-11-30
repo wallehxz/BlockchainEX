@@ -22,17 +22,17 @@ while($running) do
       balance = coin.fund.balance
       _latest = coin.recent_price
       _cost   = coin.avg_cost
-      _profit = _cost + regul.cash_profit
+      _profit = regul.resistance
       _retain = regul.retain
-      trends  = market.get_ticker('1m', 2).kline_trends
+      trends  = coin.get_ticker('1m', 2).kline_trends
 
       if balance < _retain / 20.0
         regul.toggle!('takeprofit')
-        content = "[#{Time.now.to_s(:short)}] #{regul.market.symbols} 关闭止盈"
+        content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 关闭止盈"
         Notice.dingding(content)
       end
 
-      if _latest > _profit && trends[0] > 0 && trends[-1] < 0
+      if _latest > _profit && trends[-1] < 0
         #如果价格大于预期收益，且开始下跌，则批量卖出
         _amount = _retain / 8
         if balance > _amount
