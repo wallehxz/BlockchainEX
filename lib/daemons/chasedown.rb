@@ -30,10 +30,25 @@ def chase_order(market)
   end
 end
 
+def all_to_off(coin)
+  coin.sync_fund
+  balance = coin.fund.balance
+  _regul = coin.regulate
+  retain = _regul.retain
+  if balance > retain * 0.91
+    if _regul.chasedown
+      _regul.toggle!('chasedown')
+      content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 已经买入足够数量 关闭追跌"
+      Notice.dingding(content)
+    end
+  end
+end
+
 while($running) do
   begin
     Regulate.where(chasedown: true).each do |regul|
       coin = regul.market
+      all_to_off(coin)
       bid_orders = coin.bid_active_orders
       if bid_orders.present?
         bid_order = bid_orders[0]
