@@ -100,7 +100,8 @@ def build(subject)
   market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
   unless market&.regulate&.fast_trade
     market.regulate.toggle!(:fast_trade)
-    content = "#{market.symbols} 开启高频交易 #{Time.now.to_s(:short)}"
+    market.regulate.update!(chasedown: true)
+    content = "#{market.symbols} 开启高频交易,开启追跌交易 #{Time.now.to_s(:short)}"
     Notice.dingding(content)
     amount = market.regulate.retain / 4.0
     market.step_price_bid(amount)
