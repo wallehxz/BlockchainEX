@@ -23,6 +23,7 @@ while($running) do
       _latest = coin.recent_price
       _cost   = coin.avg_cost
       _profit = regul.resistance
+      _support = regul.support
       _retain = regul.retain
       trends  = coin.get_ticker('1m', 2).kline_trends
 
@@ -40,7 +41,7 @@ while($running) do
         else
           coin.market_price_ask(balance)
         end
-      elsif _latest < _cost && trends.max < 0
+      elsif _latest < _support || _latest < _cost
         #如果价格已经跌过成本，则通过大量阶梯卖出止损
         _amount = _retain / 4
         if balance > _amount
