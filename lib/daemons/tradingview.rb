@@ -96,16 +96,15 @@ end
 
 def build(subject)
   trading = subject.split('|')
-  quote = trading[0].split('_')
-  market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
-  unless market&.regulate&.fast_trade
-    market.regulate.toggle!(:fast_trade)
-    market.regulate.update!(chasedown: true)
-    content = "#{market.symbols} 开启高频交易,开启追跌交易 #{Time.now.to_s(:short)}"
-    Notice.dingding(content)
-    amount = market.regulate.retain / 4.0
-    market.step_price_bid(amount)
-  end
+  quote   = trading[0].split('_')
+  market  = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
+  regul   = market&.regulate
+  regul.toggle!(:fast_trade) unless regul.fast_trade
+  regul.toggle!(:chasedown)  unless regul.chasedown
+  content = "#{market.symbols} 开启高频交易,开启追跌交易 #{Time.now.to_s(:short)}"
+  Notice.dingding(content)
+  amount = regul.retain / 4.0
+  market.step_price_bid(amount)
 end
 
 def all_in(subject)
