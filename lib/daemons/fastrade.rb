@@ -41,7 +41,7 @@ def start_hunter(coin)
       end
     end
   else
-    if recent < cost && && balance > _retain * 0.1
+    if recent < cost && balance > _retain * 0.1
       content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 行情价格低于成本 #{cost}, 当前 #{recent}"
       Notice.dingding(content)
     end
