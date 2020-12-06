@@ -123,7 +123,7 @@ class Market < ActiveRecord::Base
   end
 
   def extreme_report
-    if min_96 == last_quote.c
+    if min_48 == last_quote.c
       tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} DOWN Price #{last_quote.c} Vol #{last_quote.v}"
       quote_notice(tip)
       if regulate&.range_trade
@@ -132,7 +132,7 @@ class Market < ActiveRecord::Base
         _price = recent_price * (1 - _profit)
         new_bid(_price,_amount)
       end
-    elsif max_96 == last_quote.c
+    elsif max_48 == last_quote.c
       tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} UP Price #{last_quote.c} Vol #{last_quote.v}"
       quote_notice(tip)
       if regulate&.range_trade
