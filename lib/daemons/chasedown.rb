@@ -52,8 +52,11 @@ while($running) do
       bid_orders = coin.bid_active_orders
       if bid_orders.present?
         bid_order = bid_orders[0]
-        coin.undo_order(bid_order['orderId'])
-        chase_order(coin)
+        bid_time = bid_order['time'] / 1000
+        if Time.now.to_i - bid_time > 150
+          coin.undo_order(bid_order['orderId'])
+          chase_order(coin)
+        end
       else
         chase_order(coin)
       end
