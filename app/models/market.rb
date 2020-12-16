@@ -140,7 +140,6 @@ class Market < ActiveRecord::Base
         _profit = regulate.range_profit || 0.003
         _price = recent_price * (1 + _profit)
         new_ask(_price,_amount)
-        new_bid(recent_price * 0.994,_amount)
       end
     end
   end
