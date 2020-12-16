@@ -24,7 +24,7 @@ def start_hunter(coin)
   cost   = _regul.cost
   recent = coin.recent_price
 
-  if recent > resistance && balance > _retain * 0.1
+  if recent > resistance && balance > _retain * 0.5
     unless _regul.takeprofit
       _regul.toggle!('takeprofit')
       content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 行情价格上涨预期收益 #{resistance} 开启止盈"
@@ -32,20 +32,14 @@ def start_hunter(coin)
     end
   end
 
-  if Time.now.hour < 9
-    if recent < support && balance > _retain * 0.1
-      unless _regul.stoploss
-        _regul.toggle!('stoploss')
-        content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 行情价格下跌最大亏损 #{support} 开启止损"
-        Notice.dingding(content)
-      end
-    end
-  else
-    if recent < cost && balance > _retain * 0.1
-      content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 行情价格低于成本 #{cost}, 当前 #{recent}"
+  if recent < support && balance > _retain * 0.5
+    unless _regul.stoploss
+      _regul.toggle!('stoploss')
+      content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 行情价格下跌最大亏损 #{support} 开启止损"
       Notice.dingding(content)
     end
   end
+
 end
 
 while($running) do

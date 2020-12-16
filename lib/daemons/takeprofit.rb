@@ -50,6 +50,7 @@ while($running) do
           coin.market_price_ask(balance)
         end
       end
+
     end
   rescue => detail
     Notice.dingding("TakeProfit：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")

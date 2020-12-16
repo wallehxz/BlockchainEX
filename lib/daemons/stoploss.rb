@@ -22,8 +22,8 @@ while($running) do
       _average = coin.avg_cost rescue 0
       if _latest < _average
         if regul.fast_trade
-          regul.toggle!(:fast_trade)
-          content = "#{regul.market.symbols} 关闭高频交易 #{Time.now.to_s(:short)}"
+          regul.update!(fast_trade: false, chasedown: false)
+          content = "#{regul.market.symbols} 关闭高频 追跌#{Time.now.to_s(:short)}"
           Notice.dingding(content)
         end
         amount = regul.retain / 10.0
