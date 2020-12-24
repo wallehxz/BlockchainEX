@@ -33,14 +33,13 @@ def start_hunter(coin)
     end
   end
 
-  if recent < support && balance > _retain * 0.5
+  if recent < support && balance > _retain * 0.1
     unless _regul.stoploss
       _regul.toggle!('stoploss')
       content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 行情价格下跌最大亏损 #{support} 开启止损"
       Notice.dingding(content)
     end
   end
-
 end
 
 while($running) do
