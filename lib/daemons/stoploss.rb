@@ -26,16 +26,19 @@ while($running) do
           content = "#{regul.market.symbols} 关闭高频 追跌#{Time.now.to_s(:short)}"
           Notice.dingding(content)
         end
-        amount = regul.retain / 10.0
+        amount = regul.retain / 2.0
         coin.sync_fund
         balance = coin.fund.balance
-        if balance > amount
-          coin.market_price_ask(amount)
-        else
+        if balance < regul.retain / 20.0
           coin.market_price_ask(balance)
           regul.toggle!(:stoploss)
           content = "#{regul.market.symbols} 关闭止损 #{Time.now.to_s(:short)}"
           Notice.dingding(content)
+        end
+        if balance > amount
+          coin.step_price_ask(amount)
+        else
+          coin.step_price_ask(balance)
         end
       end
     end
