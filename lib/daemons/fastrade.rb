@@ -28,7 +28,7 @@ def start_hunter(coin)
     unless _regul.takeprofit
       _regul.toggle!('takeprofit')
       content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 行情价格上涨预期收益 #{resistance} 开启止盈"
-      _regul.update!(support: recent * 0.9985)
+      _regul.update!(support: recent * 0.998)
       Notice.dingding(content)
     end
   end

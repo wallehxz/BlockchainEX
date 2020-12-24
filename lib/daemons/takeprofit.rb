@@ -35,20 +35,24 @@ while($running) do
 
       if _latest > _profit && trends[-1] < 0
         #如果价格大于预期收益，且开始下跌，则批量卖出
-        _amount = _retain / 8
+        _amount = _retain / 5.0
         if balance > _amount
           coin.step_price_ask(_amount)
         else
           coin.market_price_ask(balance)
         end
-      elsif _latest < _support || _latest < _cost
+      elsif _latest < _support
         #如果价格已经跌过成本，则通过大量阶梯卖出止损
-        _amount = _retain / 4
+        _amount = _retain / 4.0
         if balance > _amount
           coin.step_price_ask(_amount)
         else
           coin.market_price_ask(balance)
         end
+      end
+
+      if _latest > _profit && _latest * 0.998 > _support
+        regul.update!(support: _latest * 0.998)
       end
 
     end
