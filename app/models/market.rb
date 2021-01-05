@@ -111,6 +111,12 @@ class Market < ActiveRecord::Base
     regulate.present?
   end
 
+  def off_trade
+    regulate.update!(fast_profit: false, range_trade: false, chasedown: false)
+    content = "#{symbols} 关闭所有交易策略 #{Time.now.to_s(:short)}"
+    Notice.dingding(content)
+  end
+
   def quote_notice(content)
     messages.create(body: content)
     Notice.dingding(content) if regulate&.notify_dd

@@ -19,27 +19,22 @@ while($running) do
     Regulate.where(stoploss: true).each do |regul|
       coin    = regul.market
       _latest = coin.recent_price
-      _average = coin.avg_cost rescue 0
-      if _latest < _average
-        if regul.fast_trade
-          regul.update!(fast_trade: false, chasedown: false)
-          content = "#{regul.market.symbols} 关闭高频 追跌#{Time.now.to_s(:short)}"
-          Notice.dingding(content)
-        end
-        amount = regul.retain / 2.0
-        coin.sync_fund
-        balance = coin.fund.balance
-        if balance < regul.retain / 20.0
-          coin.market_price_ask(balance)
-          regul.toggle!(:stoploss)
-          content = "#{regul.market.symbols} 关闭止损 #{Time.now.to_s(:short)}"
-          Notice.dingding(content)
-        end
-        if balance > amount
-          coin.step_price_ask(amount)
-        else
-          coin.step_price_ask(balance)
-        end
+      coin.off_trade if regul.fast_trade || regul.range_trade || regul.chasedown
+      coin.sync_fund
+      balance = coin.fund.balance
+
+      if balance < regul.retain / 20.0
+        coin.market_price_ask(balance)
+        regul.toggle!(:stoploss)
+        content = "#{regul.market.symbols} 关闭止损 #{Time.now.to_s(:short)}"
+        Notice.dingding(content)
+      end
+
+      amount = regul.retain / 4.0
+      if balance > amount
+        coin.step_price_ask(amount)
+      else
+        coin.market_price_ask(balance)
       end
     end
   rescue => detail

@@ -125,7 +125,7 @@ end
 
 while($running) do
   begin
-    mails = Mail.all.select { |x| x.from[0] =~ /tradingview/ }
+    mails = Mail.all.select { |x| x.from[0] =~ /tradingview/ } rescue []
     mails.each do |email|
       if email.subject.include? '#'
         subject = email.subject
