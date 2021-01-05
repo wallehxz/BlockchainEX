@@ -147,6 +147,13 @@ class Market < ActiveRecord::Base
         _price = recent_price * (1 + _profit)
         new_ask(_price,_amount)
       end
+      if fund.balance > regulate.retain * 0.1
+        if last_quote.c > regulate.support
+          regulate.update!(support: last_quote.c * 0.9975)
+          content = "#{Time.now.to_s(:short)} #{symbols} 止盈价格更新为 #{regulate.support}"
+          Notice.dingding(content)
+        end
+      end
     end
   end
 

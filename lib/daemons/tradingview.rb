@@ -71,11 +71,6 @@ def stoploss(subject)
     Notice.dingding(content)
   end
 
-  if regul.fast_trade
-    regul.toggle!(:fast_trade)
-    content = "#{market.symbols} 关闭高频交易 #{Time.now.to_s(:short)}"
-    Notice.dingding(content)
-  end
   Daemon.start('stoploss')
 end
 
@@ -91,7 +86,7 @@ def takeprofit(subject)
     content = "#{market.symbols} 开启止盈 #{Time.now.to_s(:short)} 止损价更新为 #{cur_price}"
     Notice.dingding(content)
   end
-  Daemon.start('stoploss')
+  Daemon.start('takeprofit')
 end
 
 def build(subject)

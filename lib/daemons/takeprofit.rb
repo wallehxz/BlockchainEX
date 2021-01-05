@@ -42,7 +42,7 @@ while($running) do
           coin.market_price_ask(balance)
         end
       elsif _latest < _support
-        #如果价格已经跌过成本，则通过大量阶梯卖出止损
+        #如果价格低于止盈，则通过大量阶梯卖出止损
         _amount = _retain / 4.0
         if balance > _amount
           coin.step_price_ask(_amount)
@@ -51,8 +51,8 @@ while($running) do
         end
       end
 
-      if _latest > _profit && _latest * 0.998 > _support
-        regul.update!(support: _latest * 0.998)
+      if _latest > _profit && _latest * 0.9975 > _support
+        regul.update!(support: _latest * 0.9975)
       end
 
     end
