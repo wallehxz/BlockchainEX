@@ -18,12 +18,10 @@ end
 # 判断当前是否有之前的订单，如果没有，则拉取最新的行情，如果K线是下跌，且开始回弹，则追加订单
 
 def chase_order(market)
-  trends = market.get_ticker('1m', 2).kline_trends
+  trends = market.get_ticker('1m', 1).kline_trends
   if trends.max < 0
     amount = market.regulate.fast_cash
-    price  = market.recent_price * (1 - market.regulate.fast_profit)
     market.step_price_bid(amount)
-    market.new_bid(price, amount)
   end
 end
 
@@ -32,7 +30,7 @@ def all_to_off(coin)
   balance = coin.fund.balance
   _regul = coin.regulate
   retain = _regul.retain
-  if balance > retain * 0.91
+  if balance > retain * 0.95
     if _regul.chasedown
       _regul.toggle!('chasedown')
       content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 已经买入足够数量 关闭追跌"
@@ -45,17 +43,11 @@ while($running) do
   begin
     Regulate.where(chasedown: true).each do |regul|
       coin = regul.market
+      chase_order(coin)
       all_to_off(coin)
-      bid_orders = coin.bid_active_orders
-      if bid_orders.present?
-        bid_orders.map {|order| coin.undo_order(order['orderId'])}
-        chase_order(coin)
-      else
-        chase_order(coin)
-      end
     end
   rescue => detail
     Notice.dingding("Chasedown：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
   end
-  sleep 60
+  sleep 55
 end
