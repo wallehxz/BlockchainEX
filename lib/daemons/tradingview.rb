@@ -22,7 +22,7 @@ def start_trade(subject)
   trading = subject.split('|')
   quote = trading[0].split('_')
   market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
-  if market&.regulate&.fast_trade
+  if market&.regulate
     amount = market.regulate.fast_cash
     profit = market.regulate.fast_profit || 0.002
     side = trading[-1]
