@@ -298,6 +298,9 @@ class Binance < Market
           sync_fund
           balance = fund&.balance
         end
+        if Time.now.to_i - start_ms / 1000 > 90
+          continue = false
+        end
       end
       bid_amount = (balance - base_fund).round(4)
       bid_order.update(amount: bid_amount, total: bid_amount * bid_order.price)
@@ -331,6 +334,9 @@ class Binance < Market
           sleep 3
           sync_fund
           balance = fund.balance
+        end
+        if Time.now.to_i - start_ms / 1000 > 90
+          continue = false
         end
       end
       ask_amount = (base_fund - balance).round(4)
