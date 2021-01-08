@@ -27,6 +27,8 @@ def binance_usdt_tickers
       usdt_marts << quote
     end
   end
+  usdt_marts = usdt_marts.select {|x| !x['symbol'].include?('UPUSDT')}
+  usdt_marts = usdt_marts.select {|x| !x['symbol'].include?('DOWNUSDT')}
   usdt_marts.sort {|x, y| y['priceChangePercent'].to_f <=> x['priceChangePercent'].to_f }
 end
 

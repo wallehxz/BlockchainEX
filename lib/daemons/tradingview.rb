@@ -67,7 +67,7 @@ def stoploss(subject)
   regul = market.regulate
   unless regul.stoploss
     regul.toggle!(:stoploss)
-    content = "#{market.symbols} 开启止损 #{Time.now.to_s(:short)}"
+    content = "[#{Time.now.to_s(:short)}] #{market.symbols} 开启止损 "
     Notice.dingding(content)
   end
 
@@ -83,7 +83,7 @@ def takeprofit(subject)
     cur_price = market.recent_price
     regul.toggle!(:takeprofit)
     regul.update(support: cur_price, resistance: cur_price * 1.005)
-    content = "#{market.symbols} 开启止盈 #{Time.now.to_s(:short)} 止损价更新为 #{cur_price}"
+    content = "[#{Time.now.to_s(:short)}] #{market.symbols} 开启止盈  止损价更新为 #{cur_price}"
     Notice.dingding(content)
   end
   Daemon.start('takeprofit')
@@ -96,7 +96,7 @@ def build(subject)
   regul   = market&.regulate
   regul.toggle!(:fast_trade) unless regul.fast_trade
   regul.toggle!(:chasedown)  unless regul.chasedown
-  content = "#{market.symbols} 开启高频交易,开启追跌交易 #{Time.now.to_s(:short)}"
+  content = "[#{Time.now.to_s(:short)}] #{market.symbols} 开启高频交易,开启追跌交易 "
   Notice.dingding(content)
   amount = regul.retain / 4.0
   market.step_price_bid(amount)
@@ -118,6 +118,18 @@ def macd(subject)
   end
 end
 
+def chasedown(subject)
+  trading = subject.split('|')
+  quote   = trading[0].split('_')
+  market  = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
+  regul   = market&.regulate
+  unless regul.chasedown
+    regul.toggle!(:chasedown)
+    content = "[#{Time.now.to_s(:short)}] #{market.symbols} 开启追跌交易 "
+    Notice.dingding(content)
+  end
+end
+
 while($running) do
   begin
     mails = Mail.all.select { |x| x.from[0] =~ /tradingview/ } rescue []
@@ -131,6 +143,7 @@ while($running) do
         all_in(topic) if topic =~ /all_in/
         stoploss(topic) if topic =~ /stop/
         takeprofit(topic) if topic =~ /take/
+        chasedown(topic) if topic =~ /chase/
       end
     end
   rescue => detail
