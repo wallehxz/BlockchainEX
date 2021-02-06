@@ -10,7 +10,7 @@
 <section class="content">
   <div class="box box-primary">
     <div class="box-header">
-      <a href="<%= clear_alerts_backend_messages_path %>" class="btn bg-green btn-flat" data-confirm="确定删除历史指标吗？"><i class="fa fa-close"></i> 清空指标</a>
+      <a href="<%= clear_history_backend_indicators_path %>" class="btn bg-green btn-flat" data-confirm="确定删除历史指标吗？"><i class="fa fa-close"></i> 清空指标</a>
     </div>
     <div class="box-body">
       <div class="row">
@@ -23,11 +23,11 @@
             </tr>
             </thead>
             <tbody>
-            <% @alerts.each do |item| %>
+            <% @indicators.each do |item| %>
               <tr style="text-align: center">
                 <td style="width: 222px"><%= item.created_at.to_s(:short) %>
                   &nbsp;&nbsp;
-                  <a href="<%= backend_message_path(item) %>" data-method="delete" data-confirm="确定删除该指标吗？">
+                  <a href="<%= backend_indicator_path(item) %>" data-method="delete" data-confirm="确定删除该指标吗？">
                     <i class="fa fa-close"></i>
                   </a>
                 </td>
@@ -40,11 +40,11 @@
       </div>
       <div class="row">
         <div class="col-sm-5">
-          <div class="dataTables_info" id="example1_info" role="status" aria-live="polite"><h5>总计：「<%= @alerts.count %>」</h5></div>
+          <div class="dataTables_info" id="example1_info" role="status" aria-live="polite"><h5>总计：「<%= @indicators.count %>」</h5></div>
         </div>
         <div class="col-sm-12">
           <div class="dataTables_paginate paging_simple_numbers">
-          <%= will_paginate @alerts, :class=>'apple_pagination' %>
+          <%= will_paginate @indicators, :class=>'apple_pagination' %>
           </div>
         </div>
       </div>

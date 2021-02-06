@@ -51,13 +51,13 @@
         <i class="fa fa-envelope-open-o"></i> <span>  市场订单</span>
       </a>
     </li>
-    <li class="treeview <%= 'active' if controller_name == 'messages' && action_name == 'index' %>">
+    <li class="treeview <%= 'active' if controller_name == 'messages' %>">
       <a href="<%= backend_messages_path %>" target="_self">
         <i class="fa fa-commenting-o"></i> <span> 通知信息</span>
       </a>
     </li>
-    <li class="treeview <%= 'active' if controller_name == 'messages' && action_name == 'alerts'%>">
-      <a href="<%= alerts_backend_messages_path %>" target="_self">
+    <li class="treeview <%= 'active' if controller_name == 'indicators' %>">
+      <a href="<%= backend_indicators_path %>" target="_self">
         <i class="fa fa-qq"></i> <span> 复合指标 </span>
       </a>
     </li>
