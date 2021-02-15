@@ -294,11 +294,11 @@ class Binance < Market
         if push_order['state'] == 500
           continue = false
         else
-          sleep 3
+          sleep 6
           sync_fund
           balance = fund&.balance
         end
-        if Time.now.to_i - start_ms / 1000 > 90
+        if Time.now.to_i - start_ms / 1000 > 100
           continue = false
         end
       end
@@ -331,11 +331,11 @@ class Binance < Market
         if push_order['state'] == 500
           continue = false
         else
-          sleep 3
+          sleep 6
           sync_fund
           balance = fund.balance
         end
-        if Time.now.to_i - start_ms / 1000 > 90
+        if Time.now.to_i - start_ms / 1000 > 100
           continue = false
         end
       end

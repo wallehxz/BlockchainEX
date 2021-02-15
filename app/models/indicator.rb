@@ -17,4 +17,8 @@ class Indicator < ActiveRecord::Base
   def dingding_notice
     Notice.dingding(name)
   end
+
+  def value
+    name.split('=')[-1].to_i
+  end
 end

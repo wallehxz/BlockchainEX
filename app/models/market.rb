@@ -186,4 +186,14 @@ class Market < ActiveRecord::Base
   def new_ask(price, amount, category = 'limit')
     asks.create(price: price, amount: amount, category: category)
   end
+
+  def greedy?
+    intor = indicators&.last&.value || 0
+    if intor > 0
+      true
+    else
+      false
+    end
+  end
+
 end

@@ -137,6 +137,20 @@ def cache(subject)
   market.indicators.create(name: trading[1])
 end
 
+def boat(subject)
+  trading = subject.split('|')
+  quote   = trading[0].split('_')
+  market  = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
+  regul   = market&.regulate
+  if market.greedy?
+    unless regul.chasedown
+      regul.toggle!(:chasedown)
+      content = "[#{Time.now.to_s(:short)}] #{market.symbols} 开启追跌交易 "
+      Notice.dingding(content)
+    end
+  end
+end
+
 while($running) do
   begin
     mails = Mail.all.select { |x| x.from[0] =~ /tradingview/ } rescue []
@@ -146,12 +160,13 @@ while($running) do
         topic = subject.delete(' ').split('#')[-1]
         Notice.dingding("[#{Time.now.to_s(:short)}] \n #{topic}")
         start_trade(topic) if topic =~ /(bid)|(ask)/
-        cache(topic) if topic =~ /cache/
-        build(topic) if topic =~ /build/
-        all_in(topic) if topic =~ /all_in/
-        stoploss(topic) if topic =~ /stop/
+        cache(topic)      if topic =~ /cache/
+        build(topic)      if topic =~ /build/
+        all_in(topic)     if topic =~ /all_in/
+        stoploss(topic)   if topic =~ /stop/
         takeprofit(topic) if topic =~ /take/
-        chasedown(topic) if topic =~ /chase/
+        chasedown(topic)  if topic =~ /chase/
+        boat(topic)       if topic =~ /boat/
       end
     end
   rescue => detail
