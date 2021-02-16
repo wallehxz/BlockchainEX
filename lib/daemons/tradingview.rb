@@ -18,7 +18,6 @@ end
 # tradingview 通知格式 #BTC_USDT|RSI1 <=> 70|market|ask
 # subject= "#BTC_USDT|RSI1 <=> 70|step|bid"
 def start_trade(subject)
-  puts "[#{Time.now.to_s(:short)}] #{subject}"
   trading = subject.split('|')
   quote = trading[0].split('_')
   market = Market.find_by_quote_unit_and_base_unit(quote[0],quote[1])
@@ -27,10 +26,8 @@ def start_trade(subject)
     profit = market.regulate.fast_profit || 0.002
     side = trading[-1]
     if side == 'bid'
-      puts "[#{Time.now.to_s(:short)}] staring new bid order"
       bid_order(market, amount, profit, subject)
     elsif side == 'ask'
-      puts "[#{Time.now.to_s(:short)}] staring ask bid order"
       ask_order(market, amount, profit, subject)
     end
   end
@@ -40,24 +37,28 @@ def bid_order(market, amount, profit, subject)
   _latest = market.recent_price
   price = _latest * (1 - profit)
   market.regulate.update(cost: _latest * 0.998)
+  content = ''
   if subject =~ /(step)|(market)/
-    puts "[#{Time.now.to_s(:short)}] #{market.full_name} bid #{$1} amount: #{amount}"
+    content = "[#{Time.now.to_s(:short)}] #{market.full_name} bid #{$1} amount: #{amount}"
     market.send("#{$1 || $2}_price_bid".to_sym, amount)
   else
-    puts "[#{Time.now.to_s(:short)}] #{market.full_name} bid limit amount: #{amount}"
+    content = "[#{Time.now.to_s(:short)}] #{market.full_name} bid limit amount: #{amount}"
     market.new_bid(price, amount)
   end
+  Notice.dingding(content)
 end
 
 def ask_order(market,amount, profit, subject)
   price = market.recent_price * (1 + profit)
+  content = ''
   if subject =~ /(step)|(market)/
-    puts "[#{Time.now.to_s(:short)}] #{market.full_name} ask #{$1} amount: #{amount}"
+    content = "[#{Time.now.to_s(:short)}] #{market.full_name} ask #{$1} amount: #{amount}"
     market.send("#{$1 || $2}_price_ask".to_sym, amount)
   else
-    puts "[#{Time.now.to_s(:short)}] #{market.full_name} ask limit amount: #{amount}"
+    content = "[#{Time.now.to_s(:short)}] #{market.full_name} ask limit amount: #{amount}"
     aks_order = market.new_ask(price, amount)
   end
+  Notice.dingding(content)
 end
 
 def stoploss(subject)
@@ -158,7 +159,6 @@ while($running) do
       if email.subject.include? '#'
         subject = email.subject
         topic = subject.delete(' ').split('#')[-1]
-        Notice.dingding("[#{Time.now.to_s(:short)}] \n #{topic}")
         start_trade(topic) if topic =~ /(bid)|(ask)/
         cache(topic)      if topic =~ /cache/
         build(topic)      if topic =~ /build/

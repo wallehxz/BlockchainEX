@@ -10,13 +10,8 @@
 
 class Indicator < ActiveRecord::Base
   belongs_to :market
-  after_save :dingding_notice
   scope :recent, -> { order('created_at desc') }
   self.per_page = 10
-
-  def dingding_notice
-    Notice.dingding(name)
-  end
 
   def value
     name.split('=')[-1].to_i
