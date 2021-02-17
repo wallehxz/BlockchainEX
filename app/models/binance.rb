@@ -146,6 +146,43 @@ class Binance < Market
     end
   end
 
+  #止损限价单
+  def sync_stop_order(stop, price, quantity)
+    begin
+      order_url = 'https://api.binance.com/api/v3/order'
+      timestamp = (Time.now.to_f * 1000).to_i - 2000
+      reqs = []
+      reqs << ['symbol', symbol]
+      reqs << ['side', 'SELL']
+      reqs << ['type', 'STOP_LOSS_LIMIT']
+      reqs << ['stopPrice', stop.to_d]
+      reqs << ['price', price.to_d]
+      reqs << ['quantity', quantity.to_d]
+      reqs << ['recvWindow', 10000]
+      reqs << ['timestamp', timestamp]
+      reqs << ['timeInForce', 'GTC']
+      reqs_string = reqs.sort.map {|x| x.join('=')}.join('&')
+      res = Faraday.post do |req|
+        req.url order_url
+        req.headers['X-MBX-APIKEY'] = Settings.binance_key
+        req.params['symbol'] = symbol
+        req.params['side'] = 'SELL'
+        req.params['type'] = 'STOP_LOSS_LIMIT'
+        req.params['stopPrice'] = stop.to_d
+        req.params['price'] = price.to_d
+        req.params['quantity'] = quantity.to_d
+        req.params['recvWindow'] = 10000
+        req.params['timeInForce'] = 'GTC'
+        req.params['timestamp'] = timestamp
+        req.params['signature'] = params_signed(reqs_string)
+      end
+      result = JSON.parse(res.body)
+      result['code'] ? { 'state'=> 500, 'cause'=> result['msg'] } : { 'state'=> 200 }
+    rescue Exception => detail
+      { 'state'=> 500, 'cause'=> detail.cause }
+    end
+  end
+
   def params_signed(data)
     key = Settings.binance_secret
     digest = OpenSSL::Digest.new('sha256')
@@ -377,7 +414,7 @@ class Binance < Market
     down_body = markets.select {|c| c[4].to_f - c[1].to_f < 0}
     first_price = markets.first[4].to_f
     last_price = markets.last[4].to_f
-    indexs = (up_body.size.to_f / down_body.size) * (last_price / first_price)
+    indexs = (up_body.size / down_body.size) * (last_price / first_price)
     [first_price, last_price, up_body.size, down_body.size, indexs]
   end
 

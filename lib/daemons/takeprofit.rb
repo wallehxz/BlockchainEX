@@ -18,19 +18,27 @@ while($running) do
   begin
     Regulate.where(takeprofit: true).each do |regul|
       coin    = regul.market
-      coin.sync_fund
+      total   = coin.all_funds
+      freezing = coin.fund.freezing
       balance = coin.fund.balance
       _latest = coin.recent_price
-      _cost   = coin.avg_cost
       _profit = regul.resistance
       _support = regul.support
       _retain = regul.retain
       trends  = coin.get_ticker('1m', 2).kline_trends
 
-      if balance < _retain / 20.0
+      if total < _retain / 20.0
         regul.toggle!('takeprofit')
         content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 关闭止盈"
         Notice.dingding(content)
+      end
+
+      if freezing > 0
+        coin.ask_active_orders.map { |o| coin.undo_order(o['orderId']) }
+      end
+
+      if _latest > _profit && _latest * 0.998 > _support
+        regul.update!(support: _latest * 0.998)
       end
 
       if _latest > _profit && trends[-1] < 0
@@ -39,25 +47,27 @@ while($running) do
         if balance > _amount
           coin.step_price_ask(_amount)
         else
-          coin.market_price_ask(balance)
+          coin.step_price_ask(balance)
         end
-      elsif _latest < _support
-        #如果价格低于止盈，则通过大量阶梯卖出止损
-        _amount = _retain / 4.0
-        if balance > _amount
-          coin.step_price_ask(_amount)
-        else
-          coin.market_price_ask(balance)
-        end
+      elsif _latest < _support && trends[-1] < 0
+        #如果价格低于止盈，则通过市价全部卖出阶梯卖出止损
+        coin.market_price_ask(balance)
       end
 
-      if _latest > _profit && _latest * 0.9975 > _support
-        regul.update!(support: _latest * 0.9975)
+      #设置止损单
+      amount = coin.all_funds.to_d.round(coin&.regulate&.amount_precision || 4, :down)
+      if amount > _retain / 20.0
+        price  = regul.support.to_d.round(coin&.regulate&.price_precision || 4, :down)
+        coin.sync_stop_order(price, price, amount)
+        content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 预售限价止损单\n\n" +
+        "> 价格：#{price} #{coin.base_unit}\n\n" +
+        "> 数量：#{amount} #{coin.quote_unit}"
+        Notice.dingding(content)
       end
 
     end
   rescue => detail
     Notice.dingding("TakeProfit：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
   end
-  sleep 10
+  sleep 30
 end
