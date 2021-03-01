@@ -37,8 +37,8 @@ while($running) do
         coin.ask_active_orders.map { |o| coin.undo_order(o['orderId']) }
       end
 
-      if _latest > _profit && _latest * 0.998 > _support
-        regul.update!(support: _latest * 0.998)
+      if _latest * 0.9995 > _support
+        regul.update!(support: _latest * 0.9995)
       end
 
       if _latest > _profit && trends[-1] < 0
@@ -69,5 +69,5 @@ while($running) do
   rescue => detail
     Notice.dingding("TakeProfit：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
   end
-  sleep 30
+  sleep 60
 end

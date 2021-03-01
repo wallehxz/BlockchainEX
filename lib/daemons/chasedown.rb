@@ -18,10 +18,13 @@ end
 # 判断当前是否有之前的订单，如果没有，则拉取最新的行情，如果K线是下跌，且开始回弹，则追加订单
 
 def chase_order(market)
-  trends = market.get_ticker('1m', 1).kline_trends
+  trends = market.get_ticker('1m', 2).kline_trends
   if trends.max < 0
-    amount = market.regulate.fast_cash
-    market.step_price_bid(amount)
+    if market.bid_active_orders.nil?
+      amount = market.regulate.fast_cash
+      price = market.ticker['bidPrice'].to_f
+      market.new_bid(price, amount)
+    end
   end
 end
 
