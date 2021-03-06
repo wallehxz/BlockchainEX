@@ -17,13 +17,13 @@ end
 # TODO
 # 判断当前是否有之前的订单，如果没有，则拉取最新的行情，如果K线是下跌，且开始回弹，则追加订单
 
-def chase_order(market)
-  trends = market.get_ticker('1m', 2).kline_trends
-  if trends.max < 0
-    if market.bid_active_orders.nil?
-      amount = market.regulate.fast_cash
-      price = market.ticker['bidPrice'].to_f
-      market.new_bid(price, amount)
+def chase_order(coin)
+  trends = coin.get_ticker('1m', 2).kline_trends
+  if trends[0] < 0 && trends[1] > 0
+    if coin.bid_active_orders.blank?
+      amount = coin.regulate.fast_cash
+      price = coin.ticker['bidPrice'].to_f
+      coin.new_bid(price, amount)
     end
   end
 end
@@ -31,8 +31,8 @@ end
 def all_to_off(coin)
   coin.sync_fund
   balance = coin.fund.balance
-  _regul = coin.regulate
-  retain = _regul.retain
+  _regul  = coin.regulate
+  retain  = _regul.retain
   if balance > retain * 0.9
     if _regul.chasedown
       _regul.toggle!(:chasedown)

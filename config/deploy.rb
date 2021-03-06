@@ -27,7 +27,7 @@ set :linked_dirs, %w{
   tmp/cache
   tmp/pids
   tmp/sockets
-  tmp/log
+  tmp/logs
   public/logger
   public/uploads
 }

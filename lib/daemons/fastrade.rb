@@ -21,10 +21,10 @@ def start_hunter(coin)
   balance = coin.fund.balance
   support = _regul.support
   resistance = _regul.resistance
-  cost   = _regul.cost
+  cost = _regul.cost
   recent = coin.recent_price
 
-  if recent > resistance && balance > _retain * 0.9
+  if recent > resistance && balance > _retain * 0.3
     unless _regul.takeprofit
       _regul.toggle!('takeprofit')
       content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 行情价格上涨预期收益 #{resistance} 开启止盈"
@@ -33,7 +33,7 @@ def start_hunter(coin)
     end
   end
 
-  if recent < support && balance > _retain * 0.9
+  if recent < support && balance > _retain * 0.3
     unless _regul.stoploss
       _regul.toggle!('stoploss')
       content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 行情价格下跌最大亏损 #{support} 开启止损"

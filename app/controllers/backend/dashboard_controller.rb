@@ -1,3 +1,4 @@
+require 'open3'
 class Backend::DashboardController < Backend::BaseController
   skip_load_and_authorize_resource
 
@@ -24,7 +25,9 @@ class Backend::DashboardController < Backend::BaseController
     end
 
     if operate == 'off'
-      Daemon.stop(params[:daemon])
+      # Daemon.stop(params[:daemon])
+      shell_cmd = "ps -ef | grep #{params[:daemon]} | awk \'{print $2}\' | xargs kill -9"
+      Open3::capture2(shell_cmd)
     end
 
     if operate == 'all_on'
@@ -35,10 +38,7 @@ class Backend::DashboardController < Backend::BaseController
     end
 
     if operate == 'all_off'
-      root_path = Rails.root
-      start_daemon ="bundle exec rake daemons:stop"
-      shell_cmd = "cd #{root_path} && #{start_daemon}"
-      system("#{shell_cmd}")
+      Open3::capture2('ps -ef | grep .rb | awk \'{print $2}\' | xargs kill -9')
     end
     flash[:notice] = "守护进程状态更新"
     redirect_to backend_daemons_path

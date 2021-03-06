@@ -1,5 +1,5 @@
 dir_mode: script
-dir: ../../tmp/log
+dir: ../../tmp/logs
 multiple: false
 backtrace: false
 monitor: false
