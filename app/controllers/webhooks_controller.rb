@@ -1,5 +1,7 @@
 class WebhooksController < ApplicationController
 
+  # url  http://gogogle.cc/trade
+  # body = {"market": "BTC-USDT", "cmd": "step|market|bid", "msg": "text"}
   def trade
     trading    if params[:cmd] =~ /(bid)|(ask)/
     cache      if params[:cmd] =~ /cache/

@@ -34,29 +34,25 @@ while($running) do
       end
 
       if freezing > 0
-        coin.ask_active_orders.map { |o| coin.undo_order(o['orderId']) }
+        stop_price = coin.ask_active_orders[0].symbolize_keys[:stopPrice]
+        if _support > stop_price || _latest < stop_price
+          coin.ask_active_orders.map { |o| coin.undo_order(o['orderId']) }
+        end
       end
 
       if _latest * 0.9995 > _support
         regul.update!(support: _latest * 0.9995)
       end
 
-      if _latest > _profit && trends[-1] < 0
-        #如果价格大于预期收益，且开始下跌，则批量卖出
-        _amount = _retain / 5.0
-        if balance > _amount
-          coin.step_price_ask(_amount)
-        else
-          coin.step_price_ask(balance)
-        end
-      elsif _latest < _support && trends[-1] < 0
+      if _latest < _support && trends[-1] < 0
         #如果价格低于止盈，则通过市价全部卖出阶梯卖出止损
         coin.market_price_ask(balance)
       end
 
       #设置止损单
       amount = coin.all_funds.to_d.round(coin&.regulate&.amount_precision || 4, :down)
-      if amount > _retain / 20.0
+      freezing = coin.fund.freezing
+      unless freezing > 0
         price  = regul.support.to_d.round(coin&.regulate&.price_precision || 4, :down)
         coin.sync_stop_order(price, price, amount)
         content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 预售限价止损单\n\n" +
