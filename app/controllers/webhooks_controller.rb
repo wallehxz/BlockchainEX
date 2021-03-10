@@ -102,7 +102,7 @@ private
     Daemon.start('takeprofit')
   end
 
-  def chasedown(subject)
+  def chasedown
     market = find_market
     regul  = market&.regulate
     unless regul.chasedown
@@ -112,7 +112,7 @@ private
     end
   end
 
-  def boat(subject)
+  def boat
     market = find_market
     regul  = market&.regulate
     if market.greedy?
