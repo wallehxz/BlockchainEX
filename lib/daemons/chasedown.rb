@@ -20,11 +20,10 @@ end
 def chase_order(coin)
   trends = coin.get_ticker('1m', 2).kline_trends
   if trends[0] < 0 && trends[1] > 0
-    if coin.bid_active_orders.blank?
-      amount = coin.regulate.fast_cash
-      price = coin.ticker['bidPrice'].to_f
-      coin.new_bid(price, amount)
-    end
+    coin.bid_active_orders.map { |o| coin.undo_order(o['orderId']) }
+    amount = coin.regulate.fast_cash
+    price  = coin.ticker['bidPrice'].to_f
+    coin.new_bid(price, amount)
   end
 end
 
@@ -34,6 +33,7 @@ def all_to_off(coin)
   _regul  = coin.regulate
   retain  = _regul.retain
   if balance > retain * 0.9
+    _regul.take_profit_cost
     if _regul.chasedown
       _regul.toggle!(:chasedown)
       content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 已经买入足够数量 关闭追跌"

@@ -61,11 +61,11 @@ private
     market = find_market
     regul = market&.regulate
     regul.toggle!(:fast_trade) unless regul.fast_trade
-    regul.toggle!(:chasedown)  unless regul.chasedown
-    if market.regulate.chasedown
-      content = "[#{Time.now.to_s(:short)}] #{market.symbols} 开启高频交易,开启追跌交易 "
+    unless regul.chasedown
+      regul.toggle!(:chasedown)
+      content = "[#{Time.now.to_s(:short)}] #{market.symbols} 开启建仓，价格预期交易"
       Notice.dingding(content)
-      amount = regul.retain / 4.0
+      amount = regul.retain * 0.3
       market.step_price_bid(amount)
     end
   end
