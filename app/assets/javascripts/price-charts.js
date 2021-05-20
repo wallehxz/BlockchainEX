@@ -37,7 +37,7 @@ function drawVolume(v_data, d_data) {
   var valueDecimals = 0;
   $('#volume-chart').highcharts({
     chart: { backgroundColor: null, height: 300 },
-    tooltip: {backgroundColor: "#e2e2e2", borderColor: '#fff', style: {"color": "#2f2f2f"}, dateTimeLabelFormats: { hour: "%A, %b %e, %H:%M"}},
+    tooltip: { backgroundColor: "#e2e2e2", borderColor: '#fff', style: {"color": "#2f2f2f"} },
     title: {text: 'Volumes' },
     credits: {enabled: false},
     exporting: {enabled: false},

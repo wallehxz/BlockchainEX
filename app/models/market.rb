@@ -57,7 +57,7 @@ class Market < ActiveRecord::Base
 
   # Market.select(:type).distinct.map { |x| x.type.underscore.pluralize }
   def self.exchanges
-    ['binance', 'bittrex', 'fcoin']
+    ['binance', 'ftx']
   end
 
   def method_missing(method, *args)
@@ -188,12 +188,57 @@ class Market < ActiveRecord::Base
   end
 
   def greedy?
-    intor = indicators&.last&.value || 0
+    intor = indicators&.last&.macd_m || 0
     if intor > 0
       true
     else
       false
     end
+  end
+
+  def on_fastrade
+    regulate.update!(fast_trade: true)
+  end
+
+  def off_fastrade
+    regulate.update!(fast_trade: false)
+  end
+
+  def on_chasedown
+    regulate.update!(chasedown: true)
+  end
+
+  def off_chasedown
+    regulate.update!(chasedown: false)
+  end
+
+  def on_stoploss
+    regulate.update!(stoploss: true)
+  end
+
+  def off_stoploss
+    regulate.update!(stoploss: false)
+  end
+
+  def on_takeprofit
+    regulate.update!(takeprofit: true)
+  end
+
+  def off_takeprofit
+    regulate.update!(takeprofit: false)
+  end
+
+  def on_rangetrade
+    regulate.update!(range_trade: true)
+  end
+
+  def off_rangetrade
+    regulate.update!(range_trade: false)
+  end
+
+  def off_bids
+    off_rangetrade
+    off_chasedown
   end
 
 end

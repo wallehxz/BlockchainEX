@@ -1,6 +1,16 @@
 <%= form_for(['backend', @market]) do |f| %>
 <div class="box-body">
   <div class="col-md-5">
+    <div class="form-group has-warning">
+      <label>交易所</label>
+      <div class="input-group">
+        <div class="input-group-addon">
+          <i class="fa fa-cube"></i>
+        </div>
+        <%= f.select(:source, [['BINANCE','binance'],['FTX','ftx']], {prompt:'选择交易所'}, {:class => 'form-control'}) %>
+      </div>
+      <%= model_errors(@market,'source') %>
+    </div>
     <div class="form-group has-success">
       <label>排序</label>
       <div class="input-group">
@@ -16,29 +26,19 @@
         <div class="input-group-addon">
           <i class="fa fa-btc"></i>
         </div>
-        <%= f.text_field :quote_unit, class:'form-control', placeholder:'（必填* 市场货币）' %>
+        <%= f.text_field :quote_unit, class:'form-control', placeholder:'（必填* 市场货币 BTC）' %>
       </div>
       <%= model_errors(@market,'quote_unit') %>
     </div>
     <div class="form-group has-success">
-      <label>标的</label>
+      <label>对标币</label>
       <div class="input-group">
         <div class="input-group-addon">
           <i class="fa fa-money"></i>
         </div>
-        <%= f.text_field :base_unit, class:'form-control', placeholder:'（必填* 标的货币）' %>
+        <%= f.text_field :base_unit, class:'form-control', placeholder:'（必填* 标的货币 USDT）' %>
       </div>
       <%= model_errors(@market,'quote_unit') %>
-    </div>
-    <div class="form-group has-success">
-      <label>交易所</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-cube"></i>
-        </div>
-        <%= f.select(:source, [['币安Binance','binance'],['比特Bittrex','bittrex'],['富币Fcoin','fcoin']], {prompt:'选择交易所'}, {:class => 'form-control'}) %>
-      </div>
-      <%= model_errors(@market,'source') %>
     </div>
   </div>
   <div class="col-md-12">
