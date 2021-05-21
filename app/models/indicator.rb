@@ -30,7 +30,8 @@ class Indicator < ActiveRecord::Base
   end
 
   after_save :quotes_macd_reverse
-  def quotes_reverse
+
+  def quotes_macd_reverse
     quotes = market.indicators.last(2)
     if quotes.size > 1
       if quotes[0].macd_m > 0 && quotes[1].macd_m < 0
@@ -42,19 +43,11 @@ class Indicator < ActiveRecord::Base
       if quotes[0].macd_m < 0 && quotes[1].macd_m > 0
         content = "[#{Time.now.to_s(:short)}] #{market.symbols} MACD 由负转正 #{quotes[0].macd_m} => #{quotes[1].macd_m}"
         Notice.dingding(content)
-        market.step_price_bid(market.regulate.retain)
+        market.step_price_bid(market.regulate.retain * 0.6)
         market.on_chasedown
         market.on_fastrade
       end
     end
   end
-
-  after_save :macd_m_up
-  def macd_m_up
-
-  end
-
-  after_save :macd_m_down
-  def macd_m_down
 
 end

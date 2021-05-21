@@ -27,5 +27,7 @@ class Notice
         req.body = body_params.to_json
       end
     end
+
+    def exception()
   end
 end
