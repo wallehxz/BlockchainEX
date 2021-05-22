@@ -1,5 +1,6 @@
 class Notice
   class << self
+
     def sms_yunpian(mobile,content = '内容')
       yunpian = 'https://sms.yunpian.com/v2/sms/tpl_single_send.json'
       params = {}
@@ -28,6 +29,18 @@ class Notice
       end
     end
 
-    def exception()
+    def exception(ex, mark = "application")
+      binding.pry
+      path = Rails.root.to_s
+      log = ex.backtrace.select { |l| l.include? path }.map {|l| l.gsub(path,'')}.join("\n")
+      push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Settings.dingding_bot}"
+      content =
+        "#{mark}\n\n" +
+        "> 类型： #{ex.message}\n" +
+        "> 时间： #{Time.now.to_s(:short)}\n" +
+        "> 日志： \n#{log}"
+        dingding(content)
+    end
+
   end
 end

@@ -49,7 +49,7 @@ class Order < ActiveRecord::Base
 
   def notice
     if state.succ?
-      regulate.take_profit_cost if type == 'OrderBid'
+      regulate.update_avg_cost if type == 'OrderBid'
       sms_notice if market.regulate.notify_sms
       push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Settings.trading_bot}"
       body_params ={ msgtype:'markdown', markdown:{ title: "#{type_cn}订单" } }

@@ -18,27 +18,27 @@ while($running) do
   begin
     Regulate.where(stoploss: true).each do |regul|
       coin    = regul.market
-      _latest = coin.recent_price
-      coin.off_trade if regul.fast_trade || regul.range_trade || regul.chasedown
+      coin.off_trade
       coin.sync_fund
       balance = coin.fund.balance
-
-      if balance < regul.retain / 20.0
+      if balance < regul.retain / 100.0
         coin.market_price_ask(balance)
         regul.toggle!(:stoploss)
         content = "#{regul.market.symbols} 关闭止损 #{Time.now.to_s(:short)}"
         Notice.dingding(content)
       end
-
-      amount = regul.retain / 4.0
-      if balance > amount
-        coin.step_price_ask(amount)
-      else
-        coin.market_price_ask(balance)
+      if coin.recent_price < regu.cost
+        coin.off_bids
+        amount = regul.retain / 4.0
+        if balance > amount
+          coin.step_price_ask(amount)
+        else
+          coin.market_price_ask(balance)
+        end
       end
     end
   rescue => detail
-    Notice.dingding("StopLoss：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
+    Notice.exception(detail, "Deamon StopLoss")
   end
-  sleep 10
+  sleep 15
 end

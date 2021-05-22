@@ -243,6 +243,21 @@ class Binance < Market
     locale.update(balance: remote['free'].to_f, freezing: remote['locked'].to_f)
   end
 
+  def sync_cash
+    remote = Account.binance_sync(base_unit)
+    if remote['free'].to_f > 0 || remote['locked'].to_f > 0
+      locale = cash || build_cash
+      locale.balance = remote['free'].to_f
+      locale.freezing = remote['locked'].to_f
+      locale.save
+    end
+  end
+
+  def sync_balance
+    sync_fund
+    sync_cash
+  end
+
   def all_funds
     sync_fund
     fund.balance + fund.freezing
@@ -262,16 +277,6 @@ class Binance < Market
       _cost / _fund
     rescue
       0
-  end
-
-  def sync_cash
-    remote = Account.binance_sync(base_unit)
-    if remote['free'].to_f > 0 || remote['locked'].to_f > 0
-      locale = cash || build_cash
-      locale.balance = remote['free'].to_f
-      locale.freezing = remote['locked'].to_f
-      locale.save
-    end
   end
 
   def recent_price
@@ -298,8 +303,16 @@ class Binance < Market
     open_orders.select {|o| o['side'] == 'BUY'}
   end
 
+  def bid_undo_orders
+    bid_active_orders.map { |o| undo_order(o['orderId']) }
+  end
+
   def ask_active_orders
     open_orders.select {|o| o['side'] == 'SELL'}
+  end
+
+  def ask_undo_orders
+    ask_active_orders.map { |o| undo_order(o['orderId']) }
   end
 
   def bid_filled_orders
@@ -312,26 +325,27 @@ class Binance < Market
 
   def step_price_bid(amount)
     begin
+      1/0
       bid_order = bids.create(price: ticker['bidPrice'].to_f, amount: amount, category: 'step', state: 'succ')
       return nil if bid_order.state == 500
-      continue = true
-      start_ms = (Time.now.to_f * 1000).to_i
-      sync_fund;sync_cash
+      sync_balance
+      continue   = true
+      start_ms   = (Time.now.to_f * 1000).to_i
       ave_amount = bid_order.amount / 10.0
-      balance = fund&.balance
-      base_cash = cash&.balance
-      base_fund = balance
+      balance    = fund&.balance
+      base_cash  = cash&.balance
+      base_fund  = balance
       total_fund = base_fund + bid_order.amount
       while balance < total_fund && continue
-        curr_orders = bid_active_orders.select { |o| o['time'] > start_ms }
-        curr_orders.map { |o| undo_order(o['orderId']) }
-        bid_price = ticker['bidPrice'].to_f
-        bid_amount = (total_fund - balance) > ave_amount ? ave_amount : (total_fund - balance)
+        bid_price  = ticker['bidPrice'].to_f
+        bid_max    = total_fund - balance
+        bid_amount = bid_max > ave_amount ? ave_amount : bid_max
         push_order = sync_limit_order(:bid, bid_amount, bid_price)
         if push_order['state'] == 500
           continue = false
         else
-          sleep 6
+          sleep 3
+          bid_undo_orders
           sync_fund
           balance = fund&.balance
         end
@@ -343,7 +357,7 @@ class Binance < Market
       bid_order.update(amount: bid_amount, total: bid_amount * bid_order.price)
       bid_order.notice
     rescue => detail
-      Notice.dingding("Limit Bid Errors：\n Market: #{symbol} \n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")
+      Notice.exception(detail, "Binance Step Bid")
     end
   end
 
@@ -351,24 +365,24 @@ class Binance < Market
     begin
       ask_order = asks.create(price: ticker['askPrice'].to_f, amount: amount, category: 'step', state: 'succ')
       return nil if ask_order.state == 500
-      continue = true
-      start_ms = (Time.now.to_f * 1000).to_i
-      sync_fund;sync_cash
-      ave_amount = amount / 10.0
-      balance = fund.balance
-      base_cash = cash.balance
-      base_fund = balance
-      retain_fund = base_fund - amount
-      while balance > retain_fund && continue
-        curr_orders = ask_active_orders.select { |o| o['time'] > start_ms }
-        curr_orders.map { |o| undo_order(o['orderId']) }
-        ask_price = ticker['askPrice'].to_f
-        ask_amount = (balance - retain_fund) > ave_amount ? ave_amount : (balance - retain_fund)
+      sync_balance
+      continue    = true
+      start_ms    = (Time.now.to_f * 1000).to_i
+      ave_amount  = amount / 10.0
+      balance     = fund.balance
+      base_cash   = cash.balance
+      base_fund   = balance
+      remain_fund = base_fund - amount
+      while balance > remain_fund && continue
+        ask_price  = ticker['askPrice'].to_f
+        ask_max    = balance - remain_fund
+        ask_amount = ask_max > ave_amount ? ave_amount : ask_max
         push_order = sync_limit_order(:ask, ask_amount, ask_price)
         if push_order['state'] == 500
           continue = false
         else
-          sleep 6
+          sleep 3
+          ask_undo_orders
           sync_fund
           balance = fund.balance
         end
@@ -380,7 +394,7 @@ class Binance < Market
       ask_order.update(amount: ask_amount, total: ask_amount * ask_order.price )
       ask_order.notice
     rescue => detail
-      Notice.dingding("Limit Ask Errors：\n Market：#{symbol} \n #{detail.message} \n #{detail.backtrace[0..2].join("\n")}")
+      Notice.exception(detail, "Binance Step Ask")
     end
   end
 

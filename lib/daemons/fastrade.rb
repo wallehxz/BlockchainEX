@@ -15,30 +15,28 @@ Signal.trap("TERM") do
 end
 
 def start_hunter(coin)
-  _regul = coin.regulate
-  _retain = _regul.retain
   coin.sync_fund
-  balance = coin.fund.balance
-  support = _regul.support
+  _regul     = coin.regulate
+  _retain    = _regul.retain
+  balance    = coin.fund.balance
+  support    = _regul.support
   resistance = _regul.resistance
-  cost = _regul.cost
-  recent = coin.recent_price
+  cost       = _regul.cost
+  recent     = coin.recent_price
 
-  if recent > resistance && balance > _retain * 0.3
+  if recent > resistance && balance > _retain * 0.75
     unless _regul.takeprofit
       _regul.toggle!('takeprofit')
       content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 行情价格上涨预期收益 #{resistance} 开启止盈"
-      _regul.update!(support: recent * 0.998)
+      _regul.update!(support: recent * 0.9975)
       Notice.dingding(content)
     end
   end
 
-  if recent < support && balance > _retain * 0.3
-    unless _regul.stoploss
-      _regul.toggle!('stoploss')
-      content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 行情价格下跌最大亏损 #{support} 开启止损"
-      Notice.dingding(content)
-    end
+  if recent < cost && balance > _retain * 0.5
+    coin.on_stoploss
+    content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 行情价格下跌成本线 #{cost} 开启止损"
+    Notice.dingding(content)
   end
 end
 
@@ -48,7 +46,7 @@ while($running) do
       start_hunter(regul.market)
     end
   rescue => detail
-    Notice.dingding("FastTrade：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
+    Notice.exception(detail, "Deamon FastTrade")
   end
   sleep 60
 end

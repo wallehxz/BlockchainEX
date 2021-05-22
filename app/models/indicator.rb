@@ -35,17 +35,19 @@ class Indicator < ActiveRecord::Base
     quotes = market.indicators.last(2)
     if quotes.size > 1
       if quotes[0].macd_m > 0 && quotes[1].macd_m < 0
-        content = "[#{Time.now.to_s(:short)}] #{market.symbols} MACD 由正转负 #{quotes[0].macd_m} => #{quotes[1].macd_m}"
-        Notice.dingding(content)
+        market.off_bids
         market.on_takeprofit
+        market.on_stoploss
+        content = "[#{Time.now.to_s(:short)}] #{market.symbols} MACD 由正转负 #{quotes[0].macd_m} => #{quotes[1].macd_m}，关闭买进操作，开启止盈止损"
+        Notice.dingding(content)
       end
 
       if quotes[0].macd_m < 0 && quotes[1].macd_m > 0
-        content = "[#{Time.now.to_s(:short)}] #{market.symbols} MACD 由负转正 #{quotes[0].macd_m} => #{quotes[1].macd_m}"
-        Notice.dingding(content)
         market.step_price_bid(market.regulate.retain * 0.6)
         market.on_chasedown
         market.on_fastrade
+        content = "[#{Time.now.to_s(:short)}] #{market.symbols} MACD 由负转正 #{quotes[0].macd_m} => #{quotes[1].macd_m}，阶梯买进，开启回落买进，开启价格波动扫描"
+        Notice.dingding(content)
       end
     end
   end

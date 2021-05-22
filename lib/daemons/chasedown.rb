@@ -33,7 +33,7 @@ def all_to_off(coin)
   _regul  = coin.regulate
   retain  = _regul.retain
   if balance > retain * 0.9
-    _regul.take_profit_cost
+    _regul.update_avg_cost
     if _regul.chasedown
       _regul.toggle!(:chasedown)
       content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 已经买入足够数量 关闭追跌"
@@ -50,7 +50,7 @@ while($running) do
       all_to_off(coin)
     end
   rescue => detail
-    Notice.dingding("Chasedown：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
+    Notice.exception(detail, "Deamon Chasedown")
   end
   sleep 35
 end

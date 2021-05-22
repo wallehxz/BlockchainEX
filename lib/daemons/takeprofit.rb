@@ -17,29 +17,24 @@ end
 while($running) do
   begin
     Regulate.where(takeprofit: true).each do |regul|
-      coin    = regul.market
-      total   = coin.all_funds
-      freezing = coin.fund.freezing
-      balance = coin.fund.balance
-      _latest = coin.recent_price
-      _profit = regul.resistance
-      _support = regul.support
-      _retain = regul.retain
-      trends  = coin.get_ticker('1m', 2).kline_trends
+      coin      = regul.market
+      total     = coin.all_funds
+      freezing  = coin.fund.freezing
+      balance   = coin.fund.balance
+      _latest   = coin.recent_price
+      _profit   = regul.resistance
+      _support  = regul.support
+      _retain   = regul.retain
+      trends    = coin.get_ticker('1m', 2).kline_trends
 
-      if total < _retain / 20.0
+      if total < _retain / 100.0
         regul.toggle!('takeprofit')
         content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 关闭止盈"
         Notice.dingding(content)
         break
       end
 
-      if freezing > 0
-        stop_price = coin.ask_active_orders[0].symbolize_keys[:stopPrice]
-        if _support > stop_price || _latest < stop_price
-          coin.ask_active_orders.map { |o| coin.undo_order(o['orderId']) }
-        end
-      end
+      coin.ask_undo_orders if freezing > 0
 
       if _latest * 0.9995 > _support
         regul.update!(support: _latest * 0.9995)
@@ -63,7 +58,7 @@ while($running) do
 
     end
   rescue => detail
-    Notice.dingding("TakeProfit：\n #{detail.message} \n #{detail.backtrace[0..5].join("\n")}")
+    Notice.exception(detail, "Deamon TakeProfit")
   end
   sleep 60
 end

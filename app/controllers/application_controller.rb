@@ -17,7 +17,7 @@ class ApplicationController < ActionController::Base
   end
 
   rescue_from StandardError do |exception|
-    Notice.dingding("Warning ：\n #{exception.message} \n #{exception.backtrace[0..5].join("\n")}")
+    Notice.exception(exception, "Application")
     render json: { message: "服务器发生错误" }, status: :server_error
   end if Rails.env.production?
 

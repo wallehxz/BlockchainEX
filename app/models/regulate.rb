@@ -34,7 +34,7 @@ class Regulate < ActiveRecord::Base
 
   self.per_page = 10
 
-  def take_profit_cost
+  def update_avg_cost
     average = market.avg_cost
     if average > 0
       new_average = average.to_d.round(price_precision, :down)
