@@ -53,7 +53,7 @@ class Indicator < ActiveRecord::Base
   end rescue nil
 
   def macd_up_trade
-    if mach_m > 0
+    if macd_m > 0
       quotes =  market.indicators.last(10)
       macd_hs = quotes.map(&:macd_h)
       if macd_hs[-2] > 0 && macd_hs[-1] < 0
