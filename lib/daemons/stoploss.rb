@@ -27,7 +27,7 @@ while($running) do
         content = "#{regul.market.symbols} 关闭止损 #{Time.now.to_s(:short)}"
         Notice.dingding(content)
       end
-      if coin.recent_price < regu.cost
+      if coin.recent_price < regul.cost
         coin.off_bids
         amount = regul.retain / 4.0
         if balance > amount

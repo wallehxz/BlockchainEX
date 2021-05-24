@@ -50,6 +50,21 @@ class Indicator < ActiveRecord::Base
         Notice.dingding(content)
       end
     end
-  end
+  end rescue nil
+
+  def macd_up_trade
+    if mach_m > 0
+      quotes =  market.indicators.last(10)
+      macd_hs = quotes.map(&:macd_h)
+      if macd_hs[-2] > 0 && macd_hs[-1] < 0
+        market.sync_fund
+        market.on_fastrade if market.fund.balance > market.regulate.retain * 0.1
+      end
+      macd_hs5 = macd_hs[-5..-1]
+      if macd_hs5.min == macd_hs5[-2] && macd_hs5[-2] < 0
+        market.on_chasedown
+      end
+    end
+  end rescue nil
 
 end
