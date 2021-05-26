@@ -50,8 +50,9 @@ class Indicator < ActiveRecord::Base
         Notice.dingding(content)
       end
     end
-  end rescue nil
+  end
 
+  after_save :macd_up_trade
   def macd_up_trade
     if macd_m > 0
       quotes =  market.indicators.last(10)
@@ -59,12 +60,17 @@ class Indicator < ActiveRecord::Base
       if macd_hs[-2] > 0 && macd_hs[-1] < 0
         market.sync_fund
         market.on_fastrade if market.fund.balance > market.regulate.retain * 0.1
+        content = "[#{Time.now.to_s(:short)}] #{market.symbols} MACD H 指标改变趋势，#{macd_hs[-2]} => #{macd_hs[-1]} 开启价格波动扫描"
+        Notice.dingding(content)
       end
       macd_hs5 = macd_hs[-5..-1]
       if macd_hs5.min == macd_hs5[-2] && macd_hs5[-2] < 0
         market.on_chasedown
+        market.on_fastrade
+        content = "[#{Time.now.to_s(:short)}] #{market.symbols} MACD H 指标改变趋势，#{macd_hs[-2]} => #{macd_hs[-1]} 开启追跌"
+        Notice.dingding(content)
       end
     end
-  end rescue nil
+  end
 
 end

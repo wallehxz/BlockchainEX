@@ -1,7 +1,7 @@
 class WebhooksController < ApplicationController
 
   # url  http://gogogle.cc/trade
-  # body = {"market": "BTC-USDT", "cmd": "step|market|bid", "msg": "text"}
+  # body = {"market": "YFI-USDT", "cmd": "step|market|bid|ask|cache|all_in", "msg": "text"}
   def trade
     trading    if params[:cmd] =~ /(bid)|(ask)/
     cache      if params[:cmd] =~ /cache/
@@ -74,7 +74,7 @@ private
     market = find_market
     amount = market.regulate.retain
     market.market_price_bid(amount)
-    content = "[#{Time.now.to_s(:short)}] #{market.symbols} 市价满仓入场 数量#{amount}"
+    content = "[#{Time.now.to_s(:short)}] #{market.symbols} 市价全仓买入 数量#{amount}"
     Notice.dingding(content)
   end
 
