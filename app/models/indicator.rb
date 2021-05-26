@@ -45,8 +45,7 @@ class Indicator < ActiveRecord::Base
       if quotes[0].macd_m < 0 && quotes[1].macd_m > 0
         market.step_price_bid(market.regulate.retain * 0.6)
         market.on_chasedown
-        market.on_fastrade
-        content = "[#{Time.now.to_s(:short)}] #{market.symbols} MACD 由负转正 #{quotes[0].macd_m} => #{quotes[1].macd_m}，阶梯买进，开启回落买进，开启价格波动扫描"
+        content = "[#{Time.now.to_s(:short)}] #{market.symbols} MACD 由负转正 #{quotes[0].macd_m} => #{quotes[1].macd_m}，阶梯买进，开启回落买进"
         Notice.dingding(content)
       end
     end
