@@ -325,7 +325,6 @@ class Binance < Market
 
   def step_price_bid(amount)
     begin
-      1/0
       bid_order = bids.create(price: ticker['bidPrice'].to_f, amount: amount, category: 'step', state: 'succ')
       return nil if bid_order.state == 500
       sync_balance
