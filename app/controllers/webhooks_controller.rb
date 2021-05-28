@@ -92,13 +92,11 @@ private
   def takeprofit
     market = find_market
     regul = market.regulate
-    unless regul.takeprofit
-      cur_price = market.recent_price
-      regul.toggle!(:takeprofit)
-      regul.update(support: cur_price, resistance: cur_price * 1.005)
-      content = "[#{Time.now.to_s(:short)}] #{market.symbols} 开启止盈  止损价更新为 #{cur_price}"
-      Notice.dingding(content)
-    end
+    cur_price = market.recent_price
+    market.on_takeprofit
+    regul.update(support: cur_price, resistance: cur_price * 1.005)
+    content = "[#{Time.now.to_s(:short)}] #{market.symbols} 开启止盈  止损价更新为 #{cur_price}"
+    Notice.dingding(content)
     Daemon.start('takeprofit')
   end
 

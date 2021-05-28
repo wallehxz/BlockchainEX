@@ -67,7 +67,8 @@ class Binance < Market
     "#{quote_unit}#{base_unit}"
   end
 
-  def get_ticker(interval,amount, start_t: nil, end_t: nil)
+  # interval = [1m，3m，5m，15m，30m，1h] start_t= 1499040000000 end_t= start_t
+  def get_ticker(interval, amount, start_t= nil, end_t= nil)
     market_url = 'https://api.binance.com/api/v3/klines'
     res = Faraday.get do |req|
       req.url market_url
@@ -189,18 +190,20 @@ class Binance < Market
     OpenSSL::HMAC.hexdigest(digest, key, data)
   end
 
-  def all_orders
+  def all_orders(start_t=nil, end_t=nil)
     order_url = 'https://api.binance.com/api/v3/allOrders'
     timestamp = (Time.now.to_f * 1000).to_i - 2000
-    params_string = "limit=1000&recvWindow=10000&symbol=#{symbol}&timestamp=#{timestamp}"
+    params_string = "#{'endTime=' + end_t.to_s + '&' if end_t}limit=1000&recvWindow=10000&#{'startTime=' + start_t.to_s + '&' if start_t}symbol=#{symbol}&timestamp=#{timestamp}"
     res = Faraday.get do |req|
       req.url order_url
       req.headers['X-MBX-APIKEY'] = Settings.binance_key
-      req.params['symbol'] = symbol
-      req.params['recvWindow'] = 10000
-      req.params['limit'] = 1000
-      req.params['timestamp'] = timestamp
-      req.params['signature'] = params_signed(params_string)
+      req.params['symbol']        = symbol
+      req.params['recvWindow']    = 10000
+      req.params['limit']         = 1000
+      req.params['startTime']     = start_t if start_t
+      req.params['endTime']       = end_t if end_t
+      req.params['timestamp']     = timestamp
+      req.params['signature']     = params_signed(params_string)
     end
     result = JSON.parse(res.body)
   end

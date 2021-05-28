@@ -11,12 +11,14 @@ class TrendingController < ApplicationController
   end
 
   def symbols
+    market_lists = Market.market_list
+    market = Market.find(market_lists[params[:symbol]])
     config_hash = {}
     config_hash[:name] = params[:symbol]
     config_hash[:ticker] = params[:symbol]
     config_hash[:description] = params[:symbol].upcase
     config_hash[:timezone] = 'Asia/Shanghai'
-    config_hash[:pricescale] = 10 ** 5
+    config_hash[:pricescale] = 10 ** 2
     config_hash[:session] = '24x7'
     config_hash[:minmov] = 1
     config_hash[:data_status] = 'streaming'
@@ -32,7 +34,7 @@ class TrendingController < ApplicationController
     market_lists = Market.market_list
     market = Market.find(market_lists[params[:symbol]])
     # tickers = Candle.where(market_id: market_lists[params[:symbol]]).where("t >= ? and t < ?",params[:from],params[:to])
-    tickers = market.get_ticker("5m", 1000)
+    tickers = market.get_ticker("5m", 1000, params[:from].to_i * 1000, params[:to].to_i * 1000)
     tickers.reverse
     markets_body = {}
     tickers.each do |ticker|
@@ -55,15 +57,20 @@ class TrendingController < ApplicationController
     marks = []
     market_lists = Market.market_list
     market = Market.find(market_lists[params[:symbol]])
-    orders = market.all_orders.select {|x| x['status']=='FILLED'}
+    to_time = params[:to].to_i > Time.now.to_i ? Time.now.to_i : params[:to].to_i - 300
+    orders = market.all_orders(params[:from].to_i * 1000, to_time * 1000).select {|x| x['status']=='FILLED'}
     orders.each do |order|
       mark = {}
       mark[:id] = order['orderId']
       mark[:time] = order['time'] / 1000
-      mark[:color] = order['side'] == 'BUY' ? { border: '#ff5733', background: '#00ff00' } : { border: '#eb4559', background: '#00ff00' }
-      mark[:text] = "<p>成交价格： #{order['price'].to_f}</p><br><p>成交数量： #{order['executedQty'].to_f}</p>"
-      mark[:label] = order['side'] == 'BUY' ? '买' : '卖'
-      mark[:labelFontColor] = order['side'] == 'BUY' ? '#dd2c00' : '#000000'
+      if order['side'] == 'BUY'
+        mark[:color] = { border: '#ffffff', background: '#34D5A7' }
+      else
+        mark[:color] = { border: '#ffffff', background: '#E2517E' }
+      end
+      mark[:text] = "<p>方向： #{order['side'] == 'BUY' ? '买入' : '卖出'}</p><br><p>价格： #{order['type']} #{order['price'].to_f if order['price'].to_f > 0}</p><br><p>数量： #{order['executedQty'].to_f}</p>"
+      mark[:label] = order['side'] == 'BUY' ? 'B' : 'A'
+      mark[:labelFontColor] = '#232e36'
       mark[:minSize] = 10
       marks << mark
     end
