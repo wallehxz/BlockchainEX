@@ -198,6 +198,7 @@ class Market < ActiveRecord::Base
 
   def on_fastrade
     regulate.update!(fast_trade: true)
+    Daemon.start('fastrade')
   end
 
   def off_fastrade
@@ -206,6 +207,7 @@ class Market < ActiveRecord::Base
 
   def on_chasedown
     regulate.update!(chasedown: true)
+    Daemon.start('chasedown')
   end
 
   def off_chasedown
@@ -214,6 +216,7 @@ class Market < ActiveRecord::Base
 
   def on_stoploss
     regulate.update!(stoploss: true)
+    Daemon.start('stoploss')
   end
 
   def off_stoploss
@@ -222,6 +225,7 @@ class Market < ActiveRecord::Base
 
   def on_takeprofit
     regulate.update!(takeprofit: true)
+    Daemon.start('takeprofit')
   end
 
   def off_takeprofit
@@ -230,6 +234,7 @@ class Market < ActiveRecord::Base
 
   def on_rangetrade
     regulate.update!(range_trade: true)
+
   end
 
   def off_rangetrade

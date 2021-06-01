@@ -33,11 +33,9 @@ def all_to_off(coin)
   retain  = _regul.retain
   if balance > retain * 0.9
     _regul.update_avg_cost
-    if _regul.chasedown
-      _regul.toggle!(:chasedown)
-      content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 已经买入足够数量 关闭追跌"
-      Notice.dingding(content)
-    end
+    coin.off_chasedown
+    content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 已经买入足够数量 关闭追跌"
+    Notice.dingding(content)
   end
 end
 

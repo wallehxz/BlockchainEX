@@ -28,19 +28,19 @@ while($running) do
       trends    = coin.get_ticker('1m', 2).kline_trends
 
       if total < _retain / 100.0
-        regul.toggle!('takeprofit')
+        coin.off_takeprofit
         content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 关闭止盈"
         Notice.dingding(content)
         break
       end
 
-      coin.ask_undo_orders if freezing > 0
-
       if _latest * 0.9995 > _support
         regul.update!(support: _latest * 0.9995)
+        coin.ask_undo_orders if freezing > 0
       end
 
       if _latest < _support && trends[-1] < 0
+        coin.ask_undo_orders if freezing > 0
         coin.market_price_ask(balance)
       end
 

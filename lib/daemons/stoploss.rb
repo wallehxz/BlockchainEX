@@ -23,7 +23,7 @@ while($running) do
       balance = coin.fund.balance
       if balance < regul.retain / 100.0
         coin.market_price_ask(balance)
-        regul.toggle!(:stoploss)
+        coin.off_stoploss
         content = "#{regul.market.symbols} 关闭止损 #{Time.now.to_s(:short)}"
         Notice.dingding(content)
       end

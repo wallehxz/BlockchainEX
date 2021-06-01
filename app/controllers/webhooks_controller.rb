@@ -60,33 +60,27 @@ private
   def build
     market = find_market
     regul = market&.regulate
-    regul.toggle!(:fast_trade) unless regul.fast_trade
-    unless regul.chasedown
-      regul.toggle!(:chasedown)
-      content = "[#{Time.now.to_s(:short)}] #{market.symbols} 开启建仓，价格预期交易"
-      Notice.dingding(content)
-      amount = regul.retain * 0.3
-      market.step_price_bid(amount)
-    end
+    market.on_fastrade
+    market.on_chasedown
+    amount = regul.retain * 0.3
+    content = "[#{Time.now.to_s(:short)}] #{market.symbols} 开启建仓，持仓风控，阶梯价买入 #{amount}"
+    Notice.dingding(content)
+    market.step_price_bid(amount)
   end
 
   def all_in
     market = find_market
     amount = market.regulate.retain
     market.market_price_bid(amount)
-    content = "[#{Time.now.to_s(:short)}] #{market.symbols} 市价全仓买入 数量#{amount}"
+    content = "[#{Time.now.to_s(:short)}] #{market.symbols} 市价全仓买入#{amount}"
     Notice.dingding(content)
   end
 
   def stoploss
     market = find_market
-    regul = market.regulate
-    unless regul.stoploss
-      regul.toggle!(:stoploss)
-      content = "[#{Time.now.to_s(:short)}] #{market.symbols} 开启止损 "
-      Notice.dingding(content)
-    end
-    Daemon.start('stoploss')
+    market.on_stoploss
+    content = "[#{Time.now.to_s(:short)}] #{market.symbols} 开启止损 "
+    Notice.dingding(content)
   end
 
   def takeprofit
@@ -95,30 +89,23 @@ private
     cur_price = market.recent_price
     market.on_takeprofit
     regul.update(support: cur_price, resistance: cur_price * 1.005)
-    content = "[#{Time.now.to_s(:short)}] #{market.symbols} 开启止盈  止损价更新为 #{cur_price}"
+    content = "[#{Time.now.to_s(:short)}] #{market.symbols} 开启止盈  止盈更新 #{cur_price}"
     Notice.dingding(content)
-    Daemon.start('takeprofit')
   end
 
   def chasedown
     market = find_market
-    regul  = market&.regulate
-    unless regul.chasedown
-      regul.toggle!(:chasedown)
-      content = "[#{Time.now.to_s(:short)}] #{market.symbols} 开启追跌交易 "
-      Notice.dingding(content)
-    end
+    market.on_chasedown
+    content = "[#{Time.now.to_s(:short)}] #{market.symbols} 开启追跌交易 "
+    Notice.dingding(content)
   end
 
   def boat
     market = find_market
-    regul  = market&.regulate
     if market.greedy?
-      unless regul.chasedown
-        regul.toggle!(:chasedown)
-        content = "[#{Time.now.to_s(:short)}] #{market.symbols} 开启追跌交易 "
-        Notice.dingding(content)
-      end
+      market.on_chasedown
+      content = "[#{Time.now.to_s(:short)}] #{market.symbols} 开启追跌交易 "
+      Notice.dingding(content)
     end
   end
 

@@ -25,12 +25,10 @@ def start_hunter(coin)
   recent     = coin.recent_price
 
   if recent > resistance && balance > _retain * 0.75
-    unless _regul.takeprofit
-      _regul.toggle!('takeprofit')
-      content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 行情价格上涨预期收益 #{resistance} 开启止盈"
-      _regul.update!(support: recent * 0.9975)
-      Notice.dingding(content)
-    end
+    coin.on_takeprofit
+    content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 行情价格上涨预期收益 #{resistance} 开启止盈"
+    _regul.update!(support: recent * 0.9975)
+    Notice.dingding(content)
   end
 
   if recent < cost && balance > _retain * 0.5
