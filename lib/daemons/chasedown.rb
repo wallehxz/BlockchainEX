@@ -20,7 +20,6 @@ end
 def chase_order(coin)
   trends = coin.get_ticker('1m', 2).kline_trends
   if trends[-1] < 0
-    coin.bid_active_orders.map { |o| coin.undo_order(o['orderId']) }
     amount = coin.regulate.fast_cash
     coin.step_price_bid(amount)
   end
