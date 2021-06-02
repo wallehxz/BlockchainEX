@@ -31,7 +31,8 @@ while($running) do
         coin.off_bids
         amount = regul.retain / 4.0
         if balance > amount
-          coin.step_price_ask(amount)
+          coin.market_price_ask(amount * 0.5)
+          coin.step_price_ask(amount * 0.5)
         else
           coin.market_price_ask(balance)
         end

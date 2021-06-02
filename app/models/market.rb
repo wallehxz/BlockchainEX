@@ -138,7 +138,9 @@ class Market < ActiveRecord::Base
         _price = recent_price * (1 - _profit)
         new_bid(_price,_amount)
       end
-    elsif max_48 == last_quote.c
+    end
+
+    if max_48 == last_quote.c
       tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} UP Price #{last_quote.c} Vol #{last_quote.v}"
       quote_notice(tip)
       if regulate&.range_trade
@@ -147,13 +149,14 @@ class Market < ActiveRecord::Base
         _price = recent_price * (1 + _profit)
         new_ask(_price,_amount)
       end
-      if fund.balance > regulate.retain * 0.1
-        if last_quote.c > avg_cost + regulate.cash_profit
-          regulate.update!(support: last_quote.c * 0.9975)
-          regulate.update!(takeprofit: true)
-          content = "#{Time.now.to_s(:short)} #{symbols} 止盈价格更新为 #{regulate.support}"
-          Notice.dingding(content)
-        end
+    end
+
+    if fund.balance > regulate.retain * 0.1
+      if last_quote.c > avg_cost + regulate.cash_profit
+        regulate.update!(support: last_quote.c * 0.9975)
+        regulate.update!(takeprofit: true)
+        content = "#{Time.now.to_s(:short)} #{symbols} 止盈价格更新为 #{regulate.support}"
+        Notice.dingding(content)
       end
     end
   end
