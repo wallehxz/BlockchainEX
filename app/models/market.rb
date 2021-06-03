@@ -112,7 +112,7 @@ class Market < ActiveRecord::Base
   end
 
   def off_trade
-    regulate.update!(fast_trade: false, range_trade: false, chasedown: false)
+    regulate.update!(range_trade: false, chasedown: false)
     content = "#{symbols} 关闭所有交易策略 #{Time.now.to_s(:short)}"
     Notice.dingding(content)
   end

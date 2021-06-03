@@ -50,9 +50,9 @@ class Regulate < ActiveRecord::Base
   after_save :turnover
 
   def turnover
-    if takeprofit && chasedown
+    if (stoploss || takeprofit) && chasedown
       self.toggle!(:chasedown)
-      content = "[#{Time.now.to_s(:short)}] #{market.symbols} 止盈和追跌不可同时执行，关闭追跌"
+      content = "[#{Time.now.to_s(:short)}] #{market.symbols} 止盈卖出和追跌买入不可同时执行，关闭追跌"
       Notice.dingding(content)
     end
   end

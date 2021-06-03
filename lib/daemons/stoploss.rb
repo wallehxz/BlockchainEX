@@ -18,7 +18,6 @@ while($running) do
   begin
     Regulate.where(stoploss: true).each do |regul|
       coin    = regul.market
-      coin.off_trade
       coin.sync_fund
       balance = coin.fund.balance
       if balance < regul.retain / 100.0
