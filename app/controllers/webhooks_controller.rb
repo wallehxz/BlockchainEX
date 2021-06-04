@@ -60,12 +60,11 @@ private
   def build
     market = find_market
     regul = market&.regulate
-    market.on_fastrade
     market.on_chasedown
-    amount = regul.retain * 0.3
-    content = "[#{Time.now.to_s(:short)}] #{market.symbols} 开启建仓，持仓风控，阶梯价买入 #{amount}"
+    amount = regul.retain * 0.2
+    content = "[#{Time.now.to_s(:short)}] #{market.symbols} 开启建仓，持仓风控，市价买入 #{amount}"
     Notice.dingding(content)
-    market.step_price_bid(amount)
+    market.market_price_bid(amount)
   end
 
   def all_in
