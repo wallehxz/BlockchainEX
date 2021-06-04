@@ -23,6 +23,7 @@ while($running) do
       if balance < regul.retain / 100.0
         coin.market_price_ask(balance)
         coin.off_stoploss
+        coin.off_fastrade
         content = "#{regul.market.symbols} 关闭止损 #{Time.now.to_s(:short)}"
         Notice.dingding(content)
       end

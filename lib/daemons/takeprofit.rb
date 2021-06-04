@@ -29,6 +29,7 @@ while($running) do
 
       if total < _retain / 100.0
         coin.off_takeprofit
+        coin.off_fastrade
         content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 关闭止盈"
         Notice.dingding(content)
         break
