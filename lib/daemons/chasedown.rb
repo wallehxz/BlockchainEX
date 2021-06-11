@@ -35,7 +35,6 @@ def all_to_off(coin)
   if balance > retain * 0.9
     _regul.update_avg_cost
     coin.off_chasedown
-    coin.on_fastrade
     content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 已经买入足够数量 关闭追跌"
     Notice.dingding(content)
   end
