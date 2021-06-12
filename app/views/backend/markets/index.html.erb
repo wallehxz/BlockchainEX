@@ -24,6 +24,7 @@
               <th tabindex="0" aria-controls="example1" style="text-align: center">市场币</th>
               <th tabindex="0" aria-controls="example1" style="text-align: center">标的币</th>
               <th tabindex="0" aria-controls="example1" style="text-align: center">平均成本</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">现货数量</th>
               <th tabindex="0" aria-controls="example1" style="text-align: center;width: 240px">操作</th>
             </tr>
             </thead>
@@ -40,7 +41,7 @@
                 <td><br>
                   <label class="btn bg-black btn-flat" style="font-size: 16px;min-width: 100px">
                     <i class="fa fa-dot-circle-o" style="float: left;"></i>
-                    <%= item.quote_unit %>
+                    <%= item.full_name %>
                   </label>
                 </td>
                 <td><br>
@@ -50,7 +51,12 @@
                 </td>
                 <td><br>
                   <label class="btn bg-black btn-flat" style="font-size: 16px;min-width: 100px">
-                    <%= item.avg_cost&.round(4) rescue 0 %>
+                    <%= item.avg_cost&.round(4) rescue 0 %> <%= item.base_unit %>
+                  </label>
+                </td>
+                <td><br>
+                  <label class="btn bg-black btn-flat" style="font-size: 16px;min-width: 100px">
+                    <%= item.sync_fund rescue 0 %> <%= item.quote_unit %>
                   </label>
                 </td>
                 <td style="text-align: left">

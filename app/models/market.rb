@@ -134,8 +134,7 @@ class Market < ActiveRecord::Base
       quote_notice(tip)
       if regulate&.range_trade
         _amount = regulate.range_cash
-        _profit = regulate.range_profit || 0.0025
-        _price = recent_price * (1 - _profit)
+        _price = recent_price * (1 - 0.0025)
         new_bid(_price,_amount)
       end
     end
@@ -145,8 +144,7 @@ class Market < ActiveRecord::Base
       quote_notice(tip)
       if regulate&.range_trade
         _amount = regulate.range_cash
-        _profit = regulate.range_profit || 0.003
-        _price = recent_price * (1 + _profit)
+        _price = recent_price * (1 + 0.003)
         new_ask(_price,_amount)
       end
     end

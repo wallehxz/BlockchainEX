@@ -38,13 +38,17 @@ class Regulate < ActiveRecord::Base
     average = market.avg_cost
     if average > 0
       new_average = average.to_d.round(price_precision, :down)
-      self.resistance = new_average + cash_profit
-      self.support = new_average - cash_profit
+      self.resistance = new_average + range_profit
+      self.support = new_average - range_profit
       self.cost = new_average
       save
       content = "[#{Time.now.to_s(:short)}] #{market.symbols} Cost: #{new_average} \nProfit： #{resistance} \nLoss： #{support}"
       Notice.dingding(content)
     end
+  end
+
+  def current_fund
+    market.sync_fund
   end
 
   after_save :turnover
@@ -55,6 +59,14 @@ class Regulate < ActiveRecord::Base
       content = "[#{Time.now.to_s(:short)}] #{market.symbols} 止盈卖出和追跌买入不可同时执行，关闭追跌"
       Notice.dingding(content)
     end
+  end
+
+  after_create :update_price_amount_precision
+  def update_price_amount_precision
+    ticker = market.ticker
+    self.amount_precision = ticker['bidQty'].to_f.to_s.split('.').last.size
+    self.price_precision  = ticker['bidPrice'].to_f.to_s.split('.').last.size
+    save
   end
 
 end

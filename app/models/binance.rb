@@ -244,6 +244,7 @@ class Binance < Market
     remote = Account.binance_sync(quote_unit)
     locale = fund || build_fund
     locale.update(balance: remote['free'].to_f, freezing: remote['locked'].to_f)
+    remote['free'].to_f + remote['locked'].to_f
   end
 
   def sync_cash
@@ -346,7 +347,7 @@ class Binance < Market
         if push_order['state'] == 500
           continue = false
         else
-          sleep 3
+          sleep 5
           bid_undo_orders
           sync_fund
           balance = fund&.balance
@@ -383,7 +384,7 @@ class Binance < Market
         if push_order['state'] == 500
           continue = false
         else
-          sleep 3
+          sleep 5
           ask_undo_orders
           sync_fund
           balance = fund.balance

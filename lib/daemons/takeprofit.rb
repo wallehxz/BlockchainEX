@@ -17,49 +17,37 @@ end
 while($running) do
   begin
     Regulate.where(takeprofit: true).each do |regul|
-      coin      = regul.market
-      total     = coin.all_funds
-      freezing  = coin.fund.freezing
-      balance   = coin.fund.balance
-      _latest   = coin.recent_price
-      _profit   = regul.resistance
-      _support  = regul.support
-      _retain   = regul.retain
-      trends    = coin.get_ticker('1m', 2).kline_trends
+      market = regul.market
+      profit = regul.cash_profit
+      cost   = regul.cost
+      price  = market.get_price[:bid]
+      amount = regul.fast_cash
 
-      if total < _retain / 100.0
-        coin.off_takeprofit
-        coin.off_fastrade
-        content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 关闭止盈"
-        Notice.dingding(content)
-        break
+      if price > cost + profit && regul.current_fund > regul.retain * 0.1
+        trends = market.get_ticker('1m', 1).kline_trends[0]
+        if trends > 0
+          market.step_price_ask(amount * 0.5)
+        else
+          market.step_price_ask(amount)
+        end
       end
 
-      if _latest * 0.9995 > _support
-        regul.update!(support: _latest * 0.9995)
-        coin.ask_undo_orders if freezing > 0
-      end
+      if market.indicators.macds.last.created_at > Time.now - 10.minute
+        macds = market.indicators.macds.last(3)
+        macds_m = macds.map(&:macd_m)
+        macds_h = macds.map(&:macd_h)
+        if macds_m.max == macds_m[1] && price > cost
+          market.step_price_ask(amount * 0.5)
+        end
 
-      if _latest < _support && trends[-1] < 0
-        coin.ask_undo_orders if freezing > 0
-        coin.market_price_ask(balance)
-      end
-
-      #设置止损单
-      amount = coin.all_funds.to_d.round(coin&.regulate&.amount_precision || 4, :down)
-      freezing = coin.fund.freezing
-      if freezing == 0 && amount > 0
-        price  = regul.support.to_d.round(coin&.regulate&.price_precision || 4, :down)
-        coin.sync_stop_order(price, price, amount)
-        content = "[#{Time.now.to_s(:short)}] #{coin.symbols} 预售限价止损单\n\n" +
-        "> 价格：#{price} #{coin.base_unit}\n\n" +
-        "> 数量：#{amount} #{coin.quote_unit}"
-        Notice.dingding(content)
+        if macds_m.min == macds_m[-1] && price > cost
+          market.market_price_ask(amount * 0.5)
+        end
       end
 
     end
   rescue => detail
     Notice.exception(detail, "Deamon TakeProfit")
   end
-  sleep 60
+  sleep 25
 end

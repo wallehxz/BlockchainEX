@@ -71,4 +71,8 @@ class Account < ActiveRecord::Base
     end
   end
 
+  def total
+    balance + freezing
+  end
+
 end
