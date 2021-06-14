@@ -28,7 +28,7 @@ while($running) do
       retain  = regul.retain
       if balance < retain * 0.001
         market.off_takeprofit
-        content = "[#{Time.now.to_s(:short)}] #{market.symbols} 持币已经卖出"
+        content = "[#{Time.now.to_s(:short)}] #{market.symbols} 已经完成卖出计划，关闭止盈进程"
         Notice.dingding(content)
       end
 
