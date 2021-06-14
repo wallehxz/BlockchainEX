@@ -37,17 +37,19 @@ class Indicator < ActiveRecord::Base
       quotes = market.indicators.macds.last(2)
       if quotes.size > 1
         if quotes[0].macd_m > 0 && quotes[1].macd_m < 0
-          market.off_bids
-          market.on_takeprofit
-          market.on_stoploss
-          content = "[#{Time.now.to_s(:short)}] #{market.symbols} MACD 由正转负 #{quotes[0].macd_m} => #{quotes[1].macd_m}，关闭买进操作，开启止盈止损"
-          Notice.dingding(content)
+          market.sync_fund
+          if market.fund.balance > market.regulate.retain * 0.01
+            market.on_takeprofit
+            market.on_stoploss
+            content = "[#{Time.now.to_s(:short)}] #{market.symbols} MACD 由正转负 #{quotes[0].macd_m} => #{quotes[1].macd_m}，关闭买进操作，开启止盈止损"
+            Notice.dingding(content)
+          end
         end
 
         if quotes[0].macd_m < 0 && quotes[1].macd_m > 0
           market.step_price_bid(market.regulate.retain * 0.6)
           market.on_chasedown
-          content = "[#{Time.now.to_s(:short)}] #{market.symbols} MACD 由负转正 #{quotes[0].macd_m} => #{quotes[1].macd_m}，阶梯买进，开启回落买进"
+          content = "[#{Time.now.to_s(:short)}] #{market.symbols} MACD 由负转正 #{quotes[0].macd_m} => #{quotes[1].macd_m}，阶梯买进，开启逐仓买进"
           Notice.dingding(content)
         end
       end
@@ -64,11 +66,11 @@ class Indicator < ActiveRecord::Base
 
       if macd_hs[-2] > 0 && macd_hs[-1] < 0 && macd_hs.size > 3
         market.sync_fund
-        if market.fund.balance > market.regulate.retain * 0.1
+        if market.fund.balance > market.regulate.retain * 0.01
           market.on_takeprofit if market.recent_price > market.regulate.cost
+          content = "[#{Time.now.to_s(:short)}] #{market.symbols} MACD H 指标趋势下跌，#{macd_hs[-2]} => #{macd_hs[-1]} 开启价格波动扫描"
+          Notice.dingding(content)
         end
-        content = "[#{Time.now.to_s(:short)}] #{market.symbols} MACD H 指标趋势下跌，#{macd_hs[-2]} => #{macd_hs[-1]} 开启价格波动扫描"
-        Notice.dingding(content)
       end
 
       macd_hs5 = macd_hs[-6..-1]
