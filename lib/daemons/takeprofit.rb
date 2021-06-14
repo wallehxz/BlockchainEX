@@ -23,21 +23,30 @@ while($running) do
       price  = market.get_price[:bid]
       amount = regul.fast_cash
 
-      if price > cost + profit && regul.current_fund > regul.retain * 0.1
+      market.sync_fund
+      balance = coin.fund.balance
+      retain  = regul.retain
+      if balance < retain * 0.001
+        market.off_takeprofit
+        content = "[#{Time.now.to_s(:short)}] #{market.symbols} 持币已经卖出"
+        Notice.dingding(content)
+      end
+
+      if price > cost + profit
         trends = market.get_ticker('1m', 1).kline_trends[0]
         if trends > 0
           market.step_price_ask(amount * 0.5)
+          market.market_price_ask(amount * 0.5)
         else
-          market.step_price_ask(amount)
+          market.market_price_ask(amount * 0.5)
         end
       end
 
       if market.indicators.macds.last.created_at > Time.now - 10.minute
         macds = market.indicators.macds.last(3)
         macds_m = macds.map(&:macd_m)
-        macds_h = macds.map(&:macd_h)
         if macds_m.max == macds_m[1] && price > cost
-          market.step_price_ask(amount * 0.5)
+          market.market_price_ask(amount * 0.5)
         end
 
         if macds_m.min == macds_m[-1] && price > cost
