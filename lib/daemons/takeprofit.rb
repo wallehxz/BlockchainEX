@@ -24,7 +24,7 @@ while($running) do
       amount = regul.fast_cash
 
       market.sync_fund
-      balance = coin.fund.balance
+      balance = market.fund.balance
       retain  = regul.retain
       if balance < retain * 0.001
         market.off_takeprofit
