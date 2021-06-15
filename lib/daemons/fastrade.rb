@@ -46,5 +46,5 @@ while($running) do
   rescue => detail
     Notice.exception(detail, "Deamon FastTrade")
   end
-  sleep 60
+  sleep 35
 end

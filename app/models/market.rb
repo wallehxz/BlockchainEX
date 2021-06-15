@@ -149,7 +149,7 @@ class Market < ActiveRecord::Base
       end
     end
 
-    if fund.balance > regulate.retain * 0.1
+    if sync_fund > regulate.retain * 0.1
       if last_quote.c > regulate.resistance
         regulate.update!(support: last_quote.c * 0.9975)
         regulate.update!(takeprofit: true)
