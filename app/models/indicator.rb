@@ -65,8 +65,8 @@ class Indicator < ActiveRecord::Base
   end
 
   def macd_m_down?
-    macds_a = market.indicators.macds.last(3)
-    if macds_a.size > 2
+    macds_a = market.indicators.macds.last(2)
+    if macds_a.size > 1
       macds = macds_a.map(&:macd_m)
       if macds.min == macds[-1]
         return true
@@ -134,11 +134,11 @@ class Indicator < ActiveRecord::Base
   after_create :dema_change
 
   def dema_change
-    if name.include? 'DEMA' && dema_up? && macd_s_up?
+    if name.include?('DEMA') && dema_up? && macd_s_up?
       market.step_chasedown("移动均线DEMA上涨区间")
     end
 
-    if name.include? 'DEMA' && dema_down?
+    if name.include?('DEMA') && dema_down?
       market.step_takeprofit("移动均线DEMA下跌区间")
     end
   end
@@ -146,7 +146,7 @@ class Indicator < ActiveRecord::Base
   after_create :macd_change
 
   def macd_change
-    if name.include? 'MACD'
+    if name.include?('MACD')
       if macd_s_down? || (macd_m < 0 && macd_h_down?)
         market.step_stoploss('MACD指标直方数值 Hist Signal下跌')
       end
@@ -154,6 +154,7 @@ class Indicator < ActiveRecord::Base
       if macd_s_up? && macd_h_up?
         market.step_chasedown('MACD指标Signal指标上涨')
       end
+
     end
   end
 
