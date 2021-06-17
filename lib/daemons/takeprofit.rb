@@ -26,7 +26,7 @@ while($running) do
       market.sync_fund
       balance = market.fund.balance
       retain  = regul.retain
-      if balance < retain * 0.001
+      if balance < retain * 0.01
         market.off_takeprofit
         content = "[#{Time.now.to_s(:short)}] #{market.symbols} 已经完成卖出计划，关闭止盈进程"
         Notice.dingding(content)
@@ -35,28 +35,14 @@ while($running) do
       if price > cost + profit
         trends = market.get_ticker('1m', 1).kline_trends[0]
         if trends > 0
-          market.step_price_ask(amount * 0.5)
-          market.market_price_ask(amount * 0.5)
+          market.step_price_ask(amount)
         else
           market.market_price_ask(amount * 0.5)
         end
       end
-
-      if market.indicators.macds.last.created_at > Time.now - 10.minute
-        macds = market.indicators.macds.last(3)
-        macds_m = macds.map(&:macd_m)
-        if macds_m.max == macds_m[1] && price > cost
-          market.market_price_ask(amount * 0.5)
-        end
-
-        if macds_m.min == macds_m[-1] && price > cost
-          market.market_price_ask(amount * 0.5)
-        end
-      end
-
     end
   rescue => detail
     Notice.exception(detail, "Deamon TakeProfit")
   end
-  sleep 25
+  sleep 29
 end

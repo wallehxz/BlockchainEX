@@ -435,4 +435,30 @@ class Binance < Market
     [first_price, last_price, up_body.size, down_body.size, indexs]
   end
 
+  def step_chasedown(tip = '')
+    if sync_fund < regulate.retain * 0.5 && !regulate.chasedown
+      on_chasedown
+      content = "[#{Time.now.to_s(:short)}] #{symbols} #{tip} 开启逐仓买进"
+      Notice.dingding(content)
+    end
+  end
+
+  def step_takeprofit(tip = '')
+    if sync_fund > regulate.retain * 0.1 && !regulate.takeprofit
+      regulate.update_avg_cost
+      on_takeprofit
+      content = "[#{Time.now.to_s(:short)}] #{symbols} #{tip} 开启止盈操作"
+      Notice.dingding(content)
+    end
+  end
+
+  def step_stoploss(tip = '')
+    if sync_fund > regulate.retain * 0.1 && !regulate.stoploss
+      regulate.update_avg_cost
+      on_stoploss
+      content = "[#{Time.now.to_s(:short)}] #{symbols} #{tip} 开启止损操作"
+      Notice.dingding(content)
+    end
+  end
+
 end

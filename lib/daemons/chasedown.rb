@@ -20,17 +20,13 @@ end
 def chase_order(coin)
   trends = coin.get_ticker('1m', 2).kline_trends
   amount = coin.regulate.fast_cash
-  if trends[0] < 0 && trends[-1] > 0
-    coin.market_price_bid(amount * 0.25)
-  end
-  if trends[0] > 0 && trends[-1] < 0
-    coin.step_price_bid(amount * 0.5)
-    coin.market_price_bid(amount * 0.5)
-  end
 
   if trends.max < 0
-    coin.step_price_bid(amount)
     coin.market_price_bid(amount * 0.5)
+    coin.step_price_bid(amount)
+  end
+  if trends[0] < 0 && trends[1] > 0
+    coin.market_price_bid(amount * 0.25)
   end
 end
 

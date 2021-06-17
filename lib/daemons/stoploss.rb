@@ -20,26 +20,29 @@ while($running) do
       coin    = regul.market
       coin.sync_fund
       balance = coin.fund.balance
-      if balance < regul.retain / 100.0
+
+      if balance < regul.retain * 0.01
         coin.market_price_ask(balance)
         coin.off_stoploss
-        coin.off_fastrade
         content = "#{regul.market.symbols} 关闭止损 #{Time.now.to_s(:short)}"
         Notice.dingding(content)
       end
-      if coin.recent_price < regul.cost
-        coin.off_bids
-        amount = regul.retain / 4.0
-        if balance > amount
-          coin.market_price_ask(amount * 0.5)
-          coin.step_price_ask(amount * 0.5)
-        else
-          coin.market_price_ask(balance)
-        end
+
+      if coin.get_price[:bid] > regul.cost
+        amount = regul.retain
+        coin.market_price_ask(amount * 0.5)
+        coin.step_price_ask(amount * 0.5)
+      end
+
+      macd_h = coin.indicators.macds&.last&.macd_h
+      if macd_h && macd_h < 0 && coin.get_price[:bid] < regul.cost
+        amount = regul.retain
+        coin.step_price_ask(amount)
+        coin.market_price_ask(amount * 0.5)
       end
     end
   rescue => detail
     Notice.exception(detail, "Deamon StopLoss")
   end
-  sleep 15
+  sleep 29
 end
