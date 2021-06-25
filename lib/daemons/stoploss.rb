@@ -28,18 +28,12 @@ while($running) do
         Notice.dingding(content)
       end
 
-      if coin.get_price[:bid] > regul.cost
+      if coin.get_price[:bid] > regul.cost * 1.002
         amount = regul.retain
-        coin.market_price_ask(amount * 0.5)
-        coin.step_price_ask(amount * 0.5)
+        coin.market_price_ask(amount * 0.75)
+        coin.step_price_ask(amount * 0.75)
       end
 
-      macd_h = coin.indicators.macds&.last&.macd_h
-      if macd_h && macd_h < 0 && coin.get_price[:bid] < regul.cost
-        amount = regul.retain
-        coin.step_price_ask(amount)
-        coin.market_price_ask(amount * 0.5)
-      end
     end
   rescue => detail
     Notice.exception(detail, "Deamon StopLoss")

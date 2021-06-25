@@ -110,8 +110,8 @@ class Indicator < ActiveRecord::Base
   end
 
   def dema_up?
-    demas_a = market.indicators.demas.last(4)
-    if demas_a.size > 3
+    demas_a = market.indicators.demas.last(3)
+    if demas_a.size > 2
       demas = demas_a.map(&:dema)
       if demas.max == demas[-1]
         return true
@@ -135,11 +135,15 @@ class Indicator < ActiveRecord::Base
 
   def dema_change
     if name.include?('DEMA') && dema_up? && macd_s_up?
-      market.step_chasedown("移动均线DEMA上涨区间")
+      market.step_chasedown("DEMA上涨 Signal上涨")
     end
 
-    if name.include?('DEMA') && dema_down?
-      market.step_takeprofit("移动均线DEMA下跌区间")
+    if name.include?('DEMA') && dema_down? && macd_s_up?
+      market.step_takeprofit("DEMA下跌 Signal上涨")
+    end
+
+    if name.include?('DEMA') && dema_down? && macd_s_down?
+      market.step_stoploss("DEMA下跌 Signal下跌")
     end
   end
 
@@ -147,12 +151,12 @@ class Indicator < ActiveRecord::Base
 
   def macd_change
     if name.include?('MACD')
-      if macd_s_down? || (macd_m < 0 && macd_h_down?)
-        market.step_stoploss('MACD指标直方数值 Hist Signal下跌')
+      if macd_s_down? && macd_h_down?
+        market.step_stoploss('Signal下跌 Hist下跌')
       end
 
       if macd_s_up? && macd_h_up?
-        market.step_chasedown('MACD指标Signal指标上涨')
+        market.step_chasedown('Signal上涨 Hist上涨')
       end
 
     end

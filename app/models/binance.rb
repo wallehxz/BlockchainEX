@@ -438,6 +438,7 @@ class Binance < Market
   def step_chasedown(tip = '')
     if sync_fund < regulate.retain * 0.5 && !regulate.chasedown
       on_chasedown
+      step_price_bid(regulate.retain) if regulate.chasedown
       content = "[#{Time.now.to_s(:short)}] #{symbols} #{tip} 开启逐仓买进"
       Notice.dingding(content)
     end
