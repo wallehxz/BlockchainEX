@@ -86,6 +86,7 @@
   <script type="text/javascript">
     function switch_state(id,kind) {
       $.get('/backend/regulates/' + id +'/change_state?kind=' + kind);
+      window.location.reload();
     }
     $("[name='my-state']").bootstrapSwitch({onColor:'success',offColor:'danger', onText: 'ONN', offText: 'OFF'});
   </script>

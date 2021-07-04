@@ -135,15 +135,15 @@ class Indicator < ActiveRecord::Base
 
   def dema_change
     if name.include?('DEMA') && dema_up? && macd_s_up?
-      market.step_chasedown("DEMA上涨 Signal上涨")
+      market.step_chasedown("DEMA 上涨 Signal 上涨")
     end
 
     if name.include?('DEMA') && dema_down? && macd_s_up?
-      market.step_takeprofit("DEMA下跌 Signal上涨")
+      market.step_takeprofit("DEMA 下跌 Signal 上涨")
     end
 
     if name.include?('DEMA') && dema_down? && macd_s_down?
-      market.step_stoploss("DEMA下跌 Signal下跌")
+      market.step_stoploss("DEMA 下跌 Signal 下跌")
     end
   end
 
@@ -152,11 +152,11 @@ class Indicator < ActiveRecord::Base
   def macd_change
     if name.include?('MACD')
       if macd_s_down? && macd_h_down?
-        market.step_stoploss('Signal下跌 Hist下跌')
+        market.step_stoploss('Signal 下跌 Hist 下跌')
       end
 
       if macd_s_up? && macd_h_up?
-        market.step_chasedown('Signal上涨 Hist上涨')
+        market.step_chasedown('Signal 上涨 Hist 上涨')
       end
 
     end

@@ -29,9 +29,15 @@ while($running) do
       end
 
       if coin.get_price[:bid] > regul.cost * 1.002
-        amount = regul.retain
+        amount = regul.fast_cash
         coin.market_price_ask(amount * 0.75)
         coin.step_price_ask(amount * 0.75)
+      end
+
+      indtor = coin.indicators.last
+      if indtor.macd_h < 0 || indtor.macd_h_down?
+        amount = regul.fast_cash
+        coin.market_price_ask(amount)
       end
 
     end

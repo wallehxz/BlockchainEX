@@ -233,6 +233,7 @@ class Market < ActiveRecord::Base
     regulate.update!(takeprofit: false)
   end
 
+
   def on_rangetrade
     regulate.update!(range_trade: true)
 
@@ -245,6 +246,11 @@ class Market < ActiveRecord::Base
   def off_bids
     off_rangetrade
     off_chasedown
+  end
+
+  def off_asks
+    off_takeprofit
+    off_stoploss
   end
 
 end
