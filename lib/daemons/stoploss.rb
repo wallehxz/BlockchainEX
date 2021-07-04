@@ -35,7 +35,7 @@ while($running) do
       end
 
       indtor = coin.indicators.last
-      if indtor.macd_h < 0 || indtor.macd_h_down?
+      if indtor.macd_h < 0
         amount = regul.fast_cash
         coin.market_price_ask(amount)
       end
