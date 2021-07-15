@@ -1,17 +1,17 @@
-<%= content_for(:title,  '行情秘书 | BLOCK') %>
+<%= content_for(:title,  '收益风控 | BLOCK') %>
 <section class="content-header">
   <h1>
-    行情秘书 <small>预览</small>
+    收益风控 <small>预览</small>
   </h1>
   <ol class="breadcrumb">
     <li><a href="#"><i class="fa fa-btc"></i> Dashboard</a></li>
-    <li class="active"><i class="fa fa-balance-scale"></i> 行情秘书</li>
+    <li class="active"><i class="fa fa-balance-scale"></i> 收益风控</li>
   </ol>
 </section>
 <section class="content">
   <div class="box box-primary">
     <div class="box-header">
-      <a href="<%= new_backend_regulate_path %>" class="btn bg-primary btn-flat"><i class="ion-plus"></i> 添加监管</a>
+      <a href="<%= new_backend_regulate_path %>" class="btn bg-primary btn-flat"><i class="ion-plus"></i> 添加风控</a>
     </div>
     <div class="box-body">
       <div class="row">
@@ -51,9 +51,9 @@
                 <td style="text-align: left">
                   止损：<input type="checkbox" name="my-state" <%= 'checked' if item.stoploss %> onchange='switch_state(<%= item.id %>, "stoploss")'>&nbsp;&nbsp;
                   止盈：<input type="checkbox" name="my-state" <%= 'checked' if item.takeprofit %> onchange='switch_state(<%= item.id %>, "takeprofit")'></br></br>
+                  追跌：<input type="checkbox" name="my-state" <%= 'checked' if item.chasedown %> onchange='switch_state(<%= item.id %>, "chasedown")'>&nbsp;&nbsp;
                   高频：<input type="checkbox" name="my-state" <%= 'checked' if item.fast_trade %> onchange='switch_state(<%= item.id %>, "fast")'>&nbsp;&nbsp;
-                  低频：<input type="checkbox" name="my-state" <%= 'checked' if item.range_trade %> onchange='switch_state(<%= item.id %>, "range")'></br></br>
-                  追跌：<input type="checkbox" name="my-state" <%= 'checked' if item.chasedown %> onchange='switch_state(<%= item.id %>, "chasedown")'>
+                  低频：<input type="checkbox" name="my-state" <%= 'checked' if item.range_trade %> onchange='switch_state(<%= item.id %>, "range")'>&nbsp;&nbsp;
                 </td>
                 <td><br>
                   <a href="<%= edit_backend_regulate_path(item) %>" class="btn bg-orange btn-flat">
@@ -86,7 +86,6 @@
   <script type="text/javascript">
     function switch_state(id,kind) {
       $.get('/backend/regulates/' + id +'/change_state?kind=' + kind);
-      window.location.reload();
     }
     $("[name='my-state']").bootstrapSwitch({onColor:'success',offColor:'danger', onText: 'ONN', offText: 'OFF'});
   </script>

@@ -13,7 +13,6 @@ class Indicator < ActiveRecord::Base
   scope :recent, -> { order('created_at desc') }
   self.per_page = 10
   scope :macds, -> { where("name LIKE 'MACD%'") }
-  scope :demas, -> { where("name LIKE 'DEMA%'") }
 
   def value
     name.split('=')[-1].to_i
@@ -101,50 +100,6 @@ class Indicator < ActiveRecord::Base
       end
     end
     false
-  end
-
-  def dema
-    if name.include? 'DEMA'
-      name.split('=').last.split('|')[0].to_f
-    end
-  end
-
-  def dema_up?
-    demas_a = market.indicators.demas.last(3)
-    if demas_a.size > 2
-      demas = demas_a.map(&:dema)
-      if demas.max == demas[-1]
-        return true
-      end
-    end
-    false
-  end
-
-  def dema_down?
-    demas_a = market.indicators.demas.last(2)
-    if demas_a.size > 1
-      demas = demas_a.map(&:dema)
-      if demas.min == demas[-1]
-        return true
-      end
-    end
-    false
-  end
-
-  after_create :dema_change
-
-  def dema_change
-    if name.include?('DEMA') && dema_up? && macd_s_up?
-      market.step_chasedown("DEMA 上涨 Signal 上涨")
-    end
-
-    if name.include?('DEMA') && dema_down? && macd_s_up?
-      market.step_takeprofit("DEMA 下跌 Signal 上涨")
-    end
-
-    if name.include?('DEMA') && dema_down? && macd_s_down?
-      market.step_stoploss("DEMA 下跌 Signal 下跌")
-    end
   end
 
   after_create :macd_change
