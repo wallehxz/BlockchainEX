@@ -347,12 +347,12 @@ class Binance < Market
         if push_order['state'] == 500
           continue = false
         else
-          sleep 5
+          sleep 10
           bid_undo_orders
           sync_fund
           balance = fund&.balance
         end
-        if Time.now.to_i - start_ms / 1000 > 100
+        if Time.now.to_i - start_ms / 1000 > 150
           continue = false
         end
       end
@@ -384,12 +384,12 @@ class Binance < Market
         if push_order['state'] == 500
           continue = false
         else
-          sleep 5
+          sleep 10
           ask_undo_orders
           sync_fund
           balance = fund.balance
         end
-        if Time.now.to_i - start_ms / 1000 > 100
+        if Time.now.to_i - start_ms / 1000 > 150
           continue = false
         end
       end
