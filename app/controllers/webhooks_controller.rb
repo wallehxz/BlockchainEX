@@ -86,12 +86,7 @@ private
 
   def takeprofit
     market = find_market
-    regul = market.regulate
-    cur_price = market.recent_price
-    market.on_takeprofit
-    regul.update(support: cur_price, resistance: cur_price * 1.005)
-    content = "[#{Time.now.to_s(:short)}] #{market.symbols} 开启止盈  止盈更新 #{cur_price}"
-    Notice.dingding(content)
+    market.step_takeprofit
   end
 
   def chasedown
