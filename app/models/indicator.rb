@@ -13,6 +13,7 @@ class Indicator < ActiveRecord::Base
   scope :recent, -> { order('created_at desc') }
   self.per_page = 10
   scope :macds, -> { where("name LIKE 'MACD%'") }
+  scope :dmis, -> { where("name LIKE 'DMI%'") }
 
   def value
     name.split('=')[-1].to_i
@@ -102,18 +103,49 @@ class Indicator < ActiveRecord::Base
     false
   end
 
+  def dmi_dx
+    if name.include? 'DMI'
+      name.split('=').last.split('|')[0].to_f
+    end
+  end
+
+  def dmi_dd
+    if name.include? 'DMI'
+      name.split('=').last.split('|')[1].to_f
+    end
+  end
+
+  def dmi_di
+    if name.include? 'DMI'
+      name.split('=').last.split('|')[2].to_f
+    end
+  end
+
+  after_create :dmi_change
+
+  def dmi_change
+    if name.include?('MACD')
+      if dmi_dd < dmi_di
+        market.step_stoploss('DMI 指标 +Di 下行')
+      end
+    end
+  end
+
   after_create :macd_change
 
   def macd_change
     if name.include?('MACD')
       if macd_s_down? && macd_h_down?
-        market.step_stoploss('Signal 下跌 Hist 下跌')
+        market.step_takeprofit('Signal 下跌 Hist 下跌')
       end
 
-      if macd_s_up? && macd_h_up?
-        market.step_chasedown('Signal 上涨 Hist 上涨')
+      if macd_s_up? && macd_m_up?
+        market.step_chasedown('Signal 上涨 MACD 上涨')
       end
 
+      if macd_s < 0 && macd_s_down?
+        market.step_stoploss('Signal 零下跌')
+      end
     end
   end
 

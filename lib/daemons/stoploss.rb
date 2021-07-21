@@ -28,14 +28,12 @@ while($running) do
         Notice.dingding(content)
       end
 
-      if coin.get_price[:bid] > regul.cost * 1.002
+      if coin.get_price[:bid] > regul.cost
         amount = regul.fast_cash
-        coin.market_price_ask(amount * 0.75)
-        coin.step_price_ask(amount * 0.75)
+        coin.step_price_ask(amount)
       end
 
-      indtor = coin.indicators.last
-      if indtor.macd_h < 0
+      if coin.get_price[:bid] > regul.cost
         amount = regul.fast_cash
         coin.market_price_ask(amount)
       end

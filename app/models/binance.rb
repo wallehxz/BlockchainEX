@@ -441,7 +441,6 @@ class Binance < Market
       on_chasedown
       content = "[#{Time.now.to_s(:short)}] #{symbols} #{tip} 开启逐仓买进"
       Notice.dingding(content)
-      market_price_bid(regulate.retain * 0.5)
     end
   end
 

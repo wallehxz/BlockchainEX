@@ -12,6 +12,7 @@ class WebhooksController < ApplicationController
     chasedown  if params[:cmd] =~ /chase/
     boat       if params[:cmd] =~ /boat/
     signal     if params[:cmd] =~ /signal/
+    diup       if params[:cmd] =~ /diup/
     render json: {msg: 'success!'}
   end
 
@@ -111,9 +112,17 @@ private
 
   def signal
     market = find_market
-    indtor = market.indicators.last
+    indtor = market.indicators.macds.last
     if indtor.macd_s_up?
       market.step_chasedown("上涨金叉持仓买进")
+    end
+  end
+
+  def diup
+    market = find_market
+    indtor = market.indicators.dmis.last
+    if indtor.dmi_dd > indtor.dmi_di
+      market.step_chasedown("DMI 指标上涨")
     end
   end
 
