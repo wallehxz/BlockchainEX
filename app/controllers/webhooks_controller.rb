@@ -57,6 +57,7 @@ private
   def cache
     coin = find_market
     coin.indicators.create(name: params[:msg])
+    Indicator.where("created_at < ?", Time.now - 2.hour).destroy_all
   end
 
   def build

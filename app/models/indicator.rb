@@ -124,7 +124,7 @@ class Indicator < ActiveRecord::Base
   after_create :dmi_change
 
   def dmi_change
-    if name.include?('MACD')
+    if name.include?('DMI')
       if dmi_dd < dmi_di
         market.step_stoploss('DMI 指标 +Di 下行')
       end

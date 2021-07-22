@@ -33,7 +33,7 @@ while($running) do
         coin.step_price_ask(amount)
       end
 
-      if coin.get_price[:bid] > regul.cost
+      if coin.get_price[:bid] < regul.cost
         amount = regul.fast_cash
         coin.market_price_ask(amount)
       end
