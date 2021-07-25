@@ -35,21 +35,23 @@ class Regulate < ActiveRecord::Base
   self.per_page = 10
 
   def update_avg_cost
-    average = market.avg_cost
-    if average > 0
-      new_average = average.to_d.round(price_precision, :down)
-      self.resistance = new_average + range_profit
-      self.support = new_average - range_profit
-      self.cost = new_average
-      save
-      content = "[#{Time.now.to_s(:short)}] #{market.symbols} Cost: #{new_average} \nProfit： #{resistance} \nLoss： #{support}"
-      Notice.dingding(content)
+    if market.source == 'binance'
+      average = market.avg_cost
+      if average > 0
+        new_average = average.to_d.round(price_precision, :down)
+        self.resistance = new_average + range_profit
+        self.support = new_average - range_profit
+        self.cost = new_average
+        save
+        content = "[#{Time.now.to_s(:short)}] #{market.symbols} Cost: #{new_average} \nProfit： #{resistance} \nLoss： #{support}"
+        Notice.dingding(content)
+      end
     end
-  end if market.source == 'binance'
+  end
 
   def current_fund
-    market.sync_fund
-  end if market.source == 'binance'
+    market.sync_fund if market.source == 'binance'
+  end
 
   after_save :turnover
 
