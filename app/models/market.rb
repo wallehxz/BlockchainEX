@@ -23,7 +23,7 @@ class Market < ActiveRecord::Base
   has_many :candles, dependent: :destroy
   has_many :indicators, dependent: :destroy
   has_many :messages, dependent: :destroy
-  enumerize :source, in: ['bittrex', 'binance', 'fcoin']
+  enumerize :source, in: ['future', 'binance']
   scope :seq, -> { order('sequence') }
   before_save :set_type_of_source
   has_many :bids, class_name: 'OrderBid'
@@ -38,7 +38,7 @@ class Market < ActiveRecord::Base
   end
 
   def full_name
-    "#{type}[#{base_unit}-#{quote_unit}]"
+    "【#{quote_unit}-#{base_unit}】"
   end
 
   def symbols
@@ -57,7 +57,7 @@ class Market < ActiveRecord::Base
 
   # Market.select(:type).distinct.map { |x| x.type.underscore.pluralize }
   def self.exchanges
-    ['binance', 'ftx']
+    ['binance', 'future']
   end
 
   def method_missing(method, *args)
@@ -232,7 +232,6 @@ class Market < ActiveRecord::Base
   def off_takeprofit
     regulate.update!(takeprofit: false)
   end
-
 
   def on_rangetrade
     regulate.update!(range_trade: true)

@@ -11,21 +11,30 @@
       </div>
     </div>
     <div class="form-group has-error">
-      <label>类别</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-thermometer-half"></i>
-        </div>
-        <%= f.select(:category, [['限价', 'limit'],['市价', 'market'],['阶梯价', 'step']], {prompt:'请选择价格'}, {:class => 'form-control'}) %>
-      </div>
-    </div>
-    <div class="form-group has-error">
       <label>交易</label>
       <div class="input-group">
         <div class="input-group-addon">
           <i class="fa fa-thermometer-half"></i>
         </div>
         <%= f.select(:type, [['买入', 'OrderBid'],['卖出', 'OrderAsk']], {prompt:'请选择属性'}, {:class => 'form-control'}) %>
+      </div>
+    </div>
+    <div class="form-group has-error">
+      <label>头寸</label>
+      <div class="input-group">
+        <div class="input-group-addon">
+          <i class="fa fa-hourglass-1"></i>
+        </div>
+        <%= f.select(:position, [['做多', 'LONG'],['做空', 'SHORT']], {prompt:'请选择价格'}, {:class => 'form-control'}) %>
+      </div>
+    </div>
+    <div class="form-group has-error">
+      <label>类别</label>
+      <div class="input-group">
+        <div class="input-group-addon">
+          <i class="fa fa-thermometer-half"></i>
+        </div>
+        <%= f.select(:category, [['限价', 'limit'],['市价', 'market'],['阶梯价', 'step']], {prompt:'请选择价格'}, {:class => 'form-control'}) %>
       </div>
     </div>
     <div class="form-group has-success">

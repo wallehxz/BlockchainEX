@@ -7,7 +7,7 @@
         <div class="input-group-addon">
           <i class="fa fa-cube"></i>
         </div>
-        <%= f.select(:source, [['BINANCE','binance'],['FTX','ftx']], {prompt:'选择交易所'}, {:class => 'form-control'}) %>
+        <%= f.select(:source, [['BINANCE','binance'],['Future','future']], {prompt:'选择交易所'}, {:class => 'form-control'}) %>
       </div>
       <%= model_errors(@market,'source') %>
     </div>

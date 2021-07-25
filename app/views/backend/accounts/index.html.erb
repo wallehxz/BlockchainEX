@@ -19,20 +19,18 @@
           <table id="example1" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="example1_info">
             <thead>
             <tr>
-              <th tabindex="0" aria-controls="example1" style="text-align: center">市场</th>
               <th tabindex="0" aria-controls="example1" style="text-align: center">货币</th>
-              <th tabindex="0" aria-controls="example1" style="text-align: center">冻结</th>
               <th tabindex="0" aria-controls="example1" style="text-align: center">余额</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">冻结</th>
               <th tabindex="0" aria-controls="example1" style="text-align: center">操作</th>
             </tr>
             </thead>
             <tbody>
             <% @accounts.each do |item| %>
               <tr style="text-align: center">
-                <td><%= item.exchange %></td>
-                <td><%= item.currency %></td>
-                <td><%= item.freezing %></td>
+                <td><%= item.exchange %> &nbsp; <%= item.currency %> &nbsp; <%= item.side_cn %></td>
                 <td><%= item.balance %></td>
+                <td><%= item.freezing %></td>
                 <td>
                   <a href="<%= backend_account_path(item) %>" class="btn bg-red btn-flat" data-method="delete" data-confirm="确定删除吗？">
                     <i class="glyphicon glyphicon-trash"></i>

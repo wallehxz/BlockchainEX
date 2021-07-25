@@ -13,6 +13,7 @@
 #  updated_at :datetime         not null
 #  cause      :string
 #  category   :string           default("limit")
+#  position   :string
 #
 
 class Order < ActiveRecord::Base
@@ -22,6 +23,7 @@ class Order < ActiveRecord::Base
   scope :recent, -> { order('created_at desc') }
   enumerize :state, in: { init: 100, fail: 500, succ: 200, cancel: 0, rescue: 120 }, default: 100, scope: true
   enumerize :category, in: ['limit', 'market', 'step'], default: 'limit', scope: true
+  enumerize :position, in: ['LONG', 'SHORT']
   belongs_to :market
   has_one :regulate, primary_key: 'market_id', foreign_key: 'market_id'
   after_save :fix_price_amount

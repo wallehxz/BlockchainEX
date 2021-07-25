@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20201121110559) do
+ActiveRecord::Schema.define(version: 20210725091532) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,8 +21,10 @@ ActiveRecord::Schema.define(version: 20201121110559) do
     t.string   "currency"
     t.float    "balance"
     t.float    "freezing"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+    t.string   "side",       default: ""
+    t.float    "total"
   end
 
   create_table "candles", force: :cascade do |t|
@@ -70,6 +72,7 @@ ActiveRecord::Schema.define(version: 20201121110559) do
     t.datetime "updated_at",                   null: false
     t.string   "cause"
     t.string   "category",   default: "limit"
+    t.string   "position"
   end
 
   create_table "regulates", force: :cascade do |t|
