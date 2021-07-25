@@ -27,44 +27,46 @@ class OrderAsk < Order
         mock_push
       end
       notice
-    end
-  end if market.source == 'binance'
+    end if market.source == 'binance'
+  end
 
   def push_market_order
-    market.sync_market_order(:ask, amount)
-  end if market.source == 'binance'
+    market.sync_market_order(:ask, amount) if market.source == 'binance'
+  end
 
   after_create :push_step_order
   def push_step_order
     if state.init? && category.step?
       self.errors.add(:cause, '重置阶梯订单')
       market.step_price_ask(amount)
-    end
-  end if market.source == 'binance'
+    end if market.source == 'binance'
+  end
 
   before_create :check_amount_exceed
   def check_amount_exceed
-    market.sync_fund
-    curr_fund = market.fund.balance
-    if amount > curr_fund
-      self.amount = curr_fund
+    if market.source == 'binance'
+      market.sync_fund
+      curr_fund = market.fund.balance
+      if amount > curr_fund
+        self.amount = curr_fund
+      end
     end
-  end if market.source == 'binance'
+  end
 
   before_create :check_legal_profit
   def check_legal_profit
-    if category == 'limit'
+    if category == 'limit' && market.source == 'binance'
       average = market.avg_cost
       if price < average
         self.state = 500
         self.cause = "Limit ask price must > cost #{average}"
       end
     end
-  end if market.source == 'binance'
+  end
 
   after_save :fine_tuning_precision
   def fine_tuning_precision
-    if category == 'market' && state == 'fail'
+    if category == 'market' && state == 'fail' && market.source == 'binance'
       cur_precision = amount.to_s.split('.')[1].size rescue 0
       if cur_precision > 1
         content = "#{market.symbols} 市价卖出订单数量 #{amount} 精度降维"
@@ -73,6 +75,6 @@ class OrderAsk < Order
         market.market_price_ask(new_amount)
       end
     end
-  end if market.source == 'binance'
+  end
 
 end

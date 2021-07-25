@@ -28,23 +28,23 @@ class OrderBid < Order
       end
       notice
     end
-  end if market.source == 'binance'
+  end
 
   def push_market_order
-    market.sync_market_order(:bid, amount)
+    market.sync_market_order(:bid, amount) if market.source == 'binance'
   end
 
   after_create :push_step_order
   def push_step_order
-    if state.init? && category.step?
+    if state.init? && category.step? && market.source == 'binance'
       self.errors.add(:cause, 'errors')
       market.step_price_bid(amount)
     end
-  end if market.source == 'binance'
+  end
 
   before_create :check_fund_exceed
   def check_fund_exceed
-    if quota = market&.regulate&.retain
+    if quota = market&.regulate&.retain && market.source == 'binance'
       total_fund = market.all_funds rescue 0
       if quota - total_fund < 0.01
         self.state = 500
@@ -53,15 +53,17 @@ class OrderBid < Order
         self.amount = quota - total_fund
       end
     end
-  end if market.source == 'binance'
+  end
 
   before_create :check_insufficient_cash
   def check_insufficient_cash
-    market.sync_cash
-    cash = market.cash.balance
-    if amount * price > cash
-      self.amount = cash / price
+    if market.source == 'binance'
+      market.sync_cash
+      cash = market.cash.balance
+      if amount * price > cash
+        self.amount = cash / price
+      end
     end
-  end if market.source == 'binance'
+  end
 
 end
