@@ -22,7 +22,7 @@ class Binance < Market
   end
 
   def generate_quote
-    t = latest_ticker('5m',120)
+    t = latest_ticker('5m',2)
     ticker = {}
     ticker[:o] = t[1]
     ticker[:h] = t[2]

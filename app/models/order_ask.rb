@@ -13,6 +13,7 @@
 #  updated_at :datetime         not null
 #  cause      :string
 #  category   :string           default("limit")
+#  position   :string
 #
 
 class OrderAsk < Order

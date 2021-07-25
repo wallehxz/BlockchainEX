@@ -29,7 +29,7 @@
             <% @accounts.each do |item| %>
               <tr style="text-align: center">
                 <td><%= item.exchange %> &nbsp; <%= item.currency %> &nbsp; <%= item.side_cn %></td>
-                <td><%= item.balance %></td>
+                <td><%= item.balance.to_d.to_s %> &nbsp; <%= item.total %></td>
                 <td><%= item.freezing %></td>
                 <td>
                   <a href="<%= backend_account_path(item) %>" class="btn bg-red btn-flat" data-method="delete" data-confirm="确定删除吗？">

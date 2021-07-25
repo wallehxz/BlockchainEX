@@ -38,7 +38,7 @@ class Market < ActiveRecord::Base
   end
 
   def full_name
-    "【#{quote_unit}-#{base_unit}】"
+    "【#{quote_unit}-#{base_unit}】#{type}"
   end
 
   def symbols

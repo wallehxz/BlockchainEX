@@ -6,8 +6,7 @@ class Backend::AccountsController < Backend::BaseController
 
   def sync_balance
     Market.all.each do |ex|
-      ex.sync_fund rescue nil
-      ex.sync_cash rescue nil
+      ex.sync_balance rescue nil
     end
     flash[:notice] = "交易所所资金同步成功"
     redirect_to backend_accounts_path
