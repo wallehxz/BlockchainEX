@@ -31,8 +31,8 @@ def binance_usdt_tickers
   usdt_marts = usdt_marts.select {|x| !x['symbol'].include?('UPUSDT')}
   usdt_marts = usdt_marts.select {|x| !x['symbol'].include?('DOWNUSDT')}
   tickers = usdt_marts.sort {|x, y| y['priceChangePercent'].to_f <=> x['priceChangePercent'].to_f }
-  (tickers[0] + tickers[-1]).each do |quote|
-    tip << "#{quote['symbol']} 涨幅[#{quote['priceChangePercent']}],报价[#{quote['lastPrice'].to_f}]\n"
+  (tickers[0..0] + tickers[-1..-1]).each do |quote|
+    tip << "#{quote['symbol']} ↑↓ #{quote['priceChangePercent']}, $ #{quote['lastPrice'].to_f}\n"
   end
   Notice.dingding(tip)
 end
@@ -52,8 +52,8 @@ def future_usdt_tickers
     end
   end
   tickers = usdt_marts.sort {|x, y| y['priceChangePercent'].to_f <=> x['priceChangePercent'].to_f }
-  (tickers[0] + tickers[-1]).each do |quote|
-    tip << "#{quote['symbol']} 涨幅[#{quote['priceChangePercent']}],报价[#{quote['lastPrice'].to_f}]\n"
+  (tickers[0..0] + tickers[-1..-1]).each do |quote|
+    tip << "#{quote['symbol']} ↑↓ #{quote['priceChangePercent']} ,$ #{quote['lastPrice'].to_f} \n"
   end
   Notice.dingding(tip)
 end
