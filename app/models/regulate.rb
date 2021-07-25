@@ -45,11 +45,11 @@ class Regulate < ActiveRecord::Base
       content = "[#{Time.now.to_s(:short)}] #{market.symbols} Cost: #{new_average} \nProfit： #{resistance} \nLoss： #{support}"
       Notice.dingding(content)
     end
-  end
+  end if market.source == 'binance'
 
   def current_fund
     market.sync_fund
-  end
+  end if market.source == 'binance'
 
   after_save :turnover
 
@@ -63,10 +63,19 @@ class Regulate < ActiveRecord::Base
 
   after_create :update_price_amount_precision
   def update_price_amount_precision
-    ticker = market.ticker
-    self.amount_precision = ticker['bidQty'].to_f.to_s.split('.').last.size
-    self.price_precision  = ticker['bidPrice'].to_f.to_s.split('.').last.size
-    save
+    if market.source == 'binance'
+      ticker = market.ticker
+      self.amount_precision = ticker['bidQty'].to_f.to_s.split('.').last.size
+      self.price_precision  = ticker['bidPrice'].to_f.to_s.split('.').last.size
+      save
+    end
+
+    if market.source == 'future'
+      ticker = market.ticker
+      self.amount_precision = ticker['lastQty'].to_f.to_s.split('.').last.size
+      self.price_precision  = ticker['lastPrice'].to_f.to_s.split('.').last.size
+      save
+    end
   end
 
 end

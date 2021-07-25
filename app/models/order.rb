@@ -49,6 +49,10 @@ class Order < ActiveRecord::Base
     {'limit'=> '限价', 'market'=> '市价', 'step'=> '阶梯价' }[category]
   end
 
+  def position_cn
+    {'LONG'=> '做多', 'SHORT'=> '做空'}[position]
+  end
+
   def notice
     if state.succ?
       regulate.update_avg_cost if type == 'OrderBid'
@@ -56,7 +60,7 @@ class Order < ActiveRecord::Base
       push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Settings.trading_bot}"
       body_params ={ msgtype:'markdown', markdown:{ title: "#{type_cn}订单" } }
       body_params[:markdown][:text] =
-        "#### #{category_cn} #{type_cn}订单\n\n" +
+        "#### #{position_cn} #{category_cn} #{type_cn} 订单\n\n" +
         "> 时间：#{updated_at.to_s(:short)}\n\n" +
         "> 价格：#{price} #{market.base_unit}\n\n" +
         "> 数量：#{amount} #{market.quote_unit}\n\n" +
@@ -72,7 +76,7 @@ class Order < ActiveRecord::Base
 
   def sms_notice
     if Time.now.hour.in? [*9..22]
-      content = "\n> #{category_cn} #{type_cn}订单\n" +
+      content = "\n>#{position_cn} #{category_cn} #{type_cn} 订单\n" +
       "> 价格：#{price} #{market.base_unit}\n" +
       "> 数量：#{amount} #{market.quote_unit}\n" +
       "> 成交额 #{total.round(2)} #{market.base_unit}\n"
@@ -84,9 +88,9 @@ class Order < ActiveRecord::Base
   def failed_notice
     if state.fail?
       push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Settings.trading_bot}"
-      body_params ={ msgtype:'markdown', markdown:{ title: "#{type_cn}订单" } }
+      body_params ={ msgtype:'markdown', markdown:{ title: "#{type_cn} 订单" } }
       body_params[:markdown][:text] =
-        "#### #{market.type} 失效订单\n\n" +
+        "#### #{position_cn} #{category_cn} #{type_cn} 失效订单\n\n" +
         "> 价格：#{price} #{market.base_unit}\n\n" +
         "> 数量：#{amount} #{market.quote_unit}\n\n" +
         "> 时间：#{updated_at.to_s(:short)}\n\n" +

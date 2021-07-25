@@ -28,11 +28,11 @@ class OrderAsk < Order
       end
       notice
     end
-  end
+  end if market.source == 'binance'
 
   def push_market_order
     market.sync_market_order(:ask, amount)
-  end
+  end if market.source == 'binance'
 
   after_create :push_step_order
   def push_step_order
@@ -40,7 +40,7 @@ class OrderAsk < Order
       self.errors.add(:cause, '重置阶梯订单')
       market.step_price_ask(amount)
     end
-  end
+  end if market.source == 'binance'
 
   before_create :check_amount_exceed
   def check_amount_exceed
@@ -49,7 +49,7 @@ class OrderAsk < Order
     if amount > curr_fund
       self.amount = curr_fund
     end
-  end
+  end if market.source == 'binance'
 
   before_create :check_legal_profit
   def check_legal_profit
@@ -60,7 +60,7 @@ class OrderAsk < Order
         self.cause = "Limit ask price must > cost #{average}"
       end
     end
-  end
+  end if market.source == 'binance'
 
   after_save :fine_tuning_precision
   def fine_tuning_precision
@@ -73,6 +73,6 @@ class OrderAsk < Order
         market.market_price_ask(new_amount)
       end
     end
-  end
+  end if market.source == 'binance'
 
 end

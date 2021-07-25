@@ -23,6 +23,15 @@ class Future < Market
     "#{quote_unit}#{base_unit}"
   end
 
+  def ticker
+    ticker_url = HOST + '/fapi/v1/ticker/24hr'
+    res = Faraday.get do |req|
+      req.url ticker_url
+      req.params['symbol'] = symbol
+    end
+    result = JSON.parse(res.body)
+  end
+
   # interval = [1m，3m，5m，15m，30m，1h] start_t= 1499040000000 end_t= start_t
   def get_ticker(interval, limit, start_t= nil, end_t= nil)
     market_url = HOST + '/fapi/v1/klines'
