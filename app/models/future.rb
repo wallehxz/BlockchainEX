@@ -47,7 +47,7 @@ class Future < Market
   end
 
   def generate_quote
-    t = latest_ticker('5m',2)
+    t = latest_ticker('5m',150)
     ticker = {}
     ticker[:o] = t[1]
     ticker[:h] = t[2]
@@ -57,6 +57,14 @@ class Future < Market
     ticker[:t] = (t[0] / 1000) + 300
     ticker
     candles.create(ticker)
+  end
+
+  def latest_ticker(interval,timeout)
+    current= Time.now.to_i
+    t = get_ticker(interval,2)
+    t_1 = t[1][0] / 1000
+    return t[1] if current - t_1 > timeout
+    t[0]
   end
 
   def recent_price

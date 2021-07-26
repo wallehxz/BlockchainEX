@@ -60,8 +60,8 @@ end
 
 while($running) do
   begin
-    future_usdt_tickers
-    binance_usdt_tickers
+    future_usdt_tickers if Settings.fluctuation_future
+    binance_usdt_tickers if Settings.fluctuation_binance
   rescue => detail
     Notice.exception(detail, "Deamon Fluctuation")
   end
