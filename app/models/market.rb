@@ -29,6 +29,53 @@ class Market < ActiveRecord::Base
   has_many :bids, class_name: 'OrderBid'
   has_many :asks, class_name: 'OrderAsk'
 
+  def get_price
+    t = get_ticker('1m',1)[0]
+    { last: t[4].to_f, ask: t[2].to_f, bid: t[3].to_f }
+  end
+
+  def generate_quote
+    t = latest_ticker('5m',150)
+    ticker = {}
+    ticker[:o] = t[1]
+    ticker[:h] = t[2]
+    ticker[:l] = t[3]
+    ticker[:c] = t[4]
+    ticker[:v] = t[5]
+    ticker[:t] = (t[0] / 1000) + 300
+    ticker
+    candles.create(ticker)
+  end
+
+  def latest_ticker(interval,timeout)
+    current= Time.now.to_i
+    t = get_ticker(interval,2)
+    t_1 = t[1][0] / 1000
+    return t[1] if current - t_1 > timeout
+    t[0]
+  end
+
+  def batch_sync_quote
+    if candles.count < 10
+      batch_quote(300) rescue nil
+    end
+  end
+
+  def batch_quote(amount = 100)
+    t_100 = get_ticker('5m',amount)
+    t_100.each do |t|
+      ticker = {}
+      ticker[:o] = t[1]
+      ticker[:h] = t[2]
+      ticker[:l] = t[3]
+      ticker[:c] = t[4]
+      ticker[:v] = t[5]
+      ticker[:t] = (t[0] / 1000) + 300
+      ticker
+      candles.create(ticker)
+    end
+  end
+
   def set_type_of_source
     self.type = self.source.capitalize if self.source
   end

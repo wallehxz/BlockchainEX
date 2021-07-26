@@ -46,27 +46,6 @@ class Future < Market
     current = JSON.parse(res.body)
   end
 
-  def generate_quote
-    t = latest_ticker('5m',150)
-    ticker = {}
-    ticker[:o] = t[1]
-    ticker[:h] = t[2]
-    ticker[:l] = t[3]
-    ticker[:c] = t[4]
-    ticker[:v] = t[5]
-    ticker[:t] = (t[0] / 1000) + 300
-    ticker
-    candles.create(ticker)
-  end
-
-  def latest_ticker(interval,timeout)
-    current= Time.now.to_i
-    t = get_ticker(interval,2)
-    t_1 = t[1][0] / 1000
-    return t[1] if current - t_1 > timeout
-    t[0]
-  end
-
   def recent_price
     trade_url = HOST + '/fapi/v1/trades'
     res = Faraday.get do |req|
