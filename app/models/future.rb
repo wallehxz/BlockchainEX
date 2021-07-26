@@ -19,6 +19,26 @@ class Future < Market
 
 	HOST = 'https://fapi.binance.com'
 
+  # 开空单
+  def new_kai_short(price, amount, category = 'limit')
+    asks.create(price: price, amount: amount, category: category, position:'SHORT')
+  end
+
+  # 平空单
+  def new_ping_short(price, amount, category = 'limit')
+    bids.create(price: price, amount: amount, category: category, position:'SHORT')
+  end
+
+  # 开空单
+  def new_kai_long(price, amount, category = 'limit')
+    bids.create(price: price, amount: amount, category: category, position:'LONG')
+  end
+
+  # 平空单
+  def new_ping_long(price, amount, category = 'limit')
+    asks.create(price: price, amount: amount, category: category, position:'LONG')
+  end
+
 	def symbol
     "#{quote_unit}#{base_unit}"
   end
@@ -106,19 +126,19 @@ class Future < Market
     OpenSSL::HMAC.hexdigest(digest, Settings.future_secret, data)
   end
 
-  def sync_limit_order(side, position, quantity, price)
+  def sync_limit_order(order)
     begin
-      side = {'bid': 'BUY', 'ask': 'SELL'}[side]
+      side = {'OrderBid'=> 'BUY', 'OrderAsk'=> 'SELL'}[order.type]
       order_url = HOST + '/fapi/v1/order'
-      timestamp = (Time.now.to_f * 1000).to_i - 2000
+      timestamp = (Time.now.to_f * 1000).to_i
       reqs = []
       reqs << ['symbol', symbol]
       reqs << ['side', side]
-      reqs << ['positionSide', position]
+      reqs << ['positionSide', order.position]
       reqs << ['type', 'LIMIT']
-      reqs << ['price', price.to_d]
-      reqs << ['quantity', quantity.to_d]
-      reqs << ['recvWindow', 10000]
+      reqs << ['price', order.price.to_d]
+      reqs << ['quantity', order.amount.to_d]
+      reqs << ['recvWindow', 5000]
       reqs << ['timestamp', timestamp]
       reqs << ['timeInForce', 'GTC']
       reqs_string = reqs.sort.map {|x| x.join('=')}.join('&')
@@ -127,11 +147,11 @@ class Future < Market
         req.headers['X-MBX-APIKEY'] = Settings.future_key
         req.params['symbol'] = symbol
         req.params['side'] = side
-        req.params['positionSide'] = position
+        req.params['positionSide'] = order.position
         req.params['type'] = 'LIMIT'
-        req.params['quantity'] = quantity.to_d
-        req.params['price'] = price.to_d
-        req.params['recvWindow'] = 10000
+        req.params['quantity'] = order.amount.to_d
+        req.params['price'] = order.price.to_d
+        req.params['recvWindow'] = 5000
         req.params['timeInForce'] = 'GTC'
         req.params['timestamp'] = timestamp
         req.params['signature'] = params_signed(reqs_string)
@@ -143,24 +163,37 @@ class Future < Market
     end
   end
 
-  # 开空单
-  def new_kai_short(price, amount, category = 'limit')
-    asks.create(price: price, amount: amount, category: category, position:'SHORT')
-  end
-
-  # 平空单
-  def new_ping_short(price, amount, category = 'limit')
-    bids.create(price: price, amount: amount, category: category, position:'SHORT')
-  end
-
-  # 开空单
-  def new_kai_long(price, amount, category = 'limit')
-    bids.create(price: price, amount: amount, category: category, position:'LONG')
-  end
-
-  # 平空单
-  def new_ping_long(price, amount, category = 'limit')
-    asks.create(price: price, amount: amount, category: category, position:'LONG')
+  def sync_market_order(order)
+    begin
+      side = {'OrderBid'=> 'BUY', 'OrderAsk'=> 'SELL'}[order.type]
+      order_url = HOST + '/fapi/v1/order'
+      timestamp = (Time.now.to_f * 1000).to_i
+      reqs = []
+      reqs << ['symbol', symbol]
+      reqs << ['side', side]
+      reqs << ['positionSide', order.position]
+      reqs << ['type', 'MARKET']
+      reqs << ['timestamp', timestamp]
+      reqs << ['quantity', order.amount.to_d]
+      reqs << ['recvWindow', 5000]
+      reqs_string = reqs.sort.map {|x| x.join('=')}.join('&')
+      res = Faraday.post do |req|
+        req.url order_url
+        req.headers['X-MBX-APIKEY'] = Settings.future_key
+        req.params['symbol'] = symbol
+        req.params['side'] = side
+        req.params['positionSide'] = order.position
+        req.params['type'] = 'MARKET'
+        req.params['quantity'] = order.amount.to_d
+        req.params['recvWindow'] = 5000
+        req.params['timestamp'] = timestamp
+        req.params['signature'] = params_signed(reqs_string)
+      end
+      result = JSON.parse(res.body)
+      result['code'] ? { 'state'=> 500, 'cause'=> result['msg'] } : { 'state'=> 200 }
+    rescue Exception => detail
+      { 'state'=> 500, 'cause'=> detail.cause }
+    end
   end
 
 end

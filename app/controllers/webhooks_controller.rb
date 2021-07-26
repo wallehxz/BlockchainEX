@@ -4,6 +4,7 @@ class WebhooksController < ApplicationController
   # body = {"market": "YFI-USDT", "cmd": "step|market|bid|ask|cache|all_in", "msg": "text"}
   def trade
     trading    if params[:cmd] =~ /(bid)|(ask)/
+    f_trade    if params[:cmd] =~ /(long)|(short)/
     cache      if params[:cmd] =~ /cache/
     build      if params[:cmd] =~ /build/
     all_in     if params[:cmd] =~ /all_in/
@@ -21,6 +22,72 @@ private
   def find_market
     m_id = Market.market_list[params[:market]]
     market = Market.find(m_id)
+  end
+
+  def f_trade
+    market = find_market
+    if market&.regulate
+      if params[:cmd] =~ /short/
+        if params[:cmd] =~ /kai/
+          short_kai_order(market)
+        end
+
+        if params[:cmd] =~ /ping/
+          short_ping_order(market)
+        end
+      end
+
+      if params[:cmd] =~ /long/
+        if params[:cmd] =~ /kai/
+          long_kai_order(market)
+        end
+
+        if params[:cmd] =~ /ping/
+          long_ping_order(market)
+        end
+      end
+
+    end
+  end
+
+  def short_kai_order(market)
+    amount = market.regulate.fast_cash
+    price  = market.get_price
+    if params[:cmd] =~ /market/
+      market.new_kai_short(price[:bid], amount, 'market')
+    else
+      market.new_kai_short(price[:ask], amount)
+    end
+  end
+
+  def short_ping_order(market)
+    amount = market.regulate.fast_cash
+    price  = market.get_price
+    if params[:cmd] =~ /market/
+      market.new_ping_short(price[:ask], amount, 'market')
+    else
+      market.new_ping_short(price[:bid], amount)
+    end
+  end
+
+  def long_kai_order(market)
+    amount = market.regulate.fast_cash
+    price  = market.get_price
+    if params[:cmd] =~ /market/
+      market.new_kai_long(price[:ask], amount, 'market')
+    else
+      market.new_kai_long(price[:bid], amount)
+    end
+  end
+
+  def long_ping_order(market)
+    amount = market.regulate.fast_cash
+    price  = market.get_price
+    if params[:cmd] =~ /market/
+      market.new_ping_long(price[:bid], amount, 'market')
+    else
+      market.new_ping_long(price[:ask], amount)
+    end
   end
 
   def trading

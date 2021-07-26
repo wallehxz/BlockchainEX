@@ -18,26 +18,10 @@
 
 class OrderAsk < Order
 
-  def push_limit_order
-    if state.init? && category.limit?
-      if Rails.env.production?
-        result = market.sync_limit_order(:ask, amount, price)
-        self.update_attributes(state: result['state'], cause: result['cause'])
-      else
-        mock_push
-      end
-      notice
-    end if market.source == 'binance'
-  end
-
-  def push_market_order
-    market.sync_market_order(:ask, amount) if market.source == 'binance'
-  end
-
   after_create :push_step_order
   def push_step_order
     if state.init? && category.step?
-      self.errors.add(:cause, '重置阶梯订单')
+      self.errors.add(:cause, 'errors')
       market.step_price_ask(amount)
     end if market.source == 'binance'
   end

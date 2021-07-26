@@ -27,7 +27,7 @@ class Order < ActiveRecord::Base
   belongs_to :market
   has_one :regulate, primary_key: 'market_id', foreign_key: 'market_id'
   after_save :fix_price_amount
-  after_save :push_limit_order
+  after_save :push_limit_order, :push_market_order
   scope :succ, -> { where(state: 'succ') }
   scope :limit_order, -> { with_category(:limit) }
   scope :market_order, -> { with_category(:market) }
@@ -113,5 +113,29 @@ class Order < ActiveRecord::Base
 
   def mock_push
     self.update_attributes(state: 200)
+  end
+
+  def push_limit_order
+    if state.init? && category.limit?
+      if Rails.env.production?
+        result = market.sync_limit_order(self)
+        self.update_attributes(state: result['state'], cause: result['cause'])
+      else
+        mock_push
+      end
+      notice
+    end
+  end
+
+  def push_market_order
+    if state.init? && category.market?
+      if Rails.env.production?
+        result = market.sync_market_order(self)
+        self.update_attributes(state: result['state'], cause: result['cause'])
+      else
+        mock_push
+      end
+      notice
+    end
   end
 end

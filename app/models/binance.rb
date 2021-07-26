@@ -17,6 +17,14 @@
 class Binance < Market
   after_create :batch_sync_quote
 
+  def new_bid(price, amount, category = 'limit')
+    bids.create(price: price, amount: amount, category: category)
+  end
+
+  def new_ask(price, amount, category = 'limit')
+    asks.create(price: price, amount: amount, category: category)
+  end
+
   def symbol
     "#{quote_unit}#{base_unit}"
   end
@@ -35,18 +43,18 @@ class Binance < Market
     current = JSON.parse(res.body)
   end
 
-  def sync_limit_order(side, quantity, price)
+  def sync_limit_order(order)
     begin
-      side = {'bid': 'BUY', 'ask': 'SELL'}[side]
+      side = {'OrderBid'=> 'BUY', 'OrderAsk'=> 'SELL'}[order.type]
       order_url = 'https://api.binance.com/api/v3/order'
-      timestamp = (Time.now.to_f * 1000).to_i - 2000
+      timestamp = (Time.now.to_f * 1000).to_i
       reqs = []
       reqs << ['symbol', symbol]
       reqs << ['side', side]
       reqs << ['type', 'LIMIT']
-      reqs << ['price', price.to_d]
-      reqs << ['quantity', quantity.to_d]
-      reqs << ['recvWindow', 10000]
+      reqs << ['price', order.price.to_d]
+      reqs << ['quantity', order.quantity.to_d]
+      reqs << ['recvWindow', 5000]
       reqs << ['timestamp', timestamp]
       reqs << ['timeInForce', 'GTC']
       reqs_string = reqs.sort.map {|x| x.join('=')}.join('&')
@@ -56,9 +64,9 @@ class Binance < Market
         req.params['symbol'] = symbol
         req.params['side'] = side
         req.params['type'] = 'LIMIT'
-        req.params['quantity'] = quantity.to_d
-        req.params['price'] = price.to_d
-        req.params['recvWindow'] = 10000
+        req.params['quantity'] = order.quantity.to_d
+        req.params['price'] = order.price.to_d
+        req.params['recvWindow'] = 5000
         req.params['timeInForce'] = 'GTC'
         req.params['timestamp'] = timestamp
         req.params['signature'] = params_signed(reqs_string)
@@ -70,18 +78,18 @@ class Binance < Market
     end
   end
 
-  def sync_market_order(side, quantity)
+  def sync_market_order(order)
     begin
-      side = { 'bid': 'BUY', 'ask': 'SELL' }[side]
+      side = {'OrderBid'=> 'BUY', 'OrderAsk'=> 'SELL'}[order.type]
       order_url = 'https://api.binance.com/api/v3/order'
-      timestamp = (Time.now.to_f * 1000).to_i - 2000
+      timestamp = (Time.now.to_f * 1000).to_i
       reqs = []
       reqs << ['symbol', symbol]
       reqs << ['side', side]
       reqs << ['type', 'MARKET']
       reqs << ['timestamp', timestamp]
-      reqs << ['quantity', quantity.to_d]
-      reqs << ['recvWindow', 10000]
+      reqs << ['quantity', order.quantity.to_d]
+      reqs << ['recvWindow', 5000]
       reqs_string = reqs.sort.map {|x| x.join('=')}.join('&')
       res = Faraday.post do |req|
         req.url order_url
@@ -90,7 +98,7 @@ class Binance < Market
         req.params['side'] = side
         req.params['type'] = 'MARKET'
         req.params['quantity'] = quantity.to_d
-        req.params['recvWindow'] = 10000
+        req.params['recvWindow'] = 5000
         req.params['timestamp'] = timestamp
         req.params['signature'] = params_signed(reqs_string)
       end
@@ -105,7 +113,7 @@ class Binance < Market
   def sync_stop_order(stop, price, quantity)
     begin
       order_url = 'https://api.binance.com/api/v3/order'
-      timestamp = (Time.now.to_f * 1000).to_i - 2000
+      timestamp = (Time.now.to_f * 1000).to_i
       reqs = []
       reqs << ['symbol', symbol]
       reqs << ['side', 'SELL']
@@ -113,7 +121,7 @@ class Binance < Market
       reqs << ['stopPrice', stop.to_d]
       reqs << ['price', price.to_d]
       reqs << ['quantity', quantity.to_d]
-      reqs << ['recvWindow', 10000]
+      reqs << ['recvWindow', 5000]
       reqs << ['timestamp', timestamp]
       reqs << ['timeInForce', 'GTC']
       reqs_string = reqs.sort.map {|x| x.join('=')}.join('&')
@@ -126,7 +134,7 @@ class Binance < Market
         req.params['stopPrice'] = stop.to_d
         req.params['price'] = price.to_d
         req.params['quantity'] = quantity.to_d
-        req.params['recvWindow'] = 10000
+        req.params['recvWindow'] = 5000
         req.params['timeInForce'] = 'GTC'
         req.params['timestamp'] = timestamp
         req.params['signature'] = params_signed(reqs_string)
@@ -146,13 +154,13 @@ class Binance < Market
 
   def all_orders(start_t=nil, end_t=nil)
     order_url = 'https://api.binance.com/api/v3/allOrders'
-    timestamp = (Time.now.to_f * 1000).to_i - 2000
-    params_string = "#{'endTime=' + end_t.to_s + '&' if end_t}limit=1000&recvWindow=10000&#{'startTime=' + start_t.to_s + '&' if start_t}symbol=#{symbol}&timestamp=#{timestamp}"
+    timestamp = (Time.now.to_f * 1000).to_i
+    params_string = "#{'endTime=' + end_t.to_s + '&' if end_t}limit=1000&recvWindow=5000&#{'startTime=' + start_t.to_s + '&' if start_t}symbol=#{symbol}&timestamp=#{timestamp}"
     res = Faraday.get do |req|
       req.url order_url
       req.headers['X-MBX-APIKEY'] = Settings.binance_key
       req.params['symbol']        = symbol
-      req.params['recvWindow']    = 10000
+      req.params['recvWindow']    = 5000
       req.params['limit']         = 1000
       req.params['startTime']     = start_t if start_t
       req.params['endTime']       = end_t if end_t
@@ -164,13 +172,13 @@ class Binance < Market
 
   def open_orders
     order_url = 'https://api.binance.com/api/v3/openOrders'
-    timestamp = (Time.now.to_f * 1000).to_i - 2000
-    params_string = "recvWindow=10000&symbol=#{symbol}&timestamp=#{timestamp}"
+    timestamp = (Time.now.to_f * 1000).to_i
+    params_string = "recvWindow=5000&symbol=#{symbol}&timestamp=#{timestamp}"
     res = Faraday.get do |req|
       req.url order_url
       req.headers['X-MBX-APIKEY'] = Settings.binance_key
       req.params['symbol'] = symbol
-      req.params['recvWindow'] = 10000
+      req.params['recvWindow'] = 5000
       req.params['timestamp'] = timestamp
       req.params['signature'] = params_signed(params_string)
     end
@@ -179,14 +187,14 @@ class Binance < Market
 
   def undo_order(order_id)
     cancle_url = 'https://api.binance.com/api/v3/order'
-    timestamp = (Time.now.to_f * 1000).to_i - 2000
-    params_string = "orderId=#{order_id}&recvWindow=10000&symbol=#{symbol}&timestamp=#{timestamp}"
+    timestamp = (Time.now.to_f * 1000).to_i
+    params_string = "orderId=#{order_id}&recvWindow=5000&symbol=#{symbol}&timestamp=#{timestamp}"
     res = Faraday.delete do |req|
       req.url cancle_url
       req.headers['X-MBX-APIKEY'] = Settings.binance_key
       req.params['symbol'] = symbol
       req.params['orderId'] = order_id
-      req.params['recvWindow'] = 10000
+      req.params['recvWindow'] = 5000
       req.params['timestamp'] = timestamp
       req.params['signature'] = params_signed(params_string)
     end
@@ -359,7 +367,7 @@ class Binance < Market
     bid_price = ticker['askPrice'].to_f
     bid_order = bids.create(price: bid_price, amount: amount, category: 'market', state: 'succ')
     return nil if bid_order.state == 500
-    push_order = sync_market_order(:bid, bid_order.amount)
+    push_order = sync_market_order(bid_order)
     if push_order['state'] == 200
       bid_order.notice
     else
@@ -371,7 +379,7 @@ class Binance < Market
     ask_price = ticker['bidPrice'].to_f
     ask_order = asks.create(price: ask_price, amount: amount, category: 'market', state: 'succ')
     return nil if ask_order.state == 500
-    push_order = sync_market_order(:ask, amount)
+    push_order = sync_market_order(ask_order)
     if push_order['state'] == 200
       ask_order.notice
     else

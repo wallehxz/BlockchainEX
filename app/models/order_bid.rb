@@ -18,28 +18,12 @@
 
 class OrderBid < Order
 
-  def push_limit_order
-    if state.init? && category.limit?
-      if Rails.env.production?
-        result = market.sync_limit_order(:bid, amount, price)
-        self.update_attributes(state: result['state'], cause: result['cause'])
-      else
-        mock_push
-      end
-      notice
-    end
-  end
-
-  def push_market_order
-    market.sync_market_order(:bid, amount) if market.source == 'binance'
-  end
-
   after_create :push_step_order
   def push_step_order
-    if state.init? && category.step? && market.source == 'binance'
+    if state.init? && category.step?
       self.errors.add(:cause, 'errors')
       market.step_price_bid(amount)
-    end
+    end if market.source == 'binance'
   end
 
   before_create :check_fund_exceed

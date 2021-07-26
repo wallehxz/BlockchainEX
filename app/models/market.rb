@@ -107,55 +107,8 @@ class Market < ActiveRecord::Base
     ['binance', 'future']
   end
 
-  def method_missing(method, *args)
-    m_string = method.to_s
-    return recent_max_min('min',m_string.delete('min_')) if m_string.include?('min_')
-    return recent_max_min('max',m_string.delete('max_')) if m_string.include?('max_')
-    return ma_value(m_string.delete('ma_')) if m_string.include?('ma_')
-    return recent_vol(m_string.delete('vol_')) if m_string.include?('vol_')
-  end
-
-  def ma_value(amount)
-    candles.last(amount.to_i).map {|x| x.c }.sum / amount.to_i
-  end
-
-  def recent_max_min(side,amount)
-    eval "candles.last(#{amount.to_i}).map {|x| x.c }.#{side}"
-  end
-
   def recent_vol(amount)
     candles.last(amount.to_i).map {|x| x.v }
-  end
-
-  def rsi(amount)
-    rs = smma_up(amount) / smma_down(amount)
-    100 - (100 / (1 + rs))
-  end
-
-  def smma_up(amount)
-    prices= candles.last(amount).map { |x| x.c }
-    sum = 0
-    prices.each_with_index do |price, index|
-      if prices[index + 1].present? && prices[index + 1] - price > 0
-        sum =+ (prices[index + 1] - price) / (amount - 1)
-      end
-    end
-    sum
-  end
-
-  def smma_down(amount)
-    prices = candles.last(amount).map { |x| x.c }
-    sum = 0
-    prices.each_with_index do |price, index|
-      if prices[index + 1].present? && price - prices[index + 1] > 0
-        sum =+ (price - prices[index + 1]) / (amount - 1)
-      end
-    end
-    sum
-  end
-
-  def tip?
-    regulate.present?
   end
 
   def off_trade
@@ -225,14 +178,6 @@ class Market < ActiveRecord::Base
 
   def latest_ask
     asks.succ.recent.first
-  end
-
-  def new_bid(price, amount, category = 'limit')
-    bids.create(price: price, amount: amount, category: category)
-  end
-
-  def new_ask(price, amount, category = 'limit')
-    asks.create(price: price, amount: amount, category: category)
   end
 
   def greedy?

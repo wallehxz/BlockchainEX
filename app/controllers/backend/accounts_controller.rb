@@ -5,6 +5,7 @@ class Backend::AccountsController < Backend::BaseController
   end
 
   def sync_balance
+    Account.all.destroy_all
     Market.all.each do |ex|
       ex.sync_balance rescue nil
     end
