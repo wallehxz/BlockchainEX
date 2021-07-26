@@ -61,4 +61,21 @@ class OrderAsk < Order
     end
   end
 
+  after_create :check_short_fund_exceed
+  def check_short_fund_exceed
+    quota = market&.regulate&.retain
+    if quota && position =='SHORT'
+      account = Account.future_balances
+      remote = account['positions'].select { |x| x['symbol'] == market.symbol }.select {|x| x['positionSide'] == 'SHORT' }[0]
+      total_fund = remote['positionAmt'].to_f.abs rescue 0
+      if total_fund == quota
+        self.state = 500
+        self.cause = "Quota has fulled"
+      elsif total_fund + amount > quota
+        self.amount = quota - total_fund
+      end
+    end
+  end
+
+
 end
