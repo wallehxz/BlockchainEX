@@ -204,4 +204,11 @@ class Future < Market
     end
   end
 
+  def dmi_up?
+    dmis
+  end
+
+  def dmi_down?
+  end
+
 end

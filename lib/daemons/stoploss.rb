@@ -14,30 +14,73 @@ Signal.trap("TERM") do
   $running = false
 end
 
+def binance_trade(regul)
+  coin    = regul.market
+  coin.sync_fund
+  balance = coin.fund.balance
+
+  if balance < regul.retain * 0.01
+    coin.market_price_ask(balance)
+    coin.off_stoploss
+    content = "#{regul.market.symbols} 关闭止损 #{Time.now.to_s(:short)}"
+    Notice.dingding(content)
+  end
+
+  if coin.get_price[:bid] > regul.cost
+    amount = regul.fast_cash
+    coin.step_price_ask(amount)
+  end
+
+  if coin.get_price[:bid] < regul.cost
+    amount = regul.fast_cash
+    coin.market_price_ask(amount)
+  end
+end
+
+def future_trade(regul)
+  coin    = regul.market
+  coin.sync_fund
+  balance = coin.fund.balance
+
+  if balance < regul.retain * 0.01
+    coin.market_price_ask(balance)
+    coin.off_stoploss
+    content = "#{regul.market.symbols} 关闭止损 #{Time.now.to_s(:short)}"
+    Notice.dingding(content)
+  end
+
+  if coin.get_price[:bid] > regul.cost
+    amount = regul.fast_cash
+    coin.step_price_ask(amount)
+  end
+
+  if coin.get_price[:bid] < regul.cost
+    amount = regul.fast_cash
+    coin.market_price_ask(amount)
+  end
+end
+
+def future_trade(regul)
+  loss = regul.support
+  market = regul.market
+  long = market.long_position
+  if long['unrealizedProfit'].to_f < 0 && long['unrealizedProfit'].to_f.abs > loss
+    price  = market.get_price
+    market.new_ping_long(price[:bid], long['positionAmt'].to_f.abs, 'market')
+  end
+
+  short = market.short_position
+  if short['unrealizedProfit'].to_f < 0 && short['unrealizedProfit'].to_f.abs > loss
+    price  = market.get_price
+    market.new_ping_short(price[:bid], short['positionAmt'].to_f.abs, 'market')
+  end
+end
+
 while($running) do
   begin
     Regulate.where(stoploss: true).each do |regul|
-      coin    = regul.market
-      coin.sync_fund
-      balance = coin.fund.balance
-
-      if balance < regul.retain * 0.01
-        coin.market_price_ask(balance)
-        coin.off_stoploss
-        content = "#{regul.market.symbols} 关闭止损 #{Time.now.to_s(:short)}"
-        Notice.dingding(content)
-      end
-
-      if coin.get_price[:bid] > regul.cost
-        amount = regul.fast_cash
-        coin.step_price_ask(amount)
-      end
-
-      if coin.get_price[:bid] < regul.cost
-        amount = regul.fast_cash
-        coin.market_price_ask(amount)
-      end
-
+      future_trade(regul)  if regul.market.source == 'future'
+      binance_trade(regul) if regul.market.source == 'binance'
     end
   rescue => detail
     Notice.exception(detail, "Deamon StopLoss")

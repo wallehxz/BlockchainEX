@@ -66,7 +66,6 @@
                   止盈：<input type="checkbox" name="my-state" <%= 'checked' if item.takeprofit %> onchange='switch_state(<%= item.id %>, "takeprofit")'></br></br>
                   追跌：<input type="checkbox" name="my-state" <%= 'checked' if item.chasedown %> onchange='switch_state(<%= item.id %>, "chasedown")'>&nbsp;&nbsp;
                   高频：<input type="checkbox" name="my-state" <%= 'checked' if item.fast_trade %> onchange='switch_state(<%= item.id %>, "fast")'>&nbsp;&nbsp;
-                  低频：<input type="checkbox" name="my-state" <%= 'checked' if item.range_trade %> onchange='switch_state(<%= item.id %>, "range")'>&nbsp;&nbsp;
                 </td>
                 <td><br>
                   <a href="<%= edit_backend_regulate_path(item) %>" class="btn bg-orange btn-flat">
