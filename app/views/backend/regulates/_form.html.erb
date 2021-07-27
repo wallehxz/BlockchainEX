@@ -28,8 +28,26 @@
         <%= f.text_field :price_precision, class:'form-control', placeholder:'（必填* 交易价格精度）' %>
       </div>
     </div>
+    <div class="form-group has-error">
+      <label>亏损成本</label>
+      <div class="input-group">
+        <div class="input-group-addon">
+          <i class="fa fa-fire"></i>
+        </div>
+        <%= f.text_field :support, class:'form-control', placeholder:'（必填* 亏损成本）' %>
+      </div>
+    </div>
+    <div class="form-group has-error">
+      <label>交易数量</label>
+      <div class="input-group">
+        <div class="input-group-addon">
+          <i class="fa fa-money"></i>
+        </div>
+        <%= f.text_field :fast_cash, class:'form-control', placeholder:'（必填* 交易数量）' %>
+      </div>
+    </div>
     <div class="form-group has-success">
-      <label>最大持有币种</label>
+      <label>最大头寸</label>
       <div class="input-group">
         <div class="input-group-addon">
           <i class="fa fa-battery-4"></i>
@@ -38,72 +56,34 @@
       </div>
     </div>
     <div class="form-group has-success">
-      <label>最小卖出收益</label>
+      <label>预期收益</label>
       <div class="input-group">
         <div class="input-group-addon">
           <i class="fa fa-money"></i>
         </div>
-        <%= f.text_field :cash_profit, class:'form-control', placeholder:'（必填* 最小卖出收益）' %>
+        <%= f.text_field :cash_profit, class:'form-control', placeholder:'（必填* 预期收益）' %>
       </div>
     </div>
-
     <div class="form-group has-success">
       <label>建仓价位</label>
       <div class="input-group">
         <div class="input-group-addon">
-          <i class="fa fa-arrow-up"></i>
+          <i class="fa fa-level-up"></i>
         </div>
         <%= f.text_field :cost, class:'form-control', placeholder:'（必填* 建仓价位）' %>
       </div>
     </div>
-    <div class="form-group has-warning">
-      <label>盈利价位</label>
+    <div class="form-group has-success">
+      <label>压力价位</label>
       <div class="input-group">
         <div class="input-group-addon">
-          <i class="fa fa-arrow-down"></i>
+          <i class="fa fa-level-down"></i>
         </div>
         <%= f.text_field :resistance, class:'form-control', placeholder:'（必填* 盈利价位）' %>
       </div>
     </div>
-    <div class="form-group has-error">
-      <label>亏损价位</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-arrow-up"></i>
-        </div>
-        <%= f.text_field :support, class:'form-control', placeholder:'（必填* 亏损价位）' %>
-      </div>
-    </div>
-
-    <div class="form-group has-warning">
-      <label>短期交易数量</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-money"></i>
-        </div>
-        <%= f.text_field :fast_cash, class:'form-control', placeholder:'（必填* 短期交易数量）' %>
-      </div>
-    </div>
-    <div class="form-group has-warning">
-      <label>短期盈亏比率</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-gift"></i>
-        </div>
-        <%= f.text_field :fast_profit, class:'form-control', placeholder:'（必填* 短期交易成交收益）' %>
-      </div>
-    </div>
-    <div class="form-group has-error">
-      <label>长期交易数量</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-money"></i>
-        </div>
-        <%= f.text_field :range_cash, class:'form-control', placeholder:'（必填* 长期交易数量）' %>
-      </div>
-    </div>
-    <div class="form-group has-error">
-      <label>长期盈亏收益</label>
+    <div class="form-group has-success">
+      <label>长期收益</label>
       <div class="input-group">
         <div class="input-group-addon">
           <i class="fa fa-gift"></i>
@@ -111,7 +91,6 @@
         <%= f.text_field :range_profit, class:'form-control', placeholder:'（必填* 长期盈亏收益）' %>
       </div>
     </div>
-
   </div>
   <div class="col-md-12">
     <hr>

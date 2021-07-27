@@ -78,8 +78,7 @@ class Future < Market
   end
 
 	def sync_short
-    account = Account.future_balances
-    remote = account['positions'].select { |x| x['symbol'] == symbol }.select {|x| x['positionSide'] == 'SHORT' }[0]
+    remote = short_position
     if remote && remote['initialMargin'].to_f > 0
     	locale = short || build_short
 	    locale.balance  = remote['positionAmt'].to_f
@@ -91,8 +90,7 @@ class Future < Market
   end
 
   def sync_long
-    account = Account.future_balances
-    remote = account['positions'].select { |x| x['symbol'] == symbol }.select {|x| x['positionSide'] == 'LONG' }[0]
+    remote = long_position
     if remote && remote['initialMargin'].to_f > 0
     	locale = long || build_long
 	    locale.balance  = remote['positionAmt'].to_f
@@ -101,6 +99,16 @@ class Future < Market
 	    locale.side     = remote['positionSide']
 	    locale.save
     end
+  end
+
+  def long_position
+    account = Account.future_balances
+    account['positions'].select { |x| x['symbol'] == symbol }.select {|x| x['positionSide'] == 'LONG' }[0]
+  end
+
+  def short_position
+    account = Account.future_balances
+    account['positions'].select { |x| x['symbol'] == symbol }.select {|x| x['positionSide'] == 'SHORT' }[0]
   end
 
   def sync_cash

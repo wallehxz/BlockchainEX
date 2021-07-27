@@ -19,10 +19,10 @@
           <table id="example1" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="example1_info">
             <thead>
             <tr>
-              <th tabindex="0" aria-controls="example1" style="text-align: center">交易所</th>
-              <th tabindex="0" aria-controls="example1" style="text-align: center">指标</th>
-              <th tabindex="0" aria-controls="example1" style="text-align: center">通知</th>
-              <th tabindex="0" aria-controls="example1" style="text-align: center">交易</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">制式</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">指数</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">提醒</th>
+              <th tabindex="0" aria-controls="example1" style="text-align: center">进程</th>
               <th tabindex="0" aria-controls="example1" style="width: 120px;">操作</th>
             </tr>
             </thead>
@@ -30,19 +30,32 @@
             <% @regulates.each do |item| %>
               <tr style="text-align: left">
                 <td>
-                  <%= item.market.class.to_s.upcase %><br>
-                  <%= item.market.quote_unit + "-" + item.market.base_unit %><br>
-                  平均成本：<%= item.market.avg_cost.to_d.round(item.price_precision, :down) rescue 0 %><br>
-                  现货数量：<%= item.current_fund.to_d.round(item.amount_precision, :down)  rescue 0 %><br>
+                  <%= item.market.full_name %><br>
                   价格精度：<%= item.price_precision %><br>
-                  数量精度：<%= item.amount_precision %>
+                  数量精度：<%= item.amount_precision %><br>
+                  <% if item.market.source    == 'binance' %>
+                    现货头寸： <%= item.current_fund.to_d.round(item.amount_precision, :down)  rescue 0 %><br>
+                  <% end %>
+                  <% if item.market.source == 'future' %>
+                    <% long = item.market.long_position%>
+                    多单头寸： +<%= long['positionAmt'] %> <br>
+                    <% short = item.market.short_position%>
+                    空单头寸： <%= short['positionAmt'] %><br>
+                  <% end %>
                 </td>
                 <td style="text-align: left">
-                   持有头寸： <%= item.retain %> <%= item.market.quote_unit %><br>
-                   卖出收益： <%= item.cash_profit %> <%= item.market.base_unit %><br>
-                   盈利位价： <%= item.resistance %><br>
-                   亏损位价： <%= item.support %><br>
-                   建仓位价： <%= item.cost %><br>
+                  最大数量： <%= item.retain %> <%= item.market.quote_unit %><br>
+                  单次交易： <%= item.fast_cash %> <%= item.market.quote_unit %><br>
+                  预期收益： <%= item.cash_profit %> <%= item.market.base_unit %><br>
+                  亏损成本： <%= item.support %> <%= item.market.base_unit %><br>
+                  <% if item.market.source    == 'binance' %>
+                    现货头寸： <%= item.current_fund.to_d.round(item.amount_precision, :down)  rescue 0 %><br>
+                    平均成本： <%= item.market.avg_cost.to_d.round(item.price_precision, :down) rescue 0 %><br>
+                    压力位价： <%= item.resistance %><br>
+                  <% elsif item.market.source == 'future' %>
+                    多单价格： <%= long['entryPrice'] %> &nbsp; 收益： <%= long['unrealizedProfit'] %><br>
+                    空单价格： <%= short['entryPrice'] %> &nbsp; 收益： <%= short['unrealizedProfit'] %><br>
+                  <% end %>
                 </td>
                 <td>
                   钉钉：<input type="checkbox" name="my-state" <%= 'checked' if item.notify_dd %> onchange='switch_state(<%= item.id %>, "dd")'></br></br>

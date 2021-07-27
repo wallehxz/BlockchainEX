@@ -128,34 +128,30 @@ class Market < ActiveRecord::Base
     Notice.dingding(content) if regulate&.notify_dd
   end
 
+  def method_missing(method, *args)
+    m_string = method.to_s
+    return recent_max_min('min',m_string.delete('min_')) if m_string.include?('min_')
+    return recent_max_min('max',m_string.delete('max_')) if m_string.include?('max_')
+    return recent_vol(m_string.delete('vol_')) if m_string.include?('vol_')
+  end
+
+  def recent_max_min(side,amount)
+    eval "candles.last(#{amount.to_i}).map {|x| x.c }.#{side}"
+  end
+
+  def recent_vol(amount)
+    candles.last(amount.to_i).map {|x| x.v }
+  end
+
   def extreme_report
     if min_48 == last_quote.c
-      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} DOWN Price #{last_quote.c} Vol #{last_quote.v}"
+      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 4H DOWN Price #{last_quote.c} Vol #{last_quote.v}"
       quote_notice(tip)
-      if regulate&.range_trade
-        _amount = regulate.range_cash
-        _price = recent_price * (1 - 0.0025)
-        new_bid(_price,_amount)
-      end
     end
 
     if max_48 == last_quote.c
-      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} UP Price #{last_quote.c} Vol #{last_quote.v}"
+      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 4H UP Price #{last_quote.c} Vol #{last_quote.v}"
       quote_notice(tip)
-      if regulate&.range_trade
-        _amount = regulate.range_cash
-        _price = recent_price * (1 + 0.003)
-        new_ask(_price,_amount)
-      end
-    end
-
-    if sync_fund > regulate.retain * 0.1
-      if last_quote.c > regulate.resistance
-        regulate.update!(support: last_quote.c * 0.9975)
-        regulate.update!(takeprofit: true)
-        content = "#{Time.now.to_s(:short)} #{symbols} 止盈价格更新为 #{regulate.support}"
-        Notice.dingding(content)
-      end
     end
   end
 
@@ -164,11 +160,6 @@ class Market < ActiveRecord::Base
       kline = last_quote.kline_info
       tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 8H MaxVols #{last_quote.v} Price #{last_quote.c}，Float #{kline}"
       quote_notice(tip)
-
-      if regulate&.range_trade && kline[1] > 0
-        _amount = regulate.range_cash
-        new_bid(recent_price * 0.9975,_amount)
-      end
     end
   end
 

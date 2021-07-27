@@ -94,17 +94,16 @@ private
     market = find_market
     if market&.regulate
       amount = market.regulate.fast_cash
-      profit = market.regulate.fast_profit || 0.002
       if params[:cmd] =~ /bid/
-        bid_order(market, amount, profit)
+        bid_order(market, amount)
       elsif params[:cmd] =~ /ask/
-        ask_order(market, amount, profit)
+        ask_order(market, amount)
       end
     end
   end
 
-  def bid_order(market, amount, profit)
-    price = market.recent_price * (1 - profit)
+  def bid_order(market, amount)
+    price = market.recent_price
     if params[:cmd] =~ /(step)|(market)/
       market.send("#{$1 || $2}_price_bid".to_sym, amount)
     else
@@ -112,8 +111,8 @@ private
     end
   end
 
-  def ask_order(market,amount, profit)
-    price = market.recent_price * (1 + profit)
+  def ask_order(market,amount)
+    price = market.recent_price
     if params[:cmd] =~ /(step)|(market)/
       market.send("#{$1 || $2}_price_ask".to_sym, amount)
     else
