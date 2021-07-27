@@ -204,11 +204,24 @@ class Future < Market
     end
   end
 
+  def dmis_index
+    indicators.dmis
+  end
+
   def dmi_up?
-    dmis
+    dmi = dmis_index.last
+    if dmi.created_at > (Time.now - 10.minute)
+      return true if dmi.dmi_dd - dmi.dmi_di > 0
+    end
+    false
   end
 
   def dmi_down?
+    dmi = dmis_index.last
+    if dmi.created_at > (Time.now - 10.minute)
+      return true if dmi.dmi_di - dmi.dmi_dd > 0
+    end
+    false
   end
 
 end

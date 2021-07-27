@@ -43,12 +43,38 @@ def all_to_off(coin)
   end
 end
 
+def binance_trade(market)
+  chase_order(market)
+  all_to_off(market)
+end
+
+def future_trade(regul)
+  market = regul.market
+  amount = regul.fast_cash
+  trends = coin.get_ticker('1m', 15).map {|x| x[4].to_f}
+  # 行情指标上涨区间，做多
+  if market.dmi_up?
+    if trends.min == trends[-2]
+      price = market.get_price
+      market.new_kai_long(price[:bid], amount)
+    end
+  end
+
+  # 行情指标下跌区间，做空
+  if market.dmi_down?
+    if trends.max == trends[-2]
+      price = market.get_price
+      market.new_kai_short(price[:bid], amount)
+    end
+  end
+end
+
 while($running) do
   begin
     Regulate.where(chasedown: true).each do |regul|
-      coin = regul.market
-      chase_order(coin)
-      all_to_off(coin)
+      market = regul.market
+      future_trade(regul)   if market.source == 'future'
+      binance_trade(market) if market.source == 'binance'
     end
   rescue => detail
     Notice.exception(detail, "Deamon Chasedown")
