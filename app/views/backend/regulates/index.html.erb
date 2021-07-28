@@ -33,6 +33,7 @@
                   <%= item.market.full_name %><br>
                   价格精度：<%= item.price_precision %><br>
                   数量精度：<%= item.amount_precision %><br>
+                  最大收益：<%= item.range_profit %> <%= item.market.base_unit %><br>
                   <% if item.market.source    == 'binance' %>
                     现货头寸： <%= item.current_fund.to_d.round(item.amount_precision, :down)  rescue 0 %><br>
                   <% end %>
@@ -46,7 +47,7 @@
                 <td style="text-align: left">
                   最大数量： <%= item.retain %> <%= item.market.quote_unit %><br>
                   单次交易： <%= item.fast_cash %> <%= item.market.quote_unit %><br>
-                  预期收益： <%= item.cash_profit %> <%= item.market.base_unit %><br>
+                  浮动收益： <%= item.cash_profit %> <%= item.market.base_unit %><br>
                   亏损成本： <%= item.support %> <%= item.market.base_unit %><br>
                   <% if item.market.source    == 'binance' %>
                     现货头寸： <%= item.current_fund.to_d.round(item.amount_precision, :down)  rescue 0 %><br>

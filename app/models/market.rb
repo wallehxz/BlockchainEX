@@ -147,11 +147,27 @@ class Market < ActiveRecord::Base
     if min_48 == last_quote.c
       tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 4H DOWN Price #{last_quote.c} Vol #{last_quote.v}"
       quote_notice(tip)
+      #行情下跌 平空
+      if source == 'future'
+        profit = regulate.range_profit
+        short = short_position
+        if short['unrealizedProfit'].to_f > profit
+          new_ping_short(last_quote.c, short['positionAmt'].to_f.abs, 'market')
+        end
+      end
     end
 
     if max_48 == last_quote.c
       tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 4H UP Price #{last_quote.c} Vol #{last_quote.v}"
       quote_notice(tip)
+      # 行情上涨 平多
+      if source == 'future'
+        profit = regulate.range_profit
+        long = long_position
+        if long['unrealizedProfit'].to_f > profit
+          new_ping_long(last_quote.c, long['positionAmt'].to_f.abs, 'market')
+        end
+      end
     end
   end
 
