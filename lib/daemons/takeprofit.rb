@@ -71,5 +71,5 @@ while($running) do
   rescue => detail
     Notice.exception(detail, "Deamon TakeProfit")
   end
-  sleep 29
+  sleep 45
 end

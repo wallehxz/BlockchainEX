@@ -56,7 +56,7 @@ def future_trade(regul)
   if market.dmi_up?
     if trends.min == trends[-2]
       price = market.get_price
-      market.new_kai_long(price[:bid], amount)
+      market.new_kai_long(price[:bid], amount, 'market')
     end
   end
 
@@ -64,7 +64,7 @@ def future_trade(regul)
   if market.dmi_down?
     if trends.max == trends[-2]
       price = market.get_price
-      market.new_kai_short(price[:bid], amount)
+      market.new_kai_short(price[:bid], amount, 'market')
     end
   end
 end
@@ -79,5 +79,5 @@ while($running) do
   rescue => detail
     Notice.exception(detail, "Deamon Chasedown")
   end
-  sleep 35
+  sleep 45
 end
