@@ -51,7 +51,7 @@ end
 def future_trade(regul)
   market = regul.market
   amount = regul.fast_cash
-  trends = coin.get_ticker('1m', 15).map {|x| x[4].to_f}
+  trends = market.get_ticker('1m', 15).map {|x| x[4].to_f}
   # 行情指标上涨区间，做多
   if market.dmi_up?
     if trends.min == trends[-2]

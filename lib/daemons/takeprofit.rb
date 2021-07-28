@@ -45,20 +45,17 @@ def future_trade(regul)
   market = regul.market
   amount = regul.fast_cash
   long = market.long_position
-  if long['unrealizedProfit'].to_f > profit
+  if long['unrealizedProfit'].to_f > 0
     price  = market.get_price
-    trends = coin.get_ticker('1m', 15).map {|x| x[4].to_f}
-    trends = coin.get_ticker('1m', 15).map {|x| x[4].to_f}
-    if trends.max == trends[-2]
+    if price[:bid] > long['entryPrice'].to_f + profit
       market.new_ping_long(price[:bid], long['positionAmt'].to_f.abs, 'market')
     end
   end
 
   short = market.short_position
-  if short['unrealizedProfit'].to_f > profit
+  if short['unrealizedProfit'].to_f > 0
     price  = market.get_price
-    trends = coin.get_ticker('1m', 15).map {|x| x[4].to_f}
-    if trends.min == trends[-2]
+    if short['entryPrice'].to_f > profit + price[:bid]
       market.new_ping_short(price[:bid], amount, 'market')
     end
   end

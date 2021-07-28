@@ -55,7 +55,7 @@ class Regulate < ActiveRecord::Base
   after_save :turnover
 
   def turnover
-    if (stoploss || takeprofit) && chasedown
+    if (stoploss || takeprofit) && chasedown && market.source == 'binance'
       self.toggle!(:chasedown)
       content = "[#{Time.now.to_s(:short)}] #{market.symbols} 止损卖出和逐仓买入不可同时执行，关闭追跌"
       Notice.dingding(content)
