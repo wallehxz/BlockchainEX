@@ -41,7 +41,7 @@ def binance_trade(regul)
 end
 
 def future_trade(regul)
-  profit = regul.support
+  profit = regul.cash_profit
   market = regul.market
   amount = regul.fast_cash
 
@@ -49,7 +49,7 @@ def future_trade(regul)
   if long['unrealizedProfit'].to_f > 0
     price  = market.get_price
     if price[:bid] > long['entryPrice'].to_f + profit
-      market.new_ping_long(price[:bid], long['positionAmt'].to_f.abs, 'market')
+      market.new_ping_long(price[:bid], amount, 'market')
     end
   end
 
