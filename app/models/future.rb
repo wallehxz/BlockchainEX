@@ -213,7 +213,7 @@ class Future < Market
     false
   end
 
-  def dmi_down?
+  def cma_down?
     return true if cmas_index < 0
     false
   end
