@@ -44,6 +44,7 @@ def future_trade(regul)
   profit = regul.support
   market = regul.market
   amount = regul.fast_cash
+
   long = market.long_position
   if long['unrealizedProfit'].to_f > 0
     price  = market.get_price
@@ -60,7 +61,6 @@ def future_trade(regul)
     end
   end
 end
-
 
 while($running) do
   begin
