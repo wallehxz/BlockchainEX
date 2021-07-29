@@ -51,18 +51,18 @@ end
 def future_trade(regul)
   market = regul.market
   amount = regul.fast_cash
-  trends = market.get_ticker('1m', 15).map {|x| x[4].to_f}
+  macd = market.macd_index
   # 行情指标上涨区间，做多
-  if market.dmi_up?
-    if trends.min == trends[-2]
+  if market.cma_up?
+    if macd.macd_m_up? && macd.macd_s_up?
       price = market.get_price
       market.new_kai_long(price[:bid], amount, 'market')
     end
   end
 
   # 行情指标下跌区间，做空
-  if market.dmi_down?
-    if trends.max == trends[-2]
+  if market.cma_down?
+    if macd.macd_m_down? && macd.macd_s_down?
       price = market.get_price
       market.new_kai_short(price[:bid], amount, 'market')
     end

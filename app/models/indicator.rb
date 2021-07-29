@@ -13,7 +13,7 @@ class Indicator < ActiveRecord::Base
   scope :recent, -> { order('created_at desc') }
   self.per_page = 10
   scope :macds, -> { where("name LIKE 'MACD%'") }
-  scope :dmis, -> { where("name LIKE 'DMI%'") }
+  scope :cmas, -> { where("name LIKE 'CMAA%'") }
 
   def value
     name.split('=')[-1].to_i
@@ -103,43 +103,20 @@ class Indicator < ActiveRecord::Base
     false
   end
 
-  def dmi_dx
-    if name.include? 'DMI'
+  def cma_index
+    if name.include? 'CMAA'
       name.split('=').last.split('|')[0].to_f
     end
   end
 
-  def dmi_dd
-    if name.include? 'DMI'
-      name.split('=').last.split('|')[1].to_f
-    end
-  end
-
-  def dmi_di
-    if name.include? 'DMI'
-      name.split('=').last.split('|')[2].to_f
-    end
-  end
-
-  after_create :binance_dmi_change
-  def binance_dmi_change
-    if name.include?('DMI') && market.source == 'binance'
-      if dmi_dd < dmi_di
-        market.step_stoploss('DMI 指标 +Di 下行')
-      end
-    end
-  end
-
-  after_create :future_dmi_change
-  def future_dmi_change
-    if name.include?('DMI') && market.source == 'future' && market.regulate.fast_trade
-      dmis = market.indicators.dmis.last(5)
-      diff = dmis.map {|x| x.dmi_dd - x.dmi_di}
+  after_create :future_cma_change
+  def future_cma_change
+    if name.include?('CMAA') && market.source == 'future' && market.regulate.fast_trade
       # 指标由下跌变为上涨 做多
-      if diff[-1] > 0 && diff[-2] < 0 && diff[0..3].max < 0
+      if cma_index > 0
         amount = market.regulate.fast_cash
         price  = market.get_price
-        market.new_kai_long(price[:bid], amount)
+        market.new_kai_long(price[:bid], amount, 'market')
 
         #如果空单有盈利 则市价平仓
         short = market.short_position
@@ -149,10 +126,10 @@ class Indicator < ActiveRecord::Base
       end
 
       # 指标由上涨变为下跌 做空
-      if diff[-1] < 0 && diff[-2] > 0 && diff[0..3].max > 0
+      if cma_index < 0
         amount = market.regulate.fast_cash
         price  = market.get_price
-        market.new_kai_short(price[:ask], amount)
+        market.new_kai_short(price[:ask], amount, 'market')
 
         #如果多单有盈利 则市价平仓
         long = market.long_position
