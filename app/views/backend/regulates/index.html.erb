@@ -65,7 +65,7 @@
                 <td style="text-align: left">
                   止损：<input type="checkbox" name="my-state" <%= 'checked' if item.stoploss %> onchange='switch_state(<%= item.id %>, "stoploss")'>&nbsp;&nbsp;
                   止盈：<input type="checkbox" name="my-state" <%= 'checked' if item.takeprofit %> onchange='switch_state(<%= item.id %>, "takeprofit")'></br></br>
-                  追跌：<input type="checkbox" name="my-state" <%= 'checked' if item.chasedown %> onchange='switch_state(<%= item.id %>, "chasedown")'>&nbsp;&nbsp;
+                  加仓：<input type="checkbox" name="my-state" <%= 'checked' if item.chasedown %> onchange='switch_state(<%= item.id %>, "chasedown")'>&nbsp;&nbsp;
                   高频：<input type="checkbox" name="my-state" <%= 'checked' if item.fast_trade %> onchange='switch_state(<%= item.id %>, "fast")'>&nbsp;&nbsp;
                 </td>
                 <td><br>

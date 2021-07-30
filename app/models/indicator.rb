@@ -114,10 +114,10 @@ class Indicator < ActiveRecord::Base
     if name.include?('CMAA') && market.source == 'future' && market.regulate.fast_trade
       # 指标由下跌变为上涨 做多
       macd = market.macd_index
+      price  = market.get_price
       if cma_index > 0
         if macd.macd_m_up? && macd.macd_s_up?
           amount = market.regulate.fast_cash
-          price  = market.get_price
           market.new_kai_long(price[:bid], amount, 'market')
         end
 
@@ -132,7 +132,6 @@ class Indicator < ActiveRecord::Base
       if cma_index < 0
         if macd.macd_m_down? && macd.macd_s_down?
           amount = market.regulate.fast_cash
-          price  = market.get_price
           market.new_kai_short(price[:ask], amount, 'market')
         end
 
