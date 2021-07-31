@@ -68,7 +68,7 @@ def future_trade(regul)
   end
 
   #MA5 下穿 MA 10 此时价格为行情最大
-  if k.ma(5) < k.ma(10) && k[-6..-2] > k.ma(10)
+  if k.ma(5) < k.ma(10) && k[-6..-2].ma(5) > k.ma(10)
     market.new_kai_short(price, amount, 'market')
   end
 end

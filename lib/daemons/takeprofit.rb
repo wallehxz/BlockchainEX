@@ -54,7 +54,7 @@ def future_trade(regul)
     end
 
     # MA5 下穿 MA10 全部卖出
-    if k.ma(5) < k.ma(10) && k[-6..-2] > k.ma(10)
+    if k.ma(5) < k.ma(10) && k[-6..-2].ma(5) > k.ma(10)
       market.new_ping_long(price, long['positionAmt'].to_f.abs, 'market')
     end
   end
@@ -66,7 +66,7 @@ def future_trade(regul)
     end
 
     # MA5 下穿 MA10 全部卖出
-    if k.ma(5) > k.ma(10) && k[-6..-2] < k.ma(10)
+    if k.ma(5) > k.ma(10) && k[-6..-2].ma(5) < k.ma(10)
       market.new_ping_long(price, long['positionAmt'].to_f.abs, 'market')
     end
   end
