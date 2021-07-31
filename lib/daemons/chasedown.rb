@@ -51,21 +51,25 @@ end
 def future_trade(regul)
   market = regul.market
   amount = regul.fast_cash
-  macd = market.macd_index
-  # 行情指标上涨区间，做多
-  if market.cma_up?
-    if macd.macd_m_up? && macd.macd_s_up?
-      price = market.get_price
-      market.new_kai_long(price[:bid], amount, 'market')
-    end
+  price = market.get_price[:bid]
+  k = market.get_ticker('1m', 25).kline_c
+
+  #价格下跌
+  if k.min == k[-4..-2].min
+    market.new_kai_long(price, amount, 'market')
   end
 
-  # 行情指标下跌区间，做空
-  if market.cma_down?
-    if macd.macd_m_down? && macd.macd_s_down?
-      price = market.get_price
-      market.new_kai_short(price[:bid], amount, 'market')
-    end
+  if k.ma(5) > k.ma(10)
+    market.new_kai_long(price, amount, 'market')
+  end
+
+  if k.max == k[-3..-2].max
+    market.new_kai_short(price, amount, 'market')
+  end
+
+  #MA5 下穿 MA 10 此时价格为行情最大
+  if k.ma(5) < k.ma(10) && k[-6..-2] > k.ma(10)
+    market.new_kai_short(price, amount, 'market')
   end
 end
 
@@ -79,5 +83,5 @@ while($running) do
   rescue => detail
     Notice.exception(detail, "Deamon Chasedown")
   end
-  sleep 45
+  sleep 60
 end

@@ -66,10 +66,10 @@ class OrderAsk < Order
     quota = market&.regulate&.retain
     if quota && position =='SHORT'
       total_fund = market.short_position['positionAmt'].to_f.abs rescue 0
-      if total_fund == quota
+      if total_fund > quota
         self.state = 500
         self.cause = "Quota has fulled"
-      elsif total_fund + amount > quota
+      elsif quota > total_fund && quota < total_fund + amount
         self.amount = quota - total_fund
       end
     end

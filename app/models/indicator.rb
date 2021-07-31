@@ -116,10 +116,8 @@ class Indicator < ActiveRecord::Base
       macd = market.macd_index
       price  = market.get_price
       if cma_index > 0
-        if macd.macd_m_up? && macd.macd_s_up?
-          amount = market.regulate.fast_cash
-          market.new_kai_long(price[:bid], amount, 'market')
-        end
+        amount = market.regulate.fast_cash
+        market.new_kai_long(price[:bid], amount, 'market')
 
         #如果空单有盈利 则市价平仓
         short = market.short_position
@@ -130,10 +128,8 @@ class Indicator < ActiveRecord::Base
 
       # 指标由上涨变为下跌 做空
       if cma_index < 0
-        if macd.macd_m_down? && macd.macd_s_down?
-          amount = market.regulate.fast_cash
-          market.new_kai_short(price[:ask], amount, 'market')
-        end
+        amount = market.regulate.fast_cash
+        market.new_kai_short(price[:ask], amount, 'market')
 
         #如果多单有盈利 则市价平仓
         long = market.long_position

@@ -45,7 +45,7 @@
                   <% end %>
                 </td>
                 <td style="text-align: left">
-                  最大数量： <%= item.retain %> <%= item.market.quote_unit %><br>
+                  满仓数量： <%= item.retain %> <%= item.market.quote_unit %> &nbsp; 市场方向： <%= item.market.cma_index %><br>
                   单次交易： <%= item.fast_cash %> <%= item.market.quote_unit %><br>
                   浮动收益： <%= item.cash_profit %> <%= item.market.base_unit %><br>
                   亏损成本： <%= item.support %> <%= item.market.base_unit %><br>

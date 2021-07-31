@@ -40,4 +40,44 @@ class Array
     end
     array
   end
+
+  def kline_o
+    array = []
+    self.each do |item|
+      array << item[1].to_f
+    end
+    array
+  end
+
+  def kline_h
+    array = []
+    self.each do |item|
+      array << item[2].to_f
+    end
+    array
+  end
+
+  def kline_l
+    array = []
+    self.each do |item|
+      array << item[3].to_f
+    end
+    array
+  end
+
+  def kline_c
+    array = []
+    self.each do |item|
+      array << item[4].to_f
+    end
+    array
+  end
+
+  def ma(index)
+    if self.count >= index
+      return self.last(index).sum / index
+    end
+    0
+  end
+
 end

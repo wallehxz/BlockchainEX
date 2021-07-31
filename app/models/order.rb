@@ -53,14 +53,32 @@ class Order < ActiveRecord::Base
     {'LONG'=> '做多', 'SHORT'=> '做空'}[position]
   end
 
+  def market_cn
+    if market.source == 'binance'
+      '现货'
+    elsif market.source == 'future'
+      '合约'
+    end
+  end
+
+  def order_cn
+    if position.blank?
+      {'OrderAsk'=> '卖出', 'OrderBid'=> '买入'}[type]
+    elsif position == 'SHORT'
+      {'OrderAsk'=> '开空', 'OrderBid'=> '平空'}[type]
+    elsif position == 'LONG'
+      {'OrderAsk'=> '平多', 'OrderBid'=> '开多'}[type]
+    end
+  end
+
   def notice
     if state.succ?
-      regulate.update_avg_cost if type == 'OrderBid'
+      regulate.update_avg_cost if type == 'OrderBid' && market.source == 'binance'
       sms_notice if market.regulate.notify_sms
       push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Settings.trading_bot}"
-      body_params ={ msgtype:'markdown', markdown:{ title: "#{type_cn}订单" } }
+      body_params ={ msgtype:'markdown', markdown:{ title: "#{market_cn}订单" } }
       body_params[:markdown][:text] =
-        "#### #{position_cn} #{category_cn} #{type_cn} 订单\n\n" +
+        "## #{order_cn} #{category_cn} 订单\n\n" +
         "> 时间：#{updated_at.to_s(:short)}\n\n" +
         "> 价格：#{price} #{market.base_unit}\n\n" +
         "> 数量：#{amount} #{market.quote_unit}\n\n" +
@@ -76,7 +94,7 @@ class Order < ActiveRecord::Base
 
   def sms_notice
     if Time.now.hour.in? [*9..22]
-      content = "\n>#{position_cn} #{category_cn} #{type_cn} 订单\n" +
+      content = "\n>#{order_cn} #{category_cn} 订单\n" +
       "> 价格：#{price} #{market.base_unit}\n" +
       "> 数量：#{amount} #{market.quote_unit}\n" +
       "> 成交额 #{total.round(2)} #{market.base_unit}\n"

@@ -204,17 +204,23 @@ class Future < Market
     end
   end
 
-  def cmas_index
-    indicators.cmas.last.cma_index
+  def cma_index
+    indicators.cmas.last&.cma_index
   end
 
   def cma_up?
-    return true if cmas_index > 0
+    k = get_ticker('15m', 20).kline_c
+    if k.ma(5) - k.ma(15) > 0
+      return true
+    end
     false
   end
 
   def cma_down?
-    return true if cmas_index < 0
+    k = get_ticker('15m', 20).kline_c
+    if k.ma(5) - k.ma(15) < 0
+      return true
+    end
     false
   end
 
