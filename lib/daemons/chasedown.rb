@@ -50,26 +50,20 @@ end
 
 def future_trade(regul)
   market = regul.market
-  amount = regul.fast_cash
   price = market.get_price[:bid]
-  k = market.get_ticker('1m', 25).kline_c
-
-  #价格下跌
-  if k.min == k[-4..-2].min
-    market.new_kai_long(price, amount, 'market')
+  amount = market.regulate.fast_cash
+  if market.cma_up?
+    k = market.get_ticker('1m', 7).kline_c
+    if k.min == k[-1]
+      market.new_kai_long(price[:bid], amount, 'market')
+    end
   end
 
-  if k.ma(5) > k.ma(10)
-    market.new_kai_long(price, amount, 'market')
-  end
-
-  if k.max == k[-3..-2].max
-    market.new_kai_short(price, amount, 'market')
-  end
-
-  #MA5 下穿 MA 10 此时价格为行情最大
-  if k.ma(5) < k.ma(10) && k[-6..-2].ma(5) > k.ma(10)
-    market.new_kai_short(price, amount, 'market')
+  if market.cma_down?
+    k = market.get_ticker('1m', 7).kline_c
+    if k.max == k[-1]
+      market.new_kai_short(price[:bid], amount, 'market')
+    end
   end
 end
 

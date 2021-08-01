@@ -17,6 +17,7 @@
 #
 
 class OrderAsk < Order
+  validate :amount
 
   after_create :push_step_order
   def push_step_order
@@ -66,14 +67,13 @@ class OrderAsk < Order
     quota = market&.regulate&.retain
     if quota && position =='SHORT'
       total_fund = market.short_position['positionAmt'].to_f.abs rescue 0
-      if total_fund > quota
+      if total_fund >= quota
         self.state = 500
-        self.cause = "Quota has fulled"
+        self.cause = "持仓数量大于#{quota}"
       elsif quota > total_fund && quota < total_fund + amount
         self.amount = quota - total_fund
       end
     end
   end
-
 
 end

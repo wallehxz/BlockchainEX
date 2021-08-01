@@ -41,35 +41,7 @@ def binance_trade(regul)
 end
 
 def future_trade(regul)
-  market = regul.market
-  amount = regul.fast_cash
-  price = market.get_price[:bid]
-  k = market.get_ticker('1m', 25).kline_c
-  price  = market.get_price[:bid]
 
-  long = market.long_position
-  if long['unrealizedProfit'].to_f > 0
-    if k.max == k[-3..-2].max
-      market.new_ping_long(price, amount, 'market')
-    end
-
-    # MA5 下穿 MA10 全部卖出
-    if k.ma(5) < k.ma(10) && k[-6..-2].ma(5) > k.ma(10)
-      market.new_ping_long(price, long['positionAmt'].to_f.abs, 'market')
-    end
-  end
-
-  short = market.short_position
-  if long['unrealizedProfit'].to_f > 0
-    if k.min == k[-3..-2].min
-      market.new_ping_short(price, amount, 'market')
-    end
-
-    # MA5 下穿 MA10 全部卖出
-    if k.ma(5) > k.ma(10) && k[-6..-2].ma(5) < k.ma(10)
-      market.new_ping_long(price, long['positionAmt'].to_f.abs, 'market')
-    end
-  end
 end
 
 while($running) do

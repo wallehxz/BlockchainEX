@@ -13,7 +13,8 @@ class WebhooksController < ApplicationController
     chasedown  if params[:cmd] =~ /chase/
     boat       if params[:cmd] =~ /boat/
     signal     if params[:cmd] =~ /signal/
-    diup       if params[:cmd] =~ /diup/
+    fup        if params[:cmd] =~ /fup/
+    fdown      if params[:cmd] =~ /fdown/
     render json: {msg: 'success!'}
   end
 
@@ -22,6 +23,30 @@ private
   def find_market
     m_id = Market.market_list[params[:market]]
     market = Market.find(m_id)
+  end
+
+  #行情指标最高价，平多 开空
+  def f_up
+    market = find_market
+    price = market.get_price[:bid]
+    amount = market.regulate.fast_cash
+    long = market.long_position
+    if long['unrealizedProfit'].to_f > 0
+      market.new_ping_long(price, long['positionAmt'].to_f.abs, 'market')
+    end
+    market.new_kai_short(price[:bid], amount, 'market')
+  end
+
+  #行情指标最低价，平空 开多
+  def f_down
+    market = find_market
+    price = market.get_price[:bid]
+    amount = market.regulate.fast_cash
+    short = market.short_position
+    if long['unrealizedProfit'].to_f > 0
+      market.new_ping_short(price, long['positionAmt'].to_f.abs, 'market')
+    end
+    market.new_kai_long(price[:bid], amount, 'market')
   end
 
   def f_trade

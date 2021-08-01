@@ -32,8 +32,7 @@ class OrderBid < Order
     if quota && market.source == 'binance'
       total_fund = market.all_funds rescue 0
       if quota - total_fund < 0.01
-        self.state = 500
-        self.cause = "Quota has fulled"
+        self.errors.add(:amount, '持仓数量超标')
       elsif total_fund + amount > quota
         self.amount = quota - total_fund
       end
@@ -45,9 +44,8 @@ class OrderBid < Order
     quota = market&.regulate&.retain
     if quota && position =='LONG'
       total_fund = market.long_position['positionAmt'].to_f rescue 0
-      if total_fund > quota
-        self.state = 500
-        self.cause = "Quota has fulled"
+      if total_fund >= quota
+        self.errors.add(:amount, '持仓数量超标')
       elsif quota > total_fund && quota < total_fund + amount
         self.amount = quota - total_fund
       end

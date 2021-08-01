@@ -204,24 +204,37 @@ class Future < Market
     end
   end
 
-  def cma_index
-    indicators.cmas.last&.cma_index
-  end
-
   def cma_up?
-    k = get_ticker('15m', 20).kline_c
-    if k.ma(5) - k.ma(15) > 0
+    k   = get_ticker('5m', 20)
+    kc  = k.kline_c
+    ma7 = [kc[-10..-4].ma(7),kc[-9..-3].ma(7),kc[-8..-2].ma(7)]
+    ma7x = [ma7[-2]-ma7[-3],ma7[-1]-ma7[-2]]
+    if ma7x[-1] > 0
       return true
     end
     false
   end
 
   def cma_down?
-    k = get_ticker('15m', 20).kline_c
-    if k.ma(5) - k.ma(15) < 0
+    k   = get_ticker('5m', 20)
+    kc  = k.kline_c
+    ma7 = [kc[-10..-4].ma(7),kc[-9..-3].ma(7),kc[-8..-2].ma(7)]
+    ma7x = [ma7[-2]-ma7[-3],ma7[-1]-ma7[-2]]
+    if ma7x[-1] < 0
       return true
     end
     false
+  end
+
+  def cma_index
+    k   = get_ticker('5m', 20)
+    kc  = k.kline_c
+    ma7 = kc[-8..-2].ma(7)
+  end
+
+  def cma_up_down?
+    return '上行' if cma_up?
+    return '下行' if cma_down?
   end
 
   def macd_index
