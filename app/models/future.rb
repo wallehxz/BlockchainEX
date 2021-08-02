@@ -205,21 +205,21 @@ class Future < Market
   end
 
   def cma_up?
-    k   = get_ticker('5m', 20)
-    kc  = k.kline_c
-    ma14 = [kc[-16..-3].ma(14),kc[-15..-2].ma(14)]
-    ma14x = ma14[-1]-ma7[-2]
-    if ma14x < 0
+    k     = get_ticker('5m', 20)
+    kc    = k.kline_c
+    ma14  = [kc[-16..-3].ma(14),kc[-15..-2].ma(14)]
+    ma14x = ma14[-1] - ma14[-2]
+    if ma14x > 0
       return true
     end
     false
   end
 
   def cma_down?
-    k   = get_ticker('5m', 20)
-    kc  = k.kline_c
-    ma14 = [kc[-16..-3].ma(14),kc[-15..-2].ma(14)]
-    ma14x = ma14[-1]-ma7[-2]
+    k     = get_ticker('5m', 20)
+    kc    = k.kline_c
+    ma14  = [kc[-16..-3].ma(14),kc[-15..-2].ma(14)]
+    ma14x = ma14[-1] - ma14[-2]
     if ma14x < 0
       return true
     end
