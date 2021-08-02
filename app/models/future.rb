@@ -232,6 +232,16 @@ class Future < Market
     ma7 = kc[-8..-2].ma(7)
   end
 
+  def cma_last
+    k   = get_ticker('5m', 20)
+    kc  = k.kline_c
+    ma7 = kc[-7..-1].ma(7)
+  end
+
+  def cma_klast
+    cma_last - cma_index
+  end
+
   def cma_up_down?
     return '上行' if cma_up?
     return '下行' if cma_down?

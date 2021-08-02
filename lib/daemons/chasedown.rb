@@ -55,14 +55,14 @@ def future_trade(regul)
   if market.cma_up?
     k = market.get_ticker('1m', 7).kline_c
     if k.min == k[-1]
-      market.new_kai_long(price[:bid], amount, 'market')
+      market.new_kai_long(price, amount, 'market')
     end
   end
 
   if market.cma_down?
     k = market.get_ticker('1m', 7).kline_c
     if k.max == k[-1]
-      market.new_kai_short(price[:bid], amount, 'market')
+      market.new_kai_short(price, amount, 'market')
     end
   end
 end
