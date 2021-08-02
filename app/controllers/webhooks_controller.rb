@@ -13,8 +13,8 @@ class WebhooksController < ApplicationController
     chasedown  if params[:cmd] =~ /chase/
     boat       if params[:cmd] =~ /boat/
     signal     if params[:cmd] =~ /signal/
-    fup        if params[:cmd] =~ /fup/
-    fdown      if params[:cmd] =~ /fdown/
+    f_up        if params[:cmd] =~ /fup/
+    f_down      if params[:cmd] =~ /fdown/
     render json: {msg: 'success!'}
   end
 
