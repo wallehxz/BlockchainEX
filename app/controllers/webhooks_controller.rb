@@ -28,25 +28,29 @@ private
   #行情指标最高价，平多 开空
   def f_up
     market = find_market
-    price = market.get_price[:bid]
+    price  = market.get_price[:bid]
     amount = market.regulate.fast_cash
-    long = market.long_position
+    long   = market.long_position
     if long['unrealizedProfit'].to_f > 0
       market.new_ping_long(price, long['positionAmt'].to_f.abs, 'market')
     end
-    market.new_kai_short(price[:bid], amount, 'market')
+    if market.cma_down?
+      market.new_kai_short(price, amount, 'market')
+    end
   end
 
   #行情指标最低价，平空 开多
   def f_down
     market = find_market
-    price = market.get_price[:bid]
+    price  = market.get_price[:bid]
     amount = market.regulate.fast_cash
-    short = market.short_position
-    if long['unrealizedProfit'].to_f > 0
-      market.new_ping_short(price, long['positionAmt'].to_f.abs, 'market')
+    short  = market.short_position
+    if short['unrealizedProfit'].to_f > 0
+      market.new_ping_short(price, short['positionAmt'].to_f.abs, 'market')
     end
-    market.new_kai_long(price[:bid], amount, 'market')
+    if market.cma_up?
+      market.new_kai_long(price, amount, 'market')
+    end
   end
 
   def f_trade
