@@ -17,7 +17,7 @@
 #
 
 class OrderAsk < Order
-  validate :amount
+  validates_presence_of :price, :amount
 
   after_create :push_step_order
   def push_step_order
@@ -43,8 +43,7 @@ class OrderAsk < Order
     if category == 'limit' && market.source == 'binance'
       average = market.avg_cost
       if price < average
-        self.state = 500
-        self.cause = "Limit ask price must > cost #{average}"
+        return false
       end
     end
   end
@@ -62,15 +61,15 @@ class OrderAsk < Order
     end
   end
 
-  after_create :check_short_fund_exceed
+  before_create :check_short_fund_exceed
   def check_short_fund_exceed
     quota = market&.regulate&.retain
     if quota && position =='SHORT'
       total_fund = market.short_position['positionAmt'].to_f.abs rescue 0
       if total_fund >= quota
-        self.state = 500
-        self.cause = "持仓数量大于#{quota}"
-      elsif quota > total_fund && quota < total_fund + amount
+        return false
+      end
+      if quota > total_fund && quota < total_fund + amount
         self.amount = quota - total_fund
       end
     end

@@ -53,15 +53,15 @@ def future_trade(regul)
   price = market.get_price[:bid]
   amount = market.regulate.fast_cash
   if market.cma_up?
-    k = market.get_ticker('1m', 7).kline_c
-    if k.min == k[-1]
+    k = market.get_ticker('3m',2).kline_trends
+    if k[0] < 0
       market.new_kai_long(price, amount, 'market')
     end
   end
 
   if market.cma_down?
-    k = market.get_ticker('1m', 7).kline_c
-    if k.max == k[-1]
+    k = market.get_ticker('3m',2).kline_trends
+    if k[0] > 0
       market.new_kai_short(price, amount, 'market')
     end
   end

@@ -102,7 +102,6 @@ class Order < ActiveRecord::Base
     end
   end
 
-  #after_save :failed_notice
   def failed_notice
     if state.fail?
       push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Settings.trading_bot}"
@@ -130,7 +129,9 @@ class Order < ActiveRecord::Base
   end
 
   def mock_push
-    self.update_attributes(state: 200)
+    if state.init?
+      self.update_attributes(state: 200)
+    end
   end
 
   def push_limit_order
@@ -138,10 +139,11 @@ class Order < ActiveRecord::Base
       if Rails.env.production?
         result = market.sync_limit_order(self)
         self.update_attributes(state: result['state'], cause: result['cause'])
+        failed_notice
+        notice
       else
         mock_push
       end
-      notice
     end
   end
 
@@ -150,10 +152,11 @@ class Order < ActiveRecord::Base
       if Rails.env.production?
         result = market.sync_market_order(self)
         self.update_attributes(state: result['state'], cause: result['cause'])
+        failed_notice
+        notice
       else
         mock_push
       end
-      notice
     end
   end
 end

@@ -17,11 +17,11 @@
 #
 
 class OrderBid < Order
+  validates_presence_of :price, :amount
 
   after_create :push_step_order
   def push_step_order
     if state.init? && category.step?
-      self.errors.add(:cause, 'errors')
       market.step_price_bid(amount)
     end if market.source == 'binance'
   end
@@ -39,14 +39,15 @@ class OrderBid < Order
     end
   end
 
-  after_create :check_long_fund_exceed
+  before_create :check_long_fund_exceed
   def check_long_fund_exceed
     quota = market&.regulate&.retain
     if quota && position =='LONG'
       total_fund = market.long_position['positionAmt'].to_f rescue 0
       if total_fund >= quota
-        self.errors.add(:amount, '持仓数量超标')
-      elsif quota > total_fund && quota < total_fund + amount
+        return false
+      end
+      if quota > total_fund && quota < total_fund + amount
         self.amount = quota - total_fund
       end
     end
