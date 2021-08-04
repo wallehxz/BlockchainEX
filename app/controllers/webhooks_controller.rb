@@ -29,6 +29,7 @@ private
 
   def m_up
     market = find_market
+    price  = market.get_price[:ask]
     long   = market.long_position
     amount = market.regulate.retain
     if long['positionAmt'].to_f.abs > 0
@@ -39,6 +40,7 @@ private
 
   def m_down
     market = find_market
+    price  = market.get_price[:ask]
     short  = market.short_position
     amount = market.regulate.retain
     if short['positionAmt'].to_f.abs > 0
