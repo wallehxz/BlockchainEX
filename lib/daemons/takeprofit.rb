@@ -42,23 +42,32 @@ end
 
 def future_trade(regul)
   market = regul.market
-  price = market.get_price[:bid]
-  amount = market.regulate.fast_cash
+  price  = market.get_price[:bid]
+  amount = regul.fast_cash
+  profit = regul.cash_profit
   if market.cma_up?
-    #行情由上涨变为下跌，平多单
-    if market.cma_klast < 0
+    short  = market.short_position
+    if short['unrealizedProfit'].to_f > 0
+      market.new_ping_short(price, amount, 'market')
+    end
+
+    if profit > 0
       long = market.long_position
-      if long['unrealizedProfit'].to_f > 0
+      if long['unrealizedProfit'].to_f > profit
         market.new_ping_long(price, amount, 'market')
       end
     end
   end
 
   if market.cma_down?
-    #行情由下跌变为上涨，平空单
-    if market.cma_klast > 0
-      short  = market.short_position
-      if short['unrealizedProfit'].to_f > 0
+    long = market.long_position
+    if long['unrealizedProfit'].to_f > 0
+      market.new_ping_long(price, amount, 'market')
+    end
+
+    if profit > 0
+      short = market.short_position
+      if short['unrealizedProfit'].to_f > profit
         market.new_ping_short(price, amount, 'market')
       end
     end
