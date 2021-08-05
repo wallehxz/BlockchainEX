@@ -139,7 +139,6 @@ class Order < ActiveRecord::Base
       if Rails.env.production?
         result = market.sync_limit_order(self)
         self.update_attributes(state: result['state'], cause: result['cause'])
-        failed_notice
         notice
       else
         mock_push
@@ -152,7 +151,6 @@ class Order < ActiveRecord::Base
       if Rails.env.production?
         result = market.sync_market_order(self)
         self.update_attributes(state: result['state'], cause: result['cause'])
-        failed_notice
         notice
       else
         mock_push

@@ -50,7 +50,7 @@ def future_trade(regul)
   if market.cma_fast > 0
     short = market.short_position
     if short['positionAmt'].to_f.abs > 0 && short['unrealizedProfit'].to_f < 0
-      market.new_ping_short(price, long['positionAmt'].to_f.abs, 'market')
+      market.new_ping_short(price, short['positionAmt'].to_f.abs, 'market')
     end
   end
 end
