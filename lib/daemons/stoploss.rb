@@ -39,23 +39,18 @@ end
 
 def future_trade(regul)
   market = regul.market
-  # 如果当前是下跌，则平多单
-  if market.cma_down?
+  price  = market.get_price[:ask]
+  if market.cma_fast < 0
     long = market.long_position
-    if long['positionAmt'].to_f.abs > 0
-      price  = market.get_price[:bid]
-      amount = regul.fast_cash
-      market.new_ping_long(price, amount, 'market')
+    if long['positionAmt'].to_f.abs > 0 && long['unrealizedProfit'].to_f < 0
+      market.new_ping_long(price, long['positionAmt'].to_f.abs, 'market')
     end
   end
 
-  # 如果当前是上涨，则平空单
-  if market.cma_up?
+  if market.cma_fast > 0
     short = market.short_position
-    if short['positionAmt'].to_f.abs > 0
-      price  = market.get_price[:bid]
-      amount = regul.fast_cash
-      market.new_ping_short(price, amount, 'market')
+    if short['positionAmt'].to_f.abs > 0 && short['unrealizedProfit'].to_f < 0
+      market.new_ping_short(price, long['positionAmt'].to_f.abs, 'market')
     end
   end
 end

@@ -251,4 +251,12 @@ class Future < Market
     indicators.macds.last
   end
 
+  def cma_fast
+    k    = get_ticker('1m', 20)
+    kc   = k.kline_c
+    ma7  = kc[-7..-1].ma(7)
+    ma14 = kc[-14..-1].ma(14)
+    ma7 - ma14
+  end
+
 end

@@ -42,7 +42,7 @@ end
 
 def future_trade(regul)
   market = regul.market
-  price  = market.get_price[:bid]
+  price  = market.get_price[:ask]
   amount = regul.fast_cash
   profit = regul.cash_profit
   if market.cma_up?

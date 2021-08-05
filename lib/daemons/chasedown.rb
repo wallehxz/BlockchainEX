@@ -50,7 +50,7 @@ end
 
 def future_trade(regul)
   market = regul.market
-  price = market.get_price[:bid]
+  price = market.get_price[:ask]
   amount = market.regulate.fast_cash
 
   if market.cma_up? && market.cma_klast > 0
