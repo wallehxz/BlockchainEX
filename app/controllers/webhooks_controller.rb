@@ -17,6 +17,7 @@ class WebhooksController < ApplicationController
     f_down     if params[:cmd] =~ /fdown/
     m_up       if params[:cmd] =~ /mup/
     m_down     if params[:cmd] =~ /mdown/
+    f_take     if params[:cmd] =~ /ftake/
     render json: {msg: 'success!'}
   end
 
@@ -25,6 +26,18 @@ private
   def find_market
     m_id = Market.market_list[params[:market]]
     market = Market.find(m_id)
+  end
+
+  def f_take
+    market = find_market
+    long   = market.long_position
+    if long['positionAmt'].to_f.abs > 0
+      market.new_ping_long(price, long['positionAmt'].to_f.abs, 'market')
+    end
+    short  = market.short_position
+    if short['positionAmt'].to_f.abs > 0
+      market.new_ping_short(price, short['positionAmt'].to_f.abs, 'market')
+    end
   end
 
   def m_up
