@@ -30,6 +30,7 @@ private
 
   def f_take
     market = find_market
+    price  = market.get_price[:ask]
     long   = market.long_position
     if long['positionAmt'].to_f.abs > 0
       market.new_ping_long(price, long['positionAmt'].to_f.abs, 'market')
