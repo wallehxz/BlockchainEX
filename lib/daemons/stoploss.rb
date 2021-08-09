@@ -40,14 +40,14 @@ end
 def future_trade(regul)
   market = regul.market
   price  = market.get_price[:ask]
-  if market.cma_klast < 0
+  if market.cma_down?
     long = market.long_position
     if long['positionAmt'].to_f.abs > 0
       market.new_ping_long(price, long['positionAmt'].to_f.abs, 'market')
     end
   end
 
-  if market.cma_klast > 0
+  if market.cma_up?
     short = market.short_position
     if short['positionAmt'].to_f.abs > 0
       market.new_ping_short(price, short['positionAmt'].to_f.abs, 'market')
@@ -64,5 +64,5 @@ while($running) do
   rescue => detail
     Notice.exception(detail, "Deamon StopLoss")
   end
-  sleep 59
+  sleep 200
 end

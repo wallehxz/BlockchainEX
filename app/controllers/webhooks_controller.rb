@@ -66,28 +66,38 @@ private
   #行情指标最高价，平多 开空
   def f_up
     market = find_market
-    price  = market.get_price[:bid]
+    price  = market.get_price[:ask]
     amount = market.regulate.fast_cash
-    long   = market.long_position
-    if long['unrealizedProfit'].to_f > 0
-      market.new_ping_long(price, long['positionAmt'].to_f.abs, 'market')
+    profit = market.regulate.cash_profit
+    #行情处于高位， 在上涨行情时平多， 在下跌行情时开空
+    if market.cma_up?
+      long = market.long_position
+      if long['unrealizedProfit'].to_f > profit
+        market.new_ping_long(price, amount, 'market')
+      end
     end
+
     if market.cma_down?
       market.new_kai_short(price, amount, 'market')
     end
   end
 
-  #行情指标最低价，平空 开多
+  #行情处于低位， 在上涨行情时开多， 在下跌行情时平空
   def f_down
     market = find_market
-    price  = market.get_price[:bid]
+    price  = market.get_price[:ask]
     amount = market.regulate.fast_cash
-    short  = market.short_position
-    if short['unrealizedProfit'].to_f > 0
-      market.new_ping_short(price, short['positionAmt'].to_f.abs, 'market')
-    end
+    profit = market.regulate.cash_profit
+
     if market.cma_up?
       market.new_kai_long(price, amount, 'market')
+    end
+
+    if market.cma_down?
+      short = market.short_position
+      if short['unrealizedProfit'].to_f > profit
+        market.new_ping_short(price, amount, 'market')
+      end
     end
   end
 
