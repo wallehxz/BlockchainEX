@@ -147,8 +147,13 @@ class Market < ActiveRecord::Base
     if min_48 == last_quote.c
       tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 4H DOWN Price #{last_quote.c} Vol #{last_quote.v}"
       quote_notice(tip)
-      #行情下跌 平空
+      #行情下跌 先开空 后再收益平空
       if source == 'future'
+        if regulate.range_trade
+          price  = get_price[:ask]
+          amount = regulate.fast_cash
+          new_kai_short(price, amount, 'market')
+        end
         profit = regulate.range_profit
         short = short_position
         if short['unrealizedProfit'].to_f > profit
@@ -160,8 +165,13 @@ class Market < ActiveRecord::Base
     if max_48 == last_quote.c
       tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 4H UP Price #{last_quote.c} Vol #{last_quote.v}"
       quote_notice(tip)
-      # 行情上涨 平多
+      # 行情上涨 先开多 后再收益平多
       if source == 'future'
+        if regulate.range_trade
+          price  = get_price[:ask]
+          amount = regulate.fast_cash
+          new_kai_long(price, amount, 'market')
+        end
         profit = regulate.range_profit
         long = long_position
         if long['unrealizedProfit'].to_f > profit

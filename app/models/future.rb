@@ -111,6 +111,11 @@ class Future < Market
     account['positions'].select { |x| x['symbol'] == symbol }.select {|x| x['positionSide'] == 'SHORT' }[0]
   end
 
+  def total_position
+    account = Account.future_balances
+    account['positions'].select { |x| x['symbol'] == symbol }.map { |p| p['positionAmt'].to_f }.sum
+  end
+
   def sync_cash
     locale = cash || build_cash
     account = Account.future_balances
@@ -239,7 +244,9 @@ class Future < Market
   end
 
   def cma_klast
-    cma_last - cma_index
+    k   = get_ticker('1m', 7)
+    kc  = k.kline_c
+    kc[-1] - kc.ma(7)
   end
 
   def cma_up_down?

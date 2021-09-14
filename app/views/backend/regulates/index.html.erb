@@ -66,7 +66,7 @@
                   止损：<input type="checkbox" name="my-state" <%= 'checked' if item.stoploss %> onchange='switch_state(<%= item.id %>, "stoploss")'>&nbsp;&nbsp;
                   止盈：<input type="checkbox" name="my-state" <%= 'checked' if item.takeprofit %> onchange='switch_state(<%= item.id %>, "takeprofit")'></br></br>
                   加仓：<input type="checkbox" name="my-state" <%= 'checked' if item.chasedown %> onchange='switch_state(<%= item.id %>, "chasedown")'>&nbsp;&nbsp;
-                  高频：<input type="checkbox" name="my-state" <%= 'checked' if item.fast_trade %> onchange='switch_state(<%= item.id %>, "fast")'>&nbsp;&nbsp;
+                  波段：<input type="checkbox" name="my-state" <%= 'checked' if item.range_trade %> onchange='switch_state(<%= item.id %>, "range")'>&nbsp;&nbsp;
                 </td>
                 <td><br>
                   <a href="<%= edit_backend_regulate_path(item) %>" class="btn bg-orange btn-flat">
@@ -100,6 +100,6 @@
     function switch_state(id,kind) {
       $.get('/backend/regulates/' + id +'/change_state?kind=' + kind);
     }
-    $("[name='my-state']").bootstrapSwitch({onColor:'success',offColor:'danger', onText: 'ONN', offText: 'OFF'});
+    $("[name='my-state']").bootstrapSwitch({onColor:'success',offColor:'danger', onText: 'ON', offText: 'OFF'});
   </script>
 <% end %>

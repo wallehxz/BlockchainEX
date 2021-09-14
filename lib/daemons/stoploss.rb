@@ -38,20 +38,17 @@ def binance_trade(regul)
 end
 
 def future_trade(regul)
-  market = regul.market
-  price  = market.get_price[:ask]
-  if market.cma_down?
-    long = market.long_position
-    if long['positionAmt'].to_f.abs > 0
-      market.new_ping_long(price, long['positionAmt'].to_f.abs, 'market')
-    end
+  market  = regul.market
+  support = -regul.support
+  price   = market.get_price[:ask]
+  long = market.long_position0
+  if long['unrealizedProfit'].to_f < support
+    market.new_ping_long(price, long['positionAmt'].to_f.abs, 'market')
   end
 
-  if market.cma_up?
-    short = market.short_position
-    if short['positionAmt'].to_f.abs > 0
-      market.new_ping_short(price, short['positionAmt'].to_f.abs, 'market')
-    end
+  short = market.short_position
+  if short['unrealizedProfit'].to_f < support
+    market.new_ping_short(price, short['positionAmt'].to_f.abs, 'market')
   end
 end
 
