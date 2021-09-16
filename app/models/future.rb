@@ -113,7 +113,7 @@ class Future < Market
 
   def total_position
     account = Account.future_balances
-    account['positions'].select { |x| x['symbol'] == symbol }.map { |p| p['positionAmt'].to_f }.sum
+    account['positions'].select { |x| x['symbol'] == symbol }.map { |p| p['positionAmt'].to_f.abs }.sum
   end
 
   def sync_cash
@@ -209,7 +209,10 @@ class Future < Market
     end
   end
 
-  def cma_up?
+  def trend_up?
+    if trend_index && trend_index > 0
+      return true
+    end
     k     = get_ticker('5m', 20)
     kc    = k.kline_c
     ma14  = [kc[-16..-3].ma(14),kc[-15..-2].ma(14)]
@@ -220,7 +223,10 @@ class Future < Market
     false
   end
 
-  def cma_down?
+  def trend_down?
+    if trend_index && trend_index < 0
+      return true
+    end
     k     = get_ticker('5m', 20)
     kc    = k.kline_c
     ma14  = [kc[-16..-3].ma(14),kc[-15..-2].ma(14)]
@@ -231,31 +237,23 @@ class Future < Market
     false
   end
 
-  def cma_index
-    k   = get_ticker('5m', 20)
-    kc  = k.kline_c
-    ma7 = kc[-8..-2].ma(7)
-  end
-
-  def cma_last
-    k   = get_ticker('5m', 20)
-    kc  = k.kline_c
-    ma7 = kc[-7..-1].ma(7)
-  end
-
   def cma_klast
     k   = get_ticker('1m', 7)
     kc  = k.kline_c
     kc[-1] - kc.ma(7)
   end
 
-  def cma_up_down?
-    return '上行' if cma_up?
-    return '下行' if cma_down?
+  def trend_up_down?
+    return '上行' if trend_up?
+    return '下行' if trend_down?
   end
 
   def macd_index
     indicators.macds.last
+  end
+
+  def trend_index
+    indicators.trends.last&.trend_index
   end
 
   def cma_fast

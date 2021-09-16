@@ -41,7 +41,7 @@ def future_trade(regul)
   market  = regul.market
   support = -regul.support
   price   = market.get_price[:ask]
-  long = market.long_position0
+  long    = market.long_position0
   if long['unrealizedProfit'].to_f < support
     market.new_ping_long(price, long['positionAmt'].to_f.abs, 'market')
   end

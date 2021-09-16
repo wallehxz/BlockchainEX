@@ -14,6 +14,7 @@ class Indicator < ActiveRecord::Base
   self.per_page = 10
   scope :macds, -> { where("name LIKE 'MACD%'") }
   scope :cmas, -> { where("name LIKE 'CMAA%'") }
+  scope :trends, -> { where("name LIKE 'TREND%'") }
 
   def value
     name.split('=')[-1].to_i
@@ -105,6 +106,12 @@ class Indicator < ActiveRecord::Base
 
   def cma_index
     if name.include? 'CMAA'
+      name.split('=').last.split('|')[0].to_f
+    end
+  end
+
+  def trend_index
+    if name.include? 'TREND'
       name.split('=').last.split('|')[0].to_f
     end
   end
