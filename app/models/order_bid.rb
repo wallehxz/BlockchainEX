@@ -43,7 +43,7 @@ class OrderBid < Order
   def check_long_fund_exceed
     quota = market&.regulate&.retain
     if quota && position =='LONG'
-      total_fund = market.total_position rescue 0
+      total_fund = market.long_amount rescue 0
       if total_fund >= quota
         return false
       end

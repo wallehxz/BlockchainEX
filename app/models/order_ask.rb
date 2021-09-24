@@ -65,7 +65,7 @@ class OrderAsk < Order
   def check_short_fund_exceed
     quota = market&.regulate&.retain
     if quota && position =='SHORT'
-      total_fund = market.total_position rescue 0
+      total_fund = market.short_amount rescue 0
       if total_fund >= quota
         return false
       end

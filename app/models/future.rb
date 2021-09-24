@@ -106,9 +106,17 @@ class Future < Market
     account['positions'].select { |x| x['symbol'] == symbol }.select {|x| x['positionSide'] == 'LONG' }[0]
   end
 
+  def long_amount
+    long_position['positionAmt'].to_f.abs
+  end
+
   def short_position
     account = Account.future_balances
     account['positions'].select { |x| x['symbol'] == symbol }.select {|x| x['positionSide'] == 'SHORT' }[0]
+  end
+
+  def short_amount
+    short_position['positionAmt'].to_f.abs
   end
 
   def total_position
