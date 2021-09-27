@@ -41,13 +41,13 @@ def future_trade(regul)
   market  = regul.market
   support = -regul.support
   price   = market.get_price[:ask]
-  long    = market.long_position0
-  if long['unrealizedProfit'].to_f < support
+  long    = market.long_position
+  if market.cma_fast < 0 && long['unrealizedProfit'].to_f < support
     market.new_ping_long(price, long['positionAmt'].to_f.abs, 'market')
   end
 
   short = market.short_position
-  if short['unrealizedProfit'].to_f < support
+  if market.cma_fast > 0 && short['unrealizedProfit'].to_f < support
     market.new_ping_short(price, short['positionAmt'].to_f.abs, 'market')
   end
 end
@@ -61,5 +61,5 @@ while($running) do
   rescue => detail
     Notice.exception(detail, "Deamon StopLoss")
   end
-  sleep 200
+  sleep 29
 end
