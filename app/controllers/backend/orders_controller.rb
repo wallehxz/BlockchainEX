@@ -3,7 +3,7 @@ class Backend::OrdersController < Backend::BaseController
     @orders = Order.recent
     @orders = @orders.where(type: params[:type]) if params[:type].present?
     @orders = @orders.where(category: params[:cate]) if params[:cate].present?
-    @orders = @orders.where(state: params[:state] || 'succ')
+    @orders = @orders.where(state: params[:state])  if params[:state].present?
     if params[:actions] == 'destroy'
       @orders.destroy_all
       flash[:warn] = "已清空筛选条件数据！"
