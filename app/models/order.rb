@@ -157,4 +157,12 @@ class Order < ActiveRecord::Base
       end
     end
   end
+
+  def push_future_step_order
+    if state.init? && category.step? && market.source == 'future'
+      result = market.step_limit_order(self)
+      self.update_attributes(state: 200)
+    end
+  end
+
 end

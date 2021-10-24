@@ -199,7 +199,6 @@ class Binance < Market
       req.params['signature'] = params_signed(params_string)
     end
     result = JSON.parse(res.body)
-    puts "[#{Time.now.to_s(:long)}]撤销订单 #{order_id}"
   end
 
   def sync_fund

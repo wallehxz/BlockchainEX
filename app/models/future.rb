@@ -29,12 +29,12 @@ class Future < Market
     bids.create(price: price, amount: amount, category: category, position:'SHORT')
   end
 
-  # 开空单
+  # 开多单
   def new_kai_long(price, amount, category = 'limit')
     bids.create(price: price, amount: amount, category: category, position:'LONG')
   end
 
-  # 平空单
+  # 平多单
   def new_ping_long(price, amount, category = 'limit')
     asks.create(price: price, amount: amount, category: category, position:'LONG')
   end
@@ -50,6 +50,18 @@ class Future < Market
       req.params['symbol'] = symbol
     end
     result = JSON.parse(res.body)
+  end
+
+  def get_book
+    ticker_url = HOST + '/fapi/v1/depth'
+    res = Faraday.get do |req|
+      req.url ticker_url
+      req.params['symbol'] = symbol
+    end
+    result = JSON.parse(res.body)
+    bid = result["bids"][0]
+    ask = result["asks"][0]
+    {bid: bid[0].to_f, bid_qty: bid[1].to_f, ask: ask[0].to_f, ask_qty: ask[1].to_f}
   end
 
   # interval = [1m，3m，5m，15m，30m，1h] start_t= 1499040000000 end_t= start_t
@@ -125,9 +137,9 @@ class Future < Market
   end
 
   def sync_cash
-    locale = cash || build_cash
+    locale  = cash || build_cash
     account = Account.future_balances
-    remote = account['assets'].select { |x| x['asset'] == base_unit }[0]
+    remote  = account['assets'].select { |x| x['asset'] == base_unit }[0]
     if remote
     	locale.balance  = remote['availableBalance'].to_f
 	    locale.freezing = remote['initialMargin'].to_f
@@ -148,17 +160,24 @@ class Future < Market
   end
 
   def sync_limit_order(order)
+    side = {'OrderBid'=> 'BUY', 'OrderAsk'=> 'SELL'}[order.type]
+    position = order.position
+    amount   = order.amount
+    price    = order.price
+    push_order(side, position, amount, price)
+  end
+
+  def push_order(side, position, amount, price)
     begin
-      side = {'OrderBid'=> 'BUY', 'OrderAsk'=> 'SELL'}[order.type]
       order_url = HOST + '/fapi/v1/order'
       timestamp = (Time.now.to_f * 1000).to_i
       reqs = []
       reqs << ['symbol', symbol]
       reqs << ['side', side]
-      reqs << ['positionSide', order.position]
+      reqs << ['positionSide', position]
       reqs << ['type', 'LIMIT']
-      reqs << ['price', order.price.to_d]
-      reqs << ['quantity', order.amount.to_d]
+      reqs << ['price', price]
+      reqs << ['quantity', amount]
       reqs << ['recvWindow', 5000]
       reqs << ['timestamp', timestamp]
       reqs << ['timeInForce', 'GTC']
@@ -168,10 +187,10 @@ class Future < Market
         req.headers['X-MBX-APIKEY'] = Settings.future_key
         req.params['symbol'] = symbol
         req.params['side'] = side
-        req.params['positionSide'] = order.position
+        req.params['positionSide'] = position
         req.params['type'] = 'LIMIT'
-        req.params['quantity'] = order.amount.to_d
-        req.params['price'] = order.price.to_d
+        req.params['quantity'] = amount
+        req.params['price'] = price
         req.params['recvWindow'] = 5000
         req.params['timeInForce'] = 'GTC'
         req.params['timestamp'] = timestamp
@@ -270,6 +289,81 @@ class Future < Market
     ma7  = kc[-7..-1].ma(7)
     ma14 = kc[-14..-1].ma(14)
     ma7 - ma14
+  end
+
+  def step_limit_order(order)
+    side   = {'OrderBid'=> 'BUY', 'OrderAsk'=> 'SELL'}[order.type]
+    amount = order.amount
+    if order.position == 'SHORT'
+      short_step_order(side, amount)
+    else
+      long_step_order(side, amount)
+    end
+  end
+
+  def short_step_order(side, amount)
+    start_fund = short_position['positionAmt'].to_f.abs
+    surplus    = side == 'SELL' ? start_fund + amount : start_fund - amount
+    balance    = start_fund
+    continue   = true
+    while continue && balance != surplus && amount > 0
+      book  = get_book
+      price = side == 'SELL' ? book[:ask] : book[:bid]
+      result   = push_order(side, 'SHORT', amount, price)
+      continue = false if result['msg']
+      sleep 1
+      delete_open_orders if get_open_orders.present?
+      balance = short_position['positionAmt'].to_f.abs
+      amount  = side == 'SELL' ? surplus - balance : balance - surplus
+    end
+  end
+
+  def long_step_order(side, amount)
+    start_fund = long_position['positionAmt'].to_f
+    surplus    = side == 'BUY' ? start_fund + amount : start_fund - amount
+    balance    = start_fund
+    continue   = true
+    while continue && balance != surplus && amount > 0
+      book  = get_book
+      price = side == 'BUY' ? book[:bid] : book[:ask]
+      result   = push_order(side, 'LONG', amount, price)
+      continue = false if result['msg']
+      sleep 1
+      delete_open_orders if get_open_orders.present?
+      balance = long_position['positionAmt'].to_f
+      amount  = side == 'BUY' ? surplus - balance : balance - surplus
+    end
+    binding.pry
+  end
+
+  def delete_open_orders
+    delete_url = HOST + '/fapi/v1/allOpenOrders'
+    timestamp  = (Time.now.to_f * 1000).to_i
+    params_string = "recvWindow=5000&symbol=#{symbol}&timestamp=#{timestamp}"
+    res = Faraday.delete do |req|
+      req.url delete_url
+      req.headers['X-MBX-APIKEY'] = Settings.future_key
+      req.params['symbol'] = symbol
+      req.params['recvWindow'] = 5000
+      req.params['timestamp'] = timestamp
+      req.params['signature'] = params_signed(params_string)
+    end
+    result = JSON.parse(res.body)
+  end
+
+  def get_open_orders
+    get_url   = HOST + '/fapi/v1/openOrders'
+    timestamp = (Time.now.to_f * 1000).to_i
+    params_string = "recvWindow=5000&symbol=#{symbol}&timestamp=#{timestamp}"
+    res = Faraday.get do |req|
+      req.url get_url
+      req.headers['X-MBX-APIKEY'] = Settings.future_key
+      req.params['symbol'] = symbol
+      req.params['recvWindow'] = 5000
+      req.params['timestamp'] = timestamp
+      req.params['signature'] = params_signed(params_string)
+    end
+    result = JSON.parse(res.body)
   end
 
 end

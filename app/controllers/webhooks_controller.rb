@@ -18,6 +18,9 @@ class WebhooksController < ApplicationController
     m_up       if params[:cmd] =~ /mup/
     m_down     if params[:cmd] =~ /mdown/
     f_take     if params[:cmd] =~ /ftake/
+    l_up       if params[:cmd] =~ /lup/
+    l_down     if params[:cmd] =~ /ldown/
+    strategy   if params[:cmd] =~ /buy|sell/
     render json: {msg: 'success!'}
   end
 
@@ -28,62 +31,118 @@ private
     market = Market.find(m_id)
   end
 
+  def strategy
+    if params[:cmd] =~ /lbuy|lsell/
+      l_up   if params[:cmd] =~ /lsell/
+      l_down if params[:cmd] =~ /lbuy/
+    end
+
+    if params[:cmd] =~ /fbuy|fsell/
+      f_up   if params[:cmd] =~ /fsell/
+      f_down if params[:cmd] =~ /fbuy/
+    end
+
+    if params[:cmd] =~ /mbuy|msell/
+      m_up   if params[:cmd] =~ /msell/
+      m_down if params[:cmd] =~ /mbuy/
+    end
+  end
+
+  def l_up
+    market = find_market
+    if market.trend_up?
+      price  = market.get_book[:ask]
+      long   = market.long_position
+      amount = long['positionAmt'].to_f.abs
+      profit = long['unrealizedProfit'].to_f
+      if amount > 0 && profit > 0
+        market.new_ping_long(price, amount, 'step')
+      end
+    end
+
+    if market.trend_down?
+      price  = market.get_book[:ask]
+      amount = market.regulate.fast_cash
+      market.new_kai_short(price, amount, 'step')
+    end
+  end
+
+  def l_down
+    market = find_market
+    if market.trend_up?
+      price  = market.get_book[:bid]
+      amount = market.regulate.fast_cash
+      market.new_kai_long(price, amount, 'step')
+    end
+
+    if market.trend_down?
+      price  = market.get_book[:bid]
+      short  = market.short_position
+      amount = short['positionAmt'].to_f.abs
+      profit = short['unrealizedProfit'].to_f
+      if amount > 0 && profit > 0
+        market.new_ping_short(price, amount, 'step')
+      end
+    end
+  end
+
   def f_take
     market = find_market
-    price  = market.get_price[:ask]
+    price  = market.get_book[:ask]
     long   = market.long_position
     if long['positionAmt'].to_f.abs > 0
-      market.new_ping_long(price, long['positionAmt'].to_f.abs, 'market')
+      market.new_ping_long(price, long['positionAmt'].to_f.abs, 'step')
     end
     short  = market.short_position
     if short['positionAmt'].to_f.abs > 0
-      market.new_ping_short(price, short['positionAmt'].to_f.abs, 'market')
+      market.new_ping_short(price, short['positionAmt'].to_f.abs, 'step')
     end
   end
 
   def m_up
     market = find_market
-    price  = market.get_price[:ask]
+    price  = market.get_book[:ask]
     long   = market.long_position
-    amount = market.regulate.retain
+    amount = market.regulate.fast_cash
     if long['positionAmt'].to_f.abs > 0
-      market.new_ping_long(price, long['positionAmt'].to_f.abs, 'market')
+      market.new_ping_long(price, long['positionAmt'].to_f.abs, 'step')
     end
-    market.new_kai_short(price, amount, 'market')
+    market.new_kai_short(price, amount, 'step')
   end
 
   def m_down
     market = find_market
-    price  = market.get_price[:ask]
+    price  = market.get_book[:ask]
     short  = market.short_position
-    amount = market.regulate.retain
+    amount = market.regulate.fast_cash
     if short['positionAmt'].to_f.abs > 0
-      market.new_ping_short(price, short['positionAmt'].to_f.abs, 'market')
+      market.new_ping_short(price, short['positionAmt'].to_f.abs, 'step')
     end
-    market.new_kai_long(price, amount, 'market')
+    market.new_kai_long(price, amount, 'step')
   end
 
-  #行情指标最高价，平多 开空
   def f_up
     market = find_market
-    price  = market.get_price[:ask]
-    amount = market.regulate.fast_cash
+    price  = market.get_book[:ask]
     long   = market.long_position
-    if long['unrealizedProfit'].to_f > 0
-      market.new_ping_long(price, long['positionAmt'].to_f.abs, 'market')
+    amount  = long['positionAmt'].to_f
+    if amount > 0 && long['unrealizedProfit'].to_f > price * 0.0002 * amount * 4
+      market.new_ping_long(price, long['positionAmt'].to_f.abs, 'step')
     end
-    market.new_kai_short(price, amount, 'market')
+    amount = market.regulate.fast_cash
+    market.new_kai_short(price, amount, 'step')
   end
 
   def f_down
     market = find_market
-    price  = market.get_price[:ask]
-    amount = market.regulate.fast_cash
+    price  = market.get_book[:ask]
     short  = market.short_position
-    if short['unrealizedProfit'].to_f > 0
-      market.new_ping_short(price, long['positionAmt'].to_f.abs, 'market')
+    amount  = short['positionAmt'].to_f.abs
+    if amount > 0 && short['unrealizedProfit'].to_f > price * 0.0002 * amount * 4
+      market.new_ping_short(price, amount, 'step')
     end
-    market.new_kai_long(price, amount, 'market')
+    amount = market.regulate.fast_cash
+    market.new_kai_long(price, amount, 'step')
   end
 
   def f_trade
@@ -114,7 +173,7 @@ private
 
   def short_kai_order(market)
     amount = market.regulate.fast_cash
-    price  = market.get_price
+    price  = market.get_book
     if params[:cmd] =~ /market/
       market.new_kai_short(price[:bid], amount, 'market')
     else
@@ -124,7 +183,7 @@ private
 
   def short_ping_order(market)
     amount = market.regulate.fast_cash
-    price  = market.get_price
+    price  = market.get_book
     if params[:cmd] =~ /market/
       market.new_ping_short(price[:ask], amount, 'market')
     else
@@ -134,7 +193,7 @@ private
 
   def long_kai_order(market)
     amount = market.regulate.fast_cash
-    price  = market.get_price
+    price  = market.get_book
     if params[:cmd] =~ /market/
       market.new_kai_long(price[:ask], amount, 'market')
     else
@@ -144,7 +203,7 @@ private
 
   def long_ping_order(market)
     amount = market.regulate.fast_cash
-    price  = market.get_price
+    price  = market.get_book
     if params[:cmd] =~ /market/
       market.new_ping_long(price[:bid], amount, 'market')
     else

@@ -21,9 +21,9 @@ class OrderBid < Order
 
   after_create :push_step_order
   def push_step_order
-    if state.init? && category.step?
+    if state.init? && category.step? && market.source == 'binance'
       market.step_price_bid(amount)
-    end if market.source == 'binance'
+    end
   end
 
   before_create :check_fund_exceed

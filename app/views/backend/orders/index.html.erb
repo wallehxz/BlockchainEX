@@ -11,8 +11,7 @@
 <section class="content">
   <div class="box box-primary">
     <div class="box-header">
-      <a href="<%= new_backend_order_path %>" class="btn bg-primary btn-flat"><i class="ion-plus"></i> 新增订单</a>
-      <a href="/backend/orders?type=<%= params[:type] %>&cate=<%= params[:cate] %>&state=<%= params[:state] %>&actions=destroy" class="btn btn-danger btn-flat" data-confirm="批量删除操作请慎重！"><i class="fa fa-trash"></i> 按查询批量删除</a>
+      <a href="<%= new_backend_order_path %>" class="btn bg-primary btn-flat"><i class="ion-plus"></i> 新增订单</a><br><br>
       <row>
         <div class="col-sm-2">
           <select onchange="javascript:location.href = this.value;" class="form-control" style="display: inline;">
@@ -37,6 +36,7 @@
             <% end %>
           </select>
         </div>
+      <a href="/backend/orders?type=<%= params[:type] %>&cate=<%= params[:cate] %>&state=<%= params[:state] %>&actions=destroy" class="btn btn-danger btn-flat" data-confirm="批量删除操作请慎重！"><i class="fa fa-trash"></i> 按查询批量删除</a>
       </row>
     </div>
     <div class="box-body">
@@ -59,7 +59,7 @@
               <tr style="text-align: center">
                 <td>
                   <%= item.updated_at.to_s(:short) %></br>
-                  <%= item.market&.symbol %><br>
+                  <%= item.market&.full_name %><br>
                 </td>
                 <td>
                   <%= item.order_cn %><br>

@@ -21,10 +21,9 @@ class OrderAsk < Order
 
   after_create :push_step_order
   def push_step_order
-    if state.init? && category.step?
-      self.errors.add(:cause, 'errors')
+    if state.init? && category.step? && market.source == 'binance'
       market.step_price_ask(amount)
-    end if market.source == 'binance'
+    end
   end
 
   before_create :check_amount_exceed
