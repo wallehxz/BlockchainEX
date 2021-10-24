@@ -2,6 +2,7 @@ class WebhooksController < ApplicationController
 
   # url  http://gogogle.cc/trade
   # body = {"market": "YFI-USDT", "cmd": "step|market|bid|ask|cache|all_in", "msg": "text"}
+  # body = {"market": "YFI-USDT", "cmd": "{{strategy.order.action}}", "msg": "text"}
   def trade
     trading    if params[:cmd] =~ /(bid)|(ask)/
     f_trade    if params[:cmd] =~ /(long)|(short)/
