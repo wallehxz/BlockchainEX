@@ -27,7 +27,9 @@ class Order < ActiveRecord::Base
   belongs_to :market
   has_one :regulate, primary_key: 'market_id', foreign_key: 'market_id'
   after_save :fix_price_amount
-  after_save :push_limit_order, :push_market_order
+  after_save :push_limit_order
+  after_save :push_market_order
+  after_save :push_future_step_order
   scope :succ, -> { where(state: 'succ') }
   scope :limit_order, -> { with_category(:limit) }
   scope :market_order, -> { with_category(:market) }
