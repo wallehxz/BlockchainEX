@@ -162,8 +162,29 @@ class Order < ActiveRecord::Base
 
   def push_future_step_order
     if state.init? && category.step? && market.source == 'future'
+      amount_l = market.long_position['positionAmt'].to_f
+      amount_s = market.short_position['positionAmt'].to_f.abs
       result = market.step_limit_order(self)
-      self.update_attributes(state: 200)
+
+      if position == 'LONG'
+        amount_lo = market.long_position['positionAmt'].to_f
+        if amount_lo != amount_l
+          self.update_attributes(state: 200)
+          notice
+        else
+          self.update_attributes(state: 0)
+        end
+      end
+
+      if position == 'SHORT'
+        amount_so = market.short_position['positionAmt'].to_f.abs
+        if amount_so != amount_s
+          self.update_attributes(state: 200)
+          notice
+        else
+          self.update_attributes(state: 0)
+        end
+      end
     end
   end
 
