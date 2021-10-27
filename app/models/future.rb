@@ -302,15 +302,19 @@ class Future < Market
   end
 
   def short_step_order(side, amount)
+    log_file = "log/#{Date.current.to_s}-trade.log"
     start_fund = short_position['positionAmt'].to_f.abs
     surplus    = side == 'SELL' ? start_fund + amount : start_fund - amount
+    system("echo '[#{Time.now.long}] #{symbol} SHORT #{side} #{amount} base #{start_fund} surplus: #{surplus}' > #{log_file}")
     balance    = start_fund
     continue   = true
     while continue && balance != surplus && amount > 0
       book  = get_book
       price = side == 'SELL' ? book[:ask] : book[:bid]
-      result   = push_order(side, 'SHORT', amount, price)
+      result = push_order(side, 'SHORT', amount, price)
       continue = false if result['msg']
+      system("echo '[#{Time.now.long}] #{symbol} SHORT #{side} Order amount: #{amount} price #{price}' > #{log_file}")
+      system("echo '[#{Time.now.long}] #{symbol} SHORT #{side} Order result #{result}' > #{log_file}")
       sleep 1
       delete_open_orders if get_open_orders.present?
       balance = short_position['positionAmt'].to_f.abs
@@ -319,8 +323,10 @@ class Future < Market
   end
 
   def long_step_order(side, amount)
+    log_file = "log/#{Date.current.to_s}-trade.log"
     start_fund = long_position['positionAmt'].to_f
     surplus    = side == 'BUY' ? start_fund + amount : start_fund - amount
+    system("echo '[#{Time.now.long}] #{symbol} LONG #{side} #{amount} base #{start_fund} surplus: #{surplus}' > #{log_file}")
     balance    = start_fund
     continue   = true
     while continue && balance != surplus && amount > 0
@@ -328,6 +334,8 @@ class Future < Market
       price = side == 'BUY' ? book[:bid] : book[:ask]
       result   = push_order(side, 'LONG', amount, price)
       continue = false if result['msg']
+      system("echo '[#{Time.now.long}] #{symbol} LONG #{side} Order amount: #{amount} price #{price}' > #{log_file}")
+      system("echo '[#{Time.now.long}] #{symbol} LONG #{side} Order result #{result}' > #{log_file}")
       sleep 1
       delete_open_orders if get_open_orders.present?
       balance = long_position['positionAmt'].to_f
