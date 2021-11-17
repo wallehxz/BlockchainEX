@@ -237,9 +237,11 @@ class Future < Market
   end
 
   def trend_up?
-    if trend_index && trend_index > 0
-      return true
+    if trend_index
+      return true if trend_index > 0
+      return false
     end
+
     k     = get_ticker('5m', 20)
     kc    = k.kline_c
     ma14  = [kc[-16..-3].ma(14),kc[-15..-2].ma(14)]
@@ -251,8 +253,9 @@ class Future < Market
   end
 
   def trend_down?
-    if trend_index && trend_index < 0
-      return true
+    if trend_index
+      return true if trend_index < 0
+      return false
     end
     k     = get_ticker('5m', 20)
     kc    = k.kline_c
@@ -271,8 +274,8 @@ class Future < Market
   end
 
   def trend_up_down?
-    return '上行' if trend_up?
-    return '下行' if trend_down?
+    return '上涨' if trend_up?
+    return '下跌' if trend_down?
   end
 
   def macd_index
