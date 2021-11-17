@@ -312,7 +312,7 @@ class Future < Market
       book  = get_book
       price = side == 'SELL' ? book[:ask] : book[:bid]
       result = push_order(side, 'SHORT', amount, price)
-      continue = false if result['msg']
+      continue = false if result['cause']
       system("echo '[#{Time.now.long}] #{symbol} SHORT #{side} Order amount: #{amount} price: #{price}' >> #{log_file}")
       system("echo '[#{Time.now.long}] #{symbol} SHORT #{side} Order result: #{result}' >> #{log_file}")
       sleep 1
@@ -333,7 +333,7 @@ class Future < Market
       book  = get_book
       price = side == 'BUY' ? book[:bid] : book[:ask]
       result   = push_order(side, 'LONG', amount, price)
-      continue = false if result['msg']
+      continue = false if result['cause']
       system("echo '[#{Time.now.long}] #{symbol} LONG #{side} Order amount: #{amount} price: #{price}' >> #{log_file}")
       system("echo '[#{Time.now.long}] #{symbol} LONG #{side} Order result: #{result}' >> #{log_file}")
       sleep 1
@@ -341,7 +341,6 @@ class Future < Market
       balance = long_position['positionAmt'].to_f
       amount  = side == 'BUY' ? surplus - balance : balance - surplus
     end
-    binding.pry
   end
 
   def delete_open_orders

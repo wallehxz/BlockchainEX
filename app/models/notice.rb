@@ -30,7 +30,6 @@ class Notice
     end
 
     def exception(ex, mark = "application")
-      binding.pry
       path = Rails.root.to_s
       log = ex.backtrace.select { |l| l.include? path }.map {|l| l.gsub(path,'')}.join("\n")
       push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Settings.dingding_bot}"
