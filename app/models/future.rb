@@ -114,8 +114,8 @@ class Future < Market
   end
 
   def long_position
-    account = Account.future_balances
-    account['positions'].select { |x| x['symbol'] == symbol }.select {|x| x['positionSide'] == 'LONG' }[0]
+    positions = Account.future_balances['positions']
+    positions.select { |x| x['symbol'] == symbol }.select {|x| x['positionSide'] == 'LONG' }[0] rescue {}
   end
 
   def long_amount
@@ -123,8 +123,8 @@ class Future < Market
   end
 
   def short_position
-    account = Account.future_balances
-    account['positions'].select { |x| x['symbol'] == symbol }.select {|x| x['positionSide'] == 'SHORT' }[0]
+    positions = Account.future_balances['positions']
+    positions.select { |x| x['symbol'] == symbol }.select {|x| x['positionSide'] == 'SHORT' }[0] rescue {}
   end
 
   def short_amount
@@ -132,8 +132,8 @@ class Future < Market
   end
 
   def total_position
-    account = Account.future_balances
-    account['positions'].select { |x| x['symbol'] == symbol }.map { |p| p['positionAmt'].to_f.abs }.sum
+    positions = Account.future_balances['positions']
+    positions.select { |x| x['symbol'] == symbol }.map { |p| p['positionAmt'].to_f.abs }.sum
   end
 
   def sync_cash

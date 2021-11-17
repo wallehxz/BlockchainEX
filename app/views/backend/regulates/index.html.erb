@@ -70,10 +70,10 @@
                 </td>
                 <td><br>
                   <a href="<%= edit_backend_regulate_path(item) %>" class="btn bg-orange btn-flat">
-                    <i class="glyphicon glyphicon-edit"></i>
+                    <i class="fa fa-edit"></i>
                   </a>
                   <a href="<%= backend_regulate_path(item) %>" class="btn bg-red btn-flat" data-method="delete" data-confirm="确定删除吗？">
-                    <i class="glyphicon glyphicon-trash"></i>
+                    <i class="fa fa-trash"></i>
                   </a>
                 </td>
               </tr>
@@ -100,6 +100,6 @@
     function switch_state(id,kind) {
       $.get('/backend/regulates/' + id +'/change_state?kind=' + kind);
     }
-    $("[name='my-state']").bootstrapSwitch({onColor:'success',offColor:'danger', onText: 'ON', offText: 'OFF'});
+    $("[name='my-state']").bootstrapSwitch({onColor:'success',offColor:'danger', onText: '开', offText: '关'});
   </script>
 <% end %>
