@@ -6,6 +6,10 @@ class Daemon
       Daemons::Rails::Monitoring.statuses.keys.map {|x| x.chomp('.rb')}
     end
 
+    def status
+      Daemons::Rails::Monitoring.statuses
+    end
+
     def start(daemon)
       title = "#{daemon}.rb"
       status = Daemons::Rails::Monitoring.statuses

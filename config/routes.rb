@@ -27,6 +27,7 @@ Rails.application.routes.draw do
       collection do
         get 'fetch'
         get 'clear_history'
+        get 'daemon_launch'
       end
     end
   end
