@@ -314,10 +314,11 @@ class Future < Market
     while continue && balance != surplus && amount > 0
       book  = get_book
       price = side == 'SELL' ? book[:ask] : book[:bid]
+      amount = amount.to_d.round(regulate&.amount_precision, :down)
       result = push_order(side, 'SHORT', amount, price)
       continue = false if result['cause']
       system("echo '[#{Time.now.long}] #{symbol} SHORT #{side} Order amount: #{amount} price: #{price}' >> #{log_file}")
-      system("echo '[#{Time.now.long}] #{symbol} SHORT #{side} Order result: #{result}' >> #{log_file}")
+      system("echo '[#{Time.now.long}] #{symbol} SHORT #{side} Order result: #{result}' >> #{log_file}") if result['cause']
       sleep 1
       delete_open_orders if get_open_orders.present?
       balance = short_position['positionAmt'].to_f.abs
@@ -335,10 +336,11 @@ class Future < Market
     while continue && balance != surplus && amount > 0
       book  = get_book
       price = side == 'BUY' ? book[:bid] : book[:ask]
+      amount = amount.to_d.round(regulate&.amount_precision, :down)
       result   = push_order(side, 'LONG', amount, price)
       continue = false if result['cause']
       system("echo '[#{Time.now.long}] #{symbol} LONG #{side} Order amount: #{amount} price: #{price}' >> #{log_file}")
-      system("echo '[#{Time.now.long}] #{symbol} LONG #{side} Order result: #{result}' >> #{log_file}")
+      system("echo '[#{Time.now.long}] #{symbol} LONG #{side} Order result: #{result}' >> #{log_file}") if result['cause']
       sleep 1
       delete_open_orders if get_open_orders.present?
       balance = long_position['positionAmt'].to_f
