@@ -175,41 +175,25 @@ private
   def short_kai_order(market)
     amount = market.regulate.fast_cash
     price  = market.get_book
-    if params[:cmd] =~ /market/
-      market.new_kai_short(price[:bid], amount, 'market')
-    else
-      market.new_kai_short(price[:ask], amount)
-    end
+    market.new_kai_short(price[:bid], amount, 'step')
   end
 
   def short_ping_order(market)
     amount = market.regulate.fast_cash
     price  = market.get_book
-    if params[:cmd] =~ /market/
-      market.new_ping_short(price[:ask], amount, 'market')
-    else
-      market.new_ping_short(price[:bid], amount)
-    end
+    market.new_ping_short(price[:ask], amount, 'step')
   end
 
   def long_kai_order(market)
     amount = market.regulate.fast_cash
     price  = market.get_book
-    if params[:cmd] =~ /market/
-      market.new_kai_long(price[:ask], amount, 'market')
-    else
-      market.new_kai_long(price[:bid], amount)
-    end
+    market.new_kai_long(price[:ask], amount, 'step')
   end
 
   def long_ping_order(market)
     amount = market.regulate.fast_cash
     price  = market.get_book
-    if params[:cmd] =~ /market/
-      market.new_ping_long(price[:bid], amount, 'market')
-    else
-      market.new_ping_long(price[:ask], amount)
-    end
+    market.new_ping_long(price[:bid], amount, 'step')
   end
 
   def trading
