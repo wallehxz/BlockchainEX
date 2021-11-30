@@ -1,8 +1,8 @@
 # config valid only for current version of Capistrano
 #lock '3.4.1'
 
-set :application, 'ExTrade'
-set :repo_url, 'https://github.com/kooogle/Exchange_Trade.git'
+set :application, 'trading'
+set :repo_url, 'https://github.com/wallehxz/BlockchainEX.git'
 set :ssh_options, { keys: %w{~/.ssh/id_rsa}, forward_agent: true, auth_methods: %w(publickey) }
 # set :format, :pretty
 set :log_level, :debug
