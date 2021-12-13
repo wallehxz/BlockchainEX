@@ -152,12 +152,12 @@ class Market < ActiveRecord::Base
         if regulate.range_trade
           price  = get_book[:ask]
           amount = regulate.fast_cash
-          new_kai_short(price, amount, 'step')
+          new_kai_short(price, amount)
         end
         profit = regulate.range_profit
         short = short_position
         if short['unrealizedProfit'].to_f > profit
-          new_ping_short(last_quote.c, short['positionAmt'].to_f.abs, 'step')
+          new_ping_short(last_quote.c, short['positionAmt'].to_f.abs)
         end
       end
     end
@@ -170,12 +170,12 @@ class Market < ActiveRecord::Base
         if regulate.range_trade
           price  = get_book[:bid]
           amount = regulate.fast_cash
-          new_kai_long(price, amount, 'step')
+          new_kai_long(price, amount)
         end
         profit = regulate.range_profit
         long = long_position
         if long['unrealizedProfit'].to_f > profit
-          new_ping_long(last_quote.c, long['positionAmt'].to_f.abs, 'step')
+          new_ping_long(last_quote.c, long['positionAmt'].to_f.abs)
         end
       end
     end

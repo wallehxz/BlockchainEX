@@ -57,14 +57,14 @@ private
       amount = long['positionAmt'].to_f.abs
       profit = long['unrealizedProfit'].to_f
       if amount > 0 && profit > 0
-        market.new_ping_long(price, amount, 'step')
+        market.new_ping_long(price, amount)
       end
     end
 
     if market.trend_down?
       price  = market.get_book[:ask]
       amount = market.regulate.fast_cash
-      market.new_kai_short(price, amount, 'step')
+      market.new_kai_short(price, amount)
     end
   end
 
@@ -73,7 +73,7 @@ private
     if market.trend_up?
       price  = market.get_book[:bid]
       amount = market.regulate.fast_cash
-      market.new_kai_long(price, amount, 'step')
+      market.new_kai_long(price, amount)
     end
 
     if market.trend_down?
@@ -82,7 +82,7 @@ private
       amount = short['positionAmt'].to_f.abs
       profit = short['unrealizedProfit'].to_f
       if amount > 0 && profit > 0
-        market.new_ping_short(price, amount, 'step')
+        market.new_ping_short(price, amount)
       end
     end
   end
@@ -92,11 +92,11 @@ private
     price  = market.get_book[:ask]
     long   = market.long_position
     if long['positionAmt'].to_f.abs > 0
-      market.new_ping_long(price, long['positionAmt'].to_f.abs, 'step')
+      market.new_ping_long(price, long['positionAmt'].to_f.abs)
     end
     short  = market.short_position
     if short['positionAmt'].to_f.abs > 0
-      market.new_ping_short(price, short['positionAmt'].to_f.abs, 'step')
+      market.new_ping_short(price, short['positionAmt'].to_f.abs)
     end
   end
 
@@ -106,9 +106,9 @@ private
     long   = market.long_position
     amount = market.regulate.fast_cash
     if long['positionAmt'].to_f.abs > 0
-      market.new_ping_long(price, long['positionAmt'].to_f.abs, 'step')
+      market.new_ping_long(price, long['positionAmt'].to_f.abs)
     end
-    market.new_kai_short(price, amount, 'step')
+    market.new_kai_short(price, amount)
   end
 
   def m_down
@@ -117,9 +117,9 @@ private
     short  = market.short_position
     amount = market.regulate.fast_cash
     if short['positionAmt'].to_f.abs > 0
-      market.new_ping_short(price, short['positionAmt'].to_f.abs, 'step')
+      market.new_ping_short(price, short['positionAmt'].to_f.abs)
     end
-    market.new_kai_long(price, amount, 'step')
+    market.new_kai_long(price, amount)
   end
 
   def f_up
@@ -128,10 +128,10 @@ private
     long   = market.long_position
     amount  = long['positionAmt'].to_f
     if amount > 0 && long['unrealizedProfit'].to_f > price * 0.0002 * amount * 4
-      market.new_ping_long(price, long['positionAmt'].to_f.abs, 'step')
+      market.new_ping_long(price, long['positionAmt'].to_f.abs)
     end
     amount = market.regulate.fast_cash
-    market.new_kai_short(price, amount, 'step')
+    market.new_kai_short(price, amount)
   end
 
   def f_down
@@ -140,10 +140,10 @@ private
     short  = market.short_position
     amount  = short['positionAmt'].to_f.abs
     if amount > 0 && short['unrealizedProfit'].to_f > price * 0.0002 * amount * 4
-      market.new_ping_short(price, amount, 'step')
+      market.new_ping_short(price, amount)
     end
     amount = market.regulate.fast_cash
-    market.new_kai_long(price, amount, 'step')
+    market.new_kai_long(price, amount)
   end
 
   def f_trade
@@ -175,25 +175,25 @@ private
   def short_kai_order(market)
     amount = market.regulate.fast_cash
     price  = market.get_book
-    market.new_kai_short(price[:bid], amount, 'step')
+    market.new_kai_short(price[:bid], amount)
   end
 
   def short_ping_order(market)
     amount = market.regulate.fast_cash
     price  = market.get_book
-    market.new_ping_short(price[:ask], amount, 'step')
+    market.new_ping_short(price[:ask], amount)
   end
 
   def long_kai_order(market)
     amount = market.regulate.fast_cash
     price  = market.get_book
-    market.new_kai_long(price[:ask], amount, 'step')
+    market.new_kai_long(price[:ask], amount)
   end
 
   def long_ping_order(market)
     amount = market.regulate.fast_cash
     price  = market.get_book
-    market.new_ping_long(price[:bid], amount, 'step')
+    market.new_ping_long(price[:bid], amount)
   end
 
   def trading

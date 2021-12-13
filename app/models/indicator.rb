@@ -124,24 +124,24 @@ class Indicator < ActiveRecord::Base
       price  = market.get_price
       if cma_index > 0
         amount = market.regulate.fast_cash
-        market.new_kai_long(price[:bid], amount, 'market')
+        market.new_kai_long(price[:bid], amount)
 
         #如果空单有盈利 则市价平仓
         short = market.short_position
         if short['unrealizedProfit'].to_f > 0
-          market.new_ping_short(price[:bid], short['positionAmt'].to_f.abs, 'market')
+          market.new_ping_short(price[:bid], short['positionAmt'].to_f.abs)
         end
       end
 
       # 指标由上涨变为下跌 做空
       if cma_index < 0
         amount = market.regulate.fast_cash
-        market.new_kai_short(price[:ask], amount, 'market')
+        market.new_kai_short(price[:ask], amount)
 
         #如果多单有盈利 则市价平仓
         long = market.long_position
         if long['unrealizedProfit'].to_f > 0
-          market.new_ping_long(price[:bid], long['positionAmt'].to_f.abs, 'market')
+          market.new_ping_long(price[:bid], long['positionAmt'].to_f.abs)
         end
       end
     end

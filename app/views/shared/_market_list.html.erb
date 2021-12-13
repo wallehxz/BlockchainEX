@@ -1,3 +1,3 @@
 <% Market.seq.each do |item| %>
-  <li style="text-align: left"><a href="<%= market_quote_path(item.symbols) %>"><%= item.symbols %></a></li>
+  <li style="text-align: left;white-space: nowrap;"><a href="<%= market_quote_path(item.symbols) %>"><i class="ion-easel"></i>&nbsp;<%= item.symbols %></a></li>
 <% end %>

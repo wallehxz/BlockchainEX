@@ -54,11 +54,11 @@ def future_trade(regul)
   amount = market.regulate.fast_cash
 
   if market.trend_up? && market.cma_klast > 0
-    market.new_kai_long(price, amount, 'step')
+    market.new_kai_long(price, amount)
   end
 
   if market.trend_down? && market.cma_klast < 0
-    market.new_kai_short(price, amount, 'step')
+    market.new_kai_short(price, amount)
   end
 end
 

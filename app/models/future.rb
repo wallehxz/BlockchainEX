@@ -20,23 +20,23 @@ class Future < Market
 	HOST = 'https://fapi.binance.com'
 
   # 开空单
-  def new_kai_short(price, amount, category = 'limit')
-    asks.create(price: price, amount: amount, category: category, position:'SHORT')
+  def new_kai_short(price, amount)
+    asks.create(price: price, amount: amount, category: 'step', position:'SHORT')
   end
 
   # 平空单
-  def new_ping_short(price, amount, category = 'limit')
-    bids.create(price: price, amount: amount, category: category, position:'SHORT')
+  def new_ping_short(price, amount)
+    bids.create(price: price, amount: amount, category: 'step', position:'SHORT')
   end
 
   # 开多单
-  def new_kai_long(price, amount, category = 'limit')
-    bids.create(price: price, amount: amount, category: category, position:'LONG')
+  def new_kai_long(price, amount)
+    bids.create(price: price, amount: amount, category: 'step', position:'LONG')
   end
 
   # 平多单
-  def new_ping_long(price, amount, category = 'limit')
-    asks.create(price: price, amount: amount, category: category, position:'LONG')
+  def new_ping_long(price, amount)
+    asks.create(price: price, amount: amount, category: 'step', position:'LONG')
   end
 
 	def symbol

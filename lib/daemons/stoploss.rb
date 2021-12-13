@@ -43,12 +43,12 @@ def future_trade(regul)
   price   = market.get_price[:ask]
   long    = market.long_position
   if market.cma_fast < 0 && long['unrealizedProfit'].to_f < support
-    market.new_ping_long(price, long['positionAmt'].to_f.abs, 'step')
+    market.new_ping_long(price, long['positionAmt'].to_f.abs)
   end
 
   short = market.short_position
   if market.cma_fast > 0 && short['unrealizedProfit'].to_f < support
-    market.new_ping_short(price, short['positionAmt'].to_f.abs, 'step')
+    market.new_ping_short(price, short['positionAmt'].to_f.abs)
   end
 end
 
