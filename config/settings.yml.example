@@ -29,8 +29,6 @@ binance_secret: "xxxxxxx"
 future_key: "xxxxxx"
 future_secret: "xxxxxx"
 
-daemon_cn: {'takeprofit': '止盈保收', 'stoploss': '止损保本', 'chasedown': '逐仓加码', 'fastrade': '瞬息波动', 'fluctuation': '每日涨跌'}
-
 #按需开启每日行情类别通知
 
 fluctuation_future: true

@@ -47,6 +47,5 @@ binance_secret: "TzUj0jL755Su7ePLdV2ibXy7YSGkCrcPoimZwe3zYmAJojbcXQuTglZHPYIOgmf
 future_key: "G12gWVeSADGhJamAaetucFH022ZleTt06ILtnj6TnjiQRJ4eLjaoCNaDip8o8fy5"
 future_secret: "tzxwcBKGtaWOuRs7GLMvmcIqqb2ryLa6L42WJWvx2sI3v7JeVzZ6fOWPdQZoajPU"
 
-daemon_cn: {'takeprofit': '止盈保收', 'stoploss': '止损保本', 'chasedown': '逐仓加码', 'fastrade': '高频精灵', 'fluctuation': '每日涨跌'}
 fluctuation_future: true
 fluctuation_binance: false
