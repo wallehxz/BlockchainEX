@@ -19,6 +19,8 @@ module BlockChain
   class Application < Rails::Application
     require Rails.root.join 'app/models/setting'
 
+    config.autoload_paths += Dir[Rails.root.join('app', 'models', '{**}')]
+
     config.assets.enabled = true
 
     config.time_zone = 'Beijing'

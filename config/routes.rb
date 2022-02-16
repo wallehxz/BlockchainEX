@@ -3,14 +3,14 @@ Rails.application.routes.draw do
   devise_for :users
   devise_scope :user do
     get 'sign_in',          to:'users/sessions#new'
-    post 'sign_in',         to:'users/sessions#create'
     get 'sign_up',          to:'users/registrations#new'
-    post 'sign_up',         to:'users/registrations#create'
     get 'sign_out',         to:'users/sessions#destroy'
     get 'forgot_password',  to:'users/passwords#new'
-    post 'forgot_password', to:'users/passwords#create'
     get 'reset_password',   to:'users/passwords#edit'
     put 'reset_password',   to:'users/passwords#update'
+    post 'sign_in',         to:'users/sessions#create'
+    post 'forgot_password', to:'users/passwords#create'
+    post 'sign_up',         to:'users/registrations#create'
   end
 
   get '/markets/:symbol',  to: "welcome#trends", as: :market_quote
@@ -27,14 +27,11 @@ Rails.application.routes.draw do
       collection do
         get 'fetch'
         get 'clear_history'
-        get 'daemon_launch'
       end
     end
   end
   namespace :backend do
     get 'quote', to:'dashboard#index', as: :quote
-    get 'daemons', to: 'dashboard#daemons', as: :daemons
-    get 'daemon_operate', to: 'dashboard#daemon_operate'
     resources :markets do
       get :sync_balance, on: :member
       get :clear_candles, on: :member

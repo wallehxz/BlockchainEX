@@ -72,32 +72,6 @@ namespace :deploy do
   end
 end
 
-namespace :daemons do
-  desc "开启进程"
-  task :start do
-    on roles(:web) do
-      within release_path do
-        with rails_env: fetch(:rails_env) do
-          execute :rake, 'daemons:start'
-          info "开启后台进程..."
-        end
-      end
-    end
-  end
-
-  desc "停止进程"
-  task :stop do
-    on roles(:web) do
-      within release_path do
-        with rails_env: fetch(:rails_env) do
-          execute :rake, 'daemons:stop'
-          info "停止后台进程..."
-        end
-      end
-    end
-  end
-end
 
 # after 'deploy:finished', 'daemons:stop'
-# after 'daemons:stop','daemons:start'
 # before 'deploy:migrate', 'deploy:db_create'

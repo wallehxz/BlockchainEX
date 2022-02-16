@@ -14,34 +14,4 @@ class Backend::DashboardController < Backend::BaseController
       @decimal = Market.calc_decimal tickers.last.c rescue 2
     end
   end
-
-  def daemons; end
-
-  def daemon_operate
-    status = {'on': '开启', 'off': '关闭'}
-    operate = params[:operate]
-    if operate == 'on'
-      Daemon.start(params[:daemon])
-    end
-
-    if operate == 'off'
-      # Daemon.stop(params[:daemon])
-      shell_cmd = "ps -ef | grep #{params[:daemon]} | awk \'{print $2}\' | xargs kill -9"
-      Open3::capture2(shell_cmd)
-    end
-
-    if operate == 'all_on'
-      root_path = Rails.root
-      start_daemon ="bundle exec rake daemons:start"
-      shell_cmd = "cd #{root_path} && #{start_daemon}"
-      system("#{shell_cmd}")
-    end
-
-    if operate == 'all_off'
-      Open3::capture2('ps -ef | grep .rb | awk \'{print $2}\' | xargs kill -9')
-    end
-    flash[:notice] = "守护进程状态更新"
-    redirect_to backend_daemons_path
-  end
-
 end
