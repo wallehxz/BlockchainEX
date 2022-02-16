@@ -77,7 +77,7 @@ class Order < ActiveRecord::Base
     if state.succ?
       regulate.update_avg_cost if type == 'OrderBid' && market.source == 'binance'
       sms_notice if market.regulate.notify_sms
-      push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Settings.trading_bot}"
+      push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Setting.trading_bot}"
       body_params ={ msgtype:'markdown', markdown:{ title: "#{market_cn}订单" } }
       body_params[:markdown][:text] =
         "## #{order_cn} #{category_cn} 订单\n\n" +
@@ -106,7 +106,7 @@ class Order < ActiveRecord::Base
 
   def failed_notice
     if state.fail?
-      push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Settings.trading_bot}"
+      push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Setting.trading_bot}"
       body_params ={ msgtype:'markdown', markdown:{ title: "#{type_cn} 订单" } }
       body_params[:markdown][:text] =
         "#### #{position_cn} #{category_cn} #{type_cn} 失效订单\n\n" +

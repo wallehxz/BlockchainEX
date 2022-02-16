@@ -60,7 +60,7 @@ class Binance < Market
       reqs_string = reqs.sort.map {|x| x.join('=')}.join('&')
       res = Faraday.post do |req|
         req.url order_url
-        req.headers['X-MBX-APIKEY'] = Settings.binance_key
+        req.headers['X-MBX-APIKEY'] = Setting.binance_key
         req.params['symbol'] = symbol
         req.params['side'] = side
         req.params['type'] = 'LIMIT'
@@ -93,7 +93,7 @@ class Binance < Market
       reqs_string = reqs.sort.map {|x| x.join('=')}.join('&')
       res = Faraday.post do |req|
         req.url order_url
-        req.headers['X-MBX-APIKEY'] = Settings.binance_key
+        req.headers['X-MBX-APIKEY'] = Setting.binance_key
         req.params['symbol'] = symbol
         req.params['side'] = side
         req.params['type'] = 'MARKET'
@@ -127,7 +127,7 @@ class Binance < Market
       reqs_string = reqs.sort.map {|x| x.join('=')}.join('&')
       res = Faraday.post do |req|
         req.url order_url
-        req.headers['X-MBX-APIKEY'] = Settings.binance_key
+        req.headers['X-MBX-APIKEY'] = Setting.binance_key
         req.params['symbol'] = symbol
         req.params['side'] = 'SELL'
         req.params['type'] = 'STOP_LOSS_LIMIT'
@@ -147,7 +147,7 @@ class Binance < Market
   end
 
   def params_signed(data)
-    key = Settings.binance_secret
+    key = Setting.binance_secret
     digest = OpenSSL::Digest.new('sha256')
     OpenSSL::HMAC.hexdigest(digest, key, data)
   end
@@ -158,7 +158,7 @@ class Binance < Market
     params_string = "#{'endTime=' + end_t.to_s + '&' if end_t}limit=1000&recvWindow=5000&#{'startTime=' + start_t.to_s + '&' if start_t}symbol=#{symbol}&timestamp=#{timestamp}"
     res = Faraday.get do |req|
       req.url order_url
-      req.headers['X-MBX-APIKEY'] = Settings.binance_key
+      req.headers['X-MBX-APIKEY'] = Setting.binance_key
       req.params['symbol']        = symbol
       req.params['recvWindow']    = 5000
       req.params['limit']         = 1000
@@ -176,7 +176,7 @@ class Binance < Market
     params_string = "recvWindow=5000&symbol=#{symbol}&timestamp=#{timestamp}"
     res = Faraday.get do |req|
       req.url order_url
-      req.headers['X-MBX-APIKEY'] = Settings.binance_key
+      req.headers['X-MBX-APIKEY'] = Setting.binance_key
       req.params['symbol'] = symbol
       req.params['recvWindow'] = 5000
       req.params['timestamp'] = timestamp
@@ -191,7 +191,7 @@ class Binance < Market
     params_string = "orderId=#{order_id}&recvWindow=5000&symbol=#{symbol}&timestamp=#{timestamp}"
     res = Faraday.delete do |req|
       req.url cancle_url
-      req.headers['X-MBX-APIKEY'] = Settings.binance_key
+      req.headers['X-MBX-APIKEY'] = Setting.binance_key
       req.params['symbol'] = symbol
       req.params['orderId'] = order_id
       req.params['recvWindow'] = 5000

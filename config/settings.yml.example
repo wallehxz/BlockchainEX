@@ -1,0 +1,37 @@
+#[development,production]
+
+env: 'development'
+host: 'http://tt.tt'
+receive_email: '*****@qq.com'
+email_account: '*****@qq.com'
+email_password: '*****'
+email_stmp_address: 'smtp.xx.com'
+email_stmp_port: '587'
+
+pop_host: 'pop.gmail.com'
+pop_username: 'xxxxxxxx@gmail.com'
+pop_password: 'xxxxxxxxx'
+
+#消息通知
+default_mobile: '13812345678'
+#http://pushbear.ftqq.com
+wechat_group_key: 'xxxxxxxx'
+#https://open-doc.dingtalk.com/docs/doc.htm?treeId=257&articleId=105735&docType=1
+dingding_bot: 'xxxxxxxx'
+trading_bot: 'xxxxxxx'
+yunpian_key: 'xxxxxxxx'
+yunpian_tpl: '123456'
+
+#交易所接口
+binance_key: "xxxxxx"
+binance_secret: "xxxxxxx"
+
+future_key: "xxxxxx"
+future_secret: "xxxxxx"
+
+daemon_cn: {'takeprofit': '止盈保收', 'stoploss': '止损保本', 'chasedown': '逐仓加码', 'fastrade': '瞬息波动', 'fluctuation': '每日涨跌'}
+
+#按需开启每日行情类别通知
+
+fluctuation_future: true
+fluctuation_binance: false

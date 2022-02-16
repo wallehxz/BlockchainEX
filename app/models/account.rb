@@ -24,7 +24,7 @@ class Account < ActiveRecord::Base
     params_stirng = "recvWindow=10000&timestamp=#{timestamp}"
     res = Faraday.get do |req|
       req.url balance_url
-      req.headers['X-MBX-APIKEY'] = Settings.future_key
+      req.headers['X-MBX-APIKEY'] = Setting.future_key
       req.params['recvWindow']    = 10000
       req.params['timestamp']     = timestamp
       req.params['signature']     = Account.future_signed(params_stirng)
@@ -34,7 +34,7 @@ class Account < ActiveRecord::Base
 
   # Account.future_signed
   def self.future_signed(data)
-    secret = Settings.future_secret
+    secret = Setting.future_secret
     digest = OpenSSL::Digest.new('sha256')
     return OpenSSL::HMAC.hexdigest(digest, secret, data)
   end
@@ -46,7 +46,7 @@ class Account < ActiveRecord::Base
     params_stirng = "recvWindow=10000&timestamp=#{timestamp}"
     res = Faraday.get do |req|
       req.url balance_url
-      req.headers['X-MBX-APIKEY'] = Settings.binance_key
+      req.headers['X-MBX-APIKEY'] = Setting.binance_key
       req.params['recvWindow']    = 10000
       req.params['timestamp']     = timestamp
       req.params['signature']     = Account.binance_signed(params_stirng)
@@ -56,7 +56,7 @@ class Account < ActiveRecord::Base
 
   # Account.binance_signed
   def self.binance_signed(data)
-    secret = Settings.binance_secret
+    secret = Setting.binance_secret
     digest = OpenSSL::Digest.new('sha256')
     return OpenSSL::HMAC.hexdigest(digest, secret, data)
   end

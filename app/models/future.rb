@@ -156,7 +156,7 @@ class Future < Market
 
 	def params_signed(data)
     digest = OpenSSL::Digest.new('sha256')
-    OpenSSL::HMAC.hexdigest(digest, Settings.future_secret, data)
+    OpenSSL::HMAC.hexdigest(digest, Setting.future_secret, data)
   end
 
   def sync_limit_order(order)
@@ -184,7 +184,7 @@ class Future < Market
       reqs_string = reqs.sort.map {|x| x.join('=')}.join('&')
       res = Faraday.post do |req|
         req.url order_url
-        req.headers['X-MBX-APIKEY'] = Settings.future_key
+        req.headers['X-MBX-APIKEY'] = Setting.future_key
         req.params['symbol'] = symbol
         req.params['side'] = side
         req.params['positionSide'] = position
@@ -219,7 +219,7 @@ class Future < Market
       reqs_string = reqs.sort.map {|x| x.join('=')}.join('&')
       res = Faraday.post do |req|
         req.url order_url
-        req.headers['X-MBX-APIKEY'] = Settings.future_key
+        req.headers['X-MBX-APIKEY'] = Setting.future_key
         req.params['symbol'] = symbol
         req.params['side'] = side
         req.params['positionSide'] = order.position
@@ -354,7 +354,7 @@ class Future < Market
     params_string = "recvWindow=5000&symbol=#{symbol}&timestamp=#{timestamp}"
     res = Faraday.delete do |req|
       req.url delete_url
-      req.headers['X-MBX-APIKEY'] = Settings.future_key
+      req.headers['X-MBX-APIKEY'] = Setting.future_key
       req.params['symbol'] = symbol
       req.params['recvWindow'] = 5000
       req.params['timestamp'] = timestamp
@@ -369,7 +369,7 @@ class Future < Market
     params_string = "recvWindow=5000&symbol=#{symbol}&timestamp=#{timestamp}"
     res = Faraday.get do |req|
       req.url get_url
-      req.headers['X-MBX-APIKEY'] = Settings.future_key
+      req.headers['X-MBX-APIKEY'] = Setting.future_key
       req.params['symbol'] = symbol
       req.params['recvWindow'] = 5000
       req.params['timestamp'] = timestamp

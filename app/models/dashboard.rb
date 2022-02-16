@@ -6,7 +6,7 @@ class Dashboard
 
   def self.hamc_digest(string)
     sha512 = OpenSSL::Digest.new('SHA512')
-    OpenSSL::HMAC.hexdigest(sha512, Settings.apiSecret, string)
+    OpenSSL::HMAC.hexdigest(sha512, Setting.apiSecret, string)
   end
 
 end
