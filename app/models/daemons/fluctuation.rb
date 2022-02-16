@@ -46,8 +46,8 @@ class Fluctuation
 
     def start
       begin
-        future_usdt_tickers if Settings.fluctuation_future
-        binance_usdt_tickers if Settings.fluctuation_binance
+        future_usdt_tickers if Setting.fluctuation_future
+        binance_usdt_tickers if Setting.fluctuation_binance
       rescue => detail
         Notice.exception(detail, "Deamon Fluctuation")
       end

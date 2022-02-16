@@ -18,7 +18,7 @@ set :puma_init_active_record, true
 set :linked_files, %w{
   config/database.yml
   config/secrets.yml
-  config/settings.rb
+  config/settings.yml
 }
 
 set :linked_dirs, %w{
