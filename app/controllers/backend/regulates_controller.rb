@@ -56,6 +56,46 @@ class Backend::RegulatesController < Backend::BaseController
     render json: { message: 'Success'}
   end
 
+  def kai_long
+    amount = @regulate.fast_cash
+    market = @regulate.market
+    price  = market.get_book[:bid]
+    market.new_kai_long(price, amount)
+    flash[:notice] = "新增开多持仓"
+    redirect_to :back
+  end
+
+  def ping_long
+    market = @regulate.market
+    price  = market.get_book[:ask]
+    long   = market.long_position
+    if long['positionAmt'].to_f.abs > 0
+      market.new_ping_long(price, long['positionAmt'].to_f.abs)
+      flash[:notice] = "开多持仓已完成平仓"
+    end
+    redirect_to :back
+  end
+
+  def kai_short
+    amount = @regulate.fast_cash
+    market = @regulate.market
+    price  = market.get_book[:bid]
+    market.new_kai_short(price, amount)
+    flash[:notice] = "新增开空持仓"
+    redirect_to :back
+  end
+
+  def ping_short
+    market = @regulate.market
+    price  = market.get_book[:ask]
+    short  = market.short_position
+    if short['positionAmt'].to_f.abs > 0
+      market.new_ping_short(price, short['positionAmt'].to_f.abs)
+      flash[:notice] = "开空持仓已完成平仓"
+    end
+    redirect_to :back
+  end
+
 private
 
   def regulate_params

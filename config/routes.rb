@@ -40,6 +40,10 @@ Rails.application.routes.draw do
     end
     resources :regulates do
       get :change_state, on: :member
+      get :kai_long, on: :member
+      get :ping_long, on: :member
+      get :kai_short, on: :member
+      get :ping_short, on: :member
     end
     resources :accounts do
       get :sync_balance, on: :collection

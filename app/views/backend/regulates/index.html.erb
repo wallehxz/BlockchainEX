@@ -39,9 +39,23 @@
                   <% end %>
                   <% if item.market.source == 'future' %>
                     <% long = item.market.long_position%>
-                    多单头寸： +<%= long['positionAmt'] %> <br>
+                    <a href="<%= kai_long_backend_regulate_path(item) %>" class="btn bg-olive btn-flat" data-confirm="确定开多吗？">
+                      开多
+                    </a>
+                    <a href="<%= ping_long_backend_regulate_path(item) %>" class="btn bg-red btn-flat" data-confirm="确定平仓多单吗？">
+                      平多
+                    </a>
+                    多单头寸： +<%= long['positionAmt'] %>
+                    <br><br>
                     <% short = item.market.short_position%>
-                    空单头寸： <%= short['positionAmt'] %><br>
+                    <a href="<%= kai_short_backend_regulate_path(item) %>" class="btn bg-blue btn-flat" data-confirm="确定开空吗？">
+                      开空
+                    </a>
+                    <a href="<%= ping_short_backend_regulate_path(item) %>" class="btn bg-red btn-flat" data-confirm="确定平仓空单吗？">
+                      平空
+                    </a>
+                    空单头寸： <%= short['positionAmt'] %>
+                    <br>
                   <% end %>
                 </td>
                 <td style="text-align: left">
