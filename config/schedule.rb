@@ -31,9 +31,10 @@
 # Learn more: http://github.com/javan/whenever
 
 # 获取期货涨跌排行
-every '0,30 * * * *' do
-  runner "Fluctuation.start"
-end
+
+# every '0,30 * * * *' do
+#   runner "Fluctuation.start"
+# end
 
 # 止盈止损
 every '* * * * *' do

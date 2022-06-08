@@ -25,7 +25,7 @@
                 <li class="user_menu">
                   <a class="herd_user_info" style="min-width: 158px">
                     <img src="<%= image_path('smile.png') %>">
-                    <span>Wyckoff</span>
+                    <span><%= current_user.email.split('@')[0]&.capitalize %></span>
                   </a>
                   <div class="menus">
                     <ul>

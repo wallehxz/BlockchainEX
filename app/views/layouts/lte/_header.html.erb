@@ -2,7 +2,7 @@
   <span class="logo-mini">
     <img src="<%= image_path('favicon.png')%>" style="width: 35px;">
   </span>
-  <span class="logo-lg"><b>Wyckoff</b></span>
+  <span class="logo-lg"><b>数字期货</b></span>
 </a>
 <nav class="navbar navbar-static-top">
   <!-- Sidebar toggle button-->
@@ -16,7 +16,7 @@
       <li class="dropdown user user-menu">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
           <img src="<%= image_path('smile.png')%>" class="user-image" alt="User Image">
-          <span class="hidden-xs"><%= current_user.email.split('@')[0] %></span>
+          <span class="hidden-xs"><%= current_user.email.split('@')[0]&.capitalize %></span>
         </a>
         <ul class="dropdown-menu">
           <!-- User image -->
