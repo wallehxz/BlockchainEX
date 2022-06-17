@@ -85,7 +85,7 @@ class Market < ActiveRecord::Base
   end
 
   def full_name
-    "【#{quote_unit}-#{base_unit}】#{type}"
+    "[#{type}] #{quote_unit}-#{base_unit}"
   end
 
   def symbols
@@ -143,10 +143,58 @@ class Market < ActiveRecord::Base
     candles.last(amount.to_i).map {|x| x.v }
   end
 
+  def min_notice
+    push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Setting.dingding_bot}"
+    body_params ={ msgtype:'markdown', markdown:{ title: "趋势下跌" } }
+    body_params[:markdown][:text] =
+      "## 趋势下跌\n\n" +
+      "> 市场： #{full_name}\n\n" +
+      "> 时间： #{last_quote.ts.to_s(:short)}\n\n" +
+      "> 现价： #{last_quote.c}\n\n" +
+      "> 高价： #{last_quote.h}\n\n" +
+      "> 低价： #{last_quote.l}\n\n" +
+      "> 数量： #{last_quote.v}\n\n" +
+      "> ![screenshot](#{Notice.rand_picture})\n"
+    res = Faraday.post do |req|
+      req.url push_url
+      req.headers['Content-Type'] = 'application/json'
+      req.body = body_params.to_json
+    end
+
+    content = "趋势下跌\n\n" +
+          " 市场： #{full_name}\n\n" +
+          " 价格： #{last_quote.c}\n\n" +
+          " 数量： #{last_quote.v}\n\n"
+    Notice.wechat(content)
+  end
+
+  def max_notice
+    push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Setting.dingding_bot}"
+    body_params ={ msgtype:'markdown', markdown:{ title: "趋势上涨" } }
+    body_params[:markdown][:text] =
+      "## 趋势上涨\n\n" +
+      "> 市场： #{full_name}\n\n" +
+      "> 时间： #{last_quote.ts.to_s(:short)}\n\n" +
+      "> 现价： #{last_quote.c}\n\n" +
+      "> 高价： #{last_quote.h}\n\n" +
+      "> 低价： #{last_quote.l}\n\n" +
+      "> 数量： #{last_quote.v}\n\n" +
+      "> ![screenshot](#{Notice.rand_picture})\n"
+    res = Faraday.post do |req|
+      req.url push_url
+      req.headers['Content-Type'] = 'application/json'
+      req.body = body_params.to_json
+    end
+    content = "趋势上涨\n\n" +
+              " 市场： #{full_name}\n\n" +
+              " 价格： #{last_quote.c}\n\n" +
+              " 数量： #{last_quote.v}\n\n"
+    Notice.wechat(content)
+  end
+
   def extreme_report
     if min_48 == last_quote.c
-      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 4H DOWN Price #{last_quote.c} Vol #{last_quote.v}"
-      quote_notice(tip)
+      min_notice if regulate&.notify_dd
       #行情下跌 先开空 后再收益平空
       if source == 'future'
         if regulate.range_trade
@@ -163,8 +211,7 @@ class Market < ActiveRecord::Base
     end
 
     if max_48 == last_quote.c
-      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 4H UP Price #{last_quote.c} Vol #{last_quote.v}"
-      quote_notice(tip)
+      max_notice if regulate&.notify_dd
       # 行情上涨 先开多 后再收益平多
       if source == 'future'
         if regulate.range_trade
@@ -182,10 +229,29 @@ class Market < ActiveRecord::Base
   end
 
   def volume_report
-    if vol_96.max == last_quote.v
-      kline = last_quote.kline_info
-      tip = "[#{Time.now.strftime('%H:%M')}] #{full_name} 8H MaxVols #{last_quote.v} Price #{last_quote.c}，Float #{kline}"
-      quote_notice(tip)
+    if regulate&.notify_dd && vol_96.max == last_quote.v
+      push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Setting.dingding_bot}"
+      body_params ={ msgtype:'markdown', markdown:{ title: "交易放量" } }
+      body_params[:markdown][:text] =
+        "## 交易放量\n\n" +
+        "> 市场： #{full_name}\n\n" +
+        "> 时间： #{last_quote.ts.to_s(:short)}\n\n" +
+        "> 现价： #{last_quote.c}\n\n" +
+        "> 高价： #{last_quote.h}\n\n" +
+        "> 低价： #{last_quote.l}\n\n" +
+        "> 数量： #{last_quote.v}\n\n" +
+        "> ![screenshot](#{Notice.rand_picture})\n"
+      res = Faraday.post do |req|
+        req.url push_url
+        req.headers['Content-Type'] = 'application/json'
+        req.body = body_params.to_json
+      end
+
+      content = "交易放量\n\n" +
+            " 市场： #{full_name}\n\n" +
+            " 价格： #{last_quote.c}\n\n" +
+            " 数量： #{last_quote.v}\n\n"
+      Notice.wechat(content)
     end
   end
 

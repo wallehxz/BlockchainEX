@@ -29,6 +29,20 @@ class Notice
       end
     end
 
+    def wechat(content = '内容')
+      push_url = "http://wxpusher.zjiecode.com/api/send/message"
+      body_params ={}
+      body_params['appToken'] = 'AT_0l9soo2UqtyitwRZSBpJyUAlr0uF3J1F'
+      body_params['content'] = content
+      body_params['contentType'] = 1
+      body_params['topicIds'] = [6402]
+      res = Faraday.post do |req|
+        req.url push_url
+        req.headers['Content-Type'] = 'application/json'
+        req.body = body_params.to_json
+      end
+    end
+
     def exception(ex, mark = "application")
       path = Rails.root.to_s
       log = ex.backtrace.select { |l| l.include? path }.map {|l| l.gsub(path,'')}.join("\n")
@@ -41,5 +55,8 @@ class Notice
         dingding(content)
     end
 
+    def rand_picture
+      Faraday.get('https://source.unsplash.com/random/400x200').headers['location']
+    end
   end
 end

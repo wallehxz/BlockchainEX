@@ -85,7 +85,7 @@ class Order < ActiveRecord::Base
         "> 价格：#{price} #{market.base_unit}\n\n" +
         "> 数量：#{amount} #{market.quote_unit}\n\n" +
         "> 成交额 #{total.round(4)} #{market.base_unit}\n\n" +
-        "> ![screenshot](https://source.unsplash.com/random/400x200)\n"
+        "> ![screenshot](#{Notice.rand_picture})\n"
       res = Faraday.post do |req|
         req.url push_url
         req.headers['Content-Type'] = 'application/json'

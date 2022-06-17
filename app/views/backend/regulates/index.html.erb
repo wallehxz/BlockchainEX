@@ -63,6 +63,7 @@
                   单次交易： <%= item.fast_cash %> <%= item.market.quote_unit %><br>
                   浮动收益： <%= item.cash_profit %> <%= item.market.base_unit %><br>
                   亏损成本： <%= item.support %> <%= item.market.base_unit %><br>
+                  当前价位： <%= item.market.get_price %><br>
                   <% if item.market.source    == 'binance' %>
                     现货头寸： <%= item.current_fund.to_d.round(item.amount_precision, :down)  rescue 0 %><br>
                     平均成本： <%= item.market.avg_cost.to_d.round(item.price_precision, :down) rescue 0 %><br>
