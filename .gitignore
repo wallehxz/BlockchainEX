@@ -16,4 +16,8 @@
 /config/settings.rb
 /config/database.yml
 /config/deploy/online.rb
+/config/pdatabase.yml
+/config/psecrets.yml
+/config/psettings.yml
 /.rvmrc
+/public/assets

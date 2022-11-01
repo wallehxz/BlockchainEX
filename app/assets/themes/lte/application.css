@@ -1,7 +1,6 @@
 /*
  *=require ./css/bootstrap
- *=require ./css/font-awesome
- *=require ./css/ionicons
+ *=require font-awesome
  *=require ./css/googleapis
  *=require ./css/AdminLTE
  *=require ./css/skins
@@ -13,7 +12,6 @@
  *=require ./css/bootstrap-switch
  *=require ./css/paginate
  */
-
  .chart-container {
   background: #f2f2f2;
  }

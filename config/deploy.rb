@@ -33,29 +33,32 @@ set :linked_dirs, %w{
 
 namespace :deploy do
 
-  desc '管理数据库配置文件'
-  task :setup_config do
-    on roles(:web) do |host|
-      execute :mkdir, "-p #{deploy_to}/shared/config"
-      upload! 'config/database.yml.sample', "#{deploy_to}/shared/config/database.yml"
-      upload! 'config/secrets.yml.sample', "#{deploy_to}/shared/config/secrets.yml"
+  desc '预创建项目配置文档'
+  task :touch_linked_files do
+    on roles(:app) do
+      info '预创建项目配置文档...'
+      execute :touch, "#{deploy_to}/shared/config/database.yml"
+      execute :touch, "#{deploy_to}/shared/config/secrets.yml"
+      execute :touch, "#{deploy_to}/shared/config/settings.yml"
     end
   end
 
-  desc '重启服务'
-  task :restart do
-    on roles(:app), in: :sequence, wait: 5 do
-      execute :touch, release_path.join('tmp/restart.txt')
+  desc '上传项目配置文档'
+  task :upload_linked_files do
+    on roles(:app) do
+      info '上传项目配置文档...'
+      upload! 'config/pdatabase.yml', "#{deploy_to}/shared/config/database.yml"
+      upload! 'config/psecrets.yml', "#{deploy_to}/shared/config/secrets.yml"
+      upload! 'config/psettings.yml', "#{deploy_to}/shared/config/settings.yml"
     end
   end
 
-  desc '将配置数据写入数据库'
-  task :seed do
-    on roles(fetch(:migration_role)) do
+  desc '安装生产环境依赖 Gems'
+  task :bundle_install do
+    on roles(:app) do
       within release_path do
-        with rails_env: fetch(:rails_env) do
-          execute :rake, 'db:seed'
-        end
+        info "安装生产环境依赖 Gems...#{release_path}"
+        execute " bundle install --path #{deploy_to}/shared/bundle --without development test  --deployment"
       end
     end
   end
@@ -70,8 +73,32 @@ namespace :deploy do
       end
     end
   end
+
+  desc '本地编译样式文件上传至服务器'
+  task :local_compile_upload do
+    run_locally do
+      info "清除旧版编译文件..."
+      execute 'rake assets:clobber'
+      info "编译本地项目样式文件..."
+      execute 'rake assets:precompile RAILS_ENV=production'
+      info '上传本地编译文件至服务器...'
+      execute "rsync -avz public/assets zalle@block.xfgll.xyz:#{shared_path}/public"
+    end
+  end
+
 end
 
 
-# after 'deploy:finished', 'daemons:stop'
+# 跳过 precompile
+Rake::Task['deploy:assets:precompile'].clear_actions
+# after 'bundler:install', 'deploy:local_compile_upload'
+# Rake::Task['whenever:update_crontab'].clear_actions
+
+# 在项目部署完成后再更新定时任务
+
+# 第一次执行部署
+# before 'deploy:check:linked_files', 'deploy:touch_linked_files'
+# before 'deploy:check:linked_files', 'deploy:upload_linked_files'
 # before 'deploy:migrate', 'deploy:db_create'
+
+# after 'deploy:cleanup', 'deploy:update_crontab'

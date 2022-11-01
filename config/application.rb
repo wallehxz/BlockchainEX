@@ -50,9 +50,9 @@ module BlockChain
     config.action_mailer.raise_delivery_errors = true
 
     config.action_mailer.smtp_settings = {
-      address:         Setting.email_stmp_address,
-      port:            Setting.email_stmp_port,
-      user_name:       Setting.email_account,
+      address:          Setting.email_stmp_address,
+      port:               Setting.email_stmp_port,
+      user_name:      Setting.email_account,
       password:        Setting.email_password,
       authentication: :plain,
       enable_starttls_auto: true

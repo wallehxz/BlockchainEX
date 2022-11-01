@@ -112,6 +112,8 @@ GEM
     faraday-patron (1.0.0)
     faraday-rack (1.0.0)
     ffi (1.15.4)
+    font-awesome-rails (4.7.0.8)
+      railties (>= 3.2, < 8.0)
     formatador (0.3.0)
     fume-settable (0.0.3)
       activesupport (>= 3.0)
@@ -277,6 +279,7 @@ DEPENDENCIES
   devise
   enumerize
   faraday
+  font-awesome-rails (= 4.7.0.8)
   fume-settable
   guard-livereload
   jbuilder
