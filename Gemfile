@@ -2,7 +2,7 @@ source 'https://gems.ruby-china.com/'  #Ruby-China源
 # source 'https://rubygems.org/'  #官方源
 
 gem 'rails', '4.2.11.3'
-gem 'nokogiri', '1.10.10'
+gem 'nokogiri', '1.13.9'
 gem 'sass-rails', '5.0.6' # Use SCSS for stylesheets
 gem "font-awesome-rails", '4.7.0.8'
 gem 'uglifier', '3.0.2' # Use Uglifier as compressor for JavaScript assets
