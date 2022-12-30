@@ -13,7 +13,8 @@
 /log/*
 !/log/.keep
 /tmp
-config/settings.yml
+/config/settings.yml
+/config/deploy.rb
 /config/database.yml
 /config/deploy/online.rb
 /config/pdatabase.yml
