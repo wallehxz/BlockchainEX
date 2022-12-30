@@ -19,6 +19,7 @@ wechat_group_key: 'xxxxxxxx'
 #https://open-doc.dingtalk.com/docs/doc.htm?treeId=257&articleId=105735&docType=1
 dingding_bot: 'xxxxxxxx'
 trading_bot: 'xxxxxxx'
+wc_bot: 'xxxxxxx'
 yunpian_key: 'xxxxxxxx'
 yunpian_tpl: '123456'
 

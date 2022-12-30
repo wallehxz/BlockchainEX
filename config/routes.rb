@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   get '/trending/marks',   to: "trending#marks"
   get '/webhook',          to: "api/tickers#webhook"
   post '/trade',           to: 'webhooks#trade'
+  post '/wcblock',         to: 'webhooks#wcblock'
 
   namespace :api do
     resources :tickers do

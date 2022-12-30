@@ -91,7 +91,7 @@ end
 
 # 跳过 precompile
 Rake::Task['deploy:assets:precompile'].clear_actions
-# after 'bundler:install', 'deploy:local_compile_upload'
+after 'bundler:install', 'deploy:local_compile_upload'
 # Rake::Task['whenever:update_crontab'].clear_actions
 
 # 在项目部署完成后再更新定时任务

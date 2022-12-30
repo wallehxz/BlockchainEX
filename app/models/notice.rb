@@ -29,6 +29,16 @@ class Notice
       end
     end
 
+    def wcbot(content = '内容')
+      push_url = "https://oapi.dingtalk.com/robot/send?access_token=#{Setting.wc_bot}"
+      body_params ={ msgtype:'text', text:{ content: content } }
+      res = Faraday.post do |req|
+        req.url push_url
+        req.headers['Content-Type'] = 'application/json'
+        req.body = body_params.to_json
+      end
+    end
+
     def wechat(content = '内容')
       push_url = "http://wxpusher.zjiecode.com/api/send/message"
       body_params ={}

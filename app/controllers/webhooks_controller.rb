@@ -25,6 +25,11 @@ class WebhooksController < ApplicationController
     render json: {msg: 'success!'}
   end
 
+  def wcblock
+    Notice.wcbot(body.to_s)
+    Notice.dingding(body.to_s)
+  end
+
 private
 
   def find_market
