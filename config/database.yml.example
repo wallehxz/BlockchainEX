@@ -18,3 +18,26 @@ test:
 production:
   <<: *defaults
   database: bcwallet_development
+
+
+
+default: &defaults
+  adapter: postgresql
+  encoding: utf8
+  host: localhost
+  username: postgres
+  password: postgres
+  pool: 10
+  reconnect: true
+
+development:
+  <<: *defaults
+  database: wyckoff_development
+
+# test:
+#   <<: *defaults
+#   database: bcwallet_test
+
+production:
+  <<: *defaults
+  database: trading

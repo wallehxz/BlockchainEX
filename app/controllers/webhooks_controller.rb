@@ -1,6 +1,6 @@
 class WebhooksController < ApplicationController
 
-  # url  http://gogogle.cc/trade
+  # url  https://block.xfgll.xyz/trade
   # body = {"market": "BTC-USDT", "cmd": "step|market|bid|ask|cache|all_in", "msg": "text"}
   # body = {"market": "BTC-USDT", "cmd": "{{strategy.order.action}}", "msg": "text"}
   def trade
@@ -25,9 +25,11 @@ class WebhooksController < ApplicationController
     render json: {msg: 'success!'}
   end
 
+  # https://block.xfgll.xyz/wcblock
   def wcblock
-    Notice.wcbot(body.to_s)
-    Notice.dingding(body.to_s)
+    Notice.wcbot(params[:webhook].to_s)
+    Notice.dingding(params[:webhook].to_s)
+    render json: {msg: 'success!'}
   end
 
 private

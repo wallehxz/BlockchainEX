@@ -22,3 +22,5 @@
 /config/psettings.yml
 /.rvmrc
 /public/assets
+/db/development.sqlite3
+/db/test.sqlite3

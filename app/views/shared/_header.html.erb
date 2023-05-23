@@ -14,7 +14,7 @@
           <div class="collapse navbar-collapse navbar-right" id="myNavbar">
             <ul class="nav navbar-nav pc_menu">
               <li class="user_menu">
-                <a style="min-width: 160px">&nbsp;<i class="fa fa-bar-chart"></i>市场</a>
+                <a style="min-width: 160px">&nbsp;<i class="fa fa-bar-chart"></i>&nbsp;市场</a>
                 <div class="menus">
                   <ul style="margin: auto;">
                     <%= render partial:'shared/market_list' %>
@@ -34,8 +34,8 @@
                   </div>
                 </li>
               <% else %>
-                <li><a href="<%= sign_up_path %>">注册&nbsp;<i class="fa fa-user-plus"></i></a></li>
-                <li><a href="<%= sign_in_path %>">登录&nbsp;<i class="fa fa-sign-in"></i></a></li>
+                <li><a href="<%= sign_up_path %>"><i class="fa fa-user-plus"></i>&nbsp;注册</a></li>
+                <li><a href="<%= sign_in_path %>"><i class="fa fa-sign-in"></i>&nbsp;登录</a></li>
               <% end %>
             </ul>
             <ul class="nav navbar-nav mobile_menu">

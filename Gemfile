@@ -24,7 +24,8 @@ gem 'devise' #,'3.4.0' # User authentication
 # gem 'daemons-rails' #, '1.2.1' #进程管理
 gem 'enumerize' #, '2.2.2' # 多标签选项
 gem 'aasm' #, '5.0.1' #状态管理
-gem 'pg', '0.20.0'
+# gem 'pg', '0.20.0'
+gem 'sqlite3', '~> 1.3.6'
 gem 'mail' #, '2.7.1' #邮件管理
 gem 'pry-rails' #, '0.3.4'
 gem 'whenever', require: false # https://github.com/javan/whenever
