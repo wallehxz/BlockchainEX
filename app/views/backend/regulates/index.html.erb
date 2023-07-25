@@ -4,14 +4,14 @@
     收益风控 <small>预览</small>
   </h1>
   <ol class="breadcrumb">
-    <li><a href="#"><i class="fa fa-btc"></i> Dashboard</a></li>
-    <li class="active"><i class="fa fa-balance-scale"></i> 收益风控</li>
+    <li><a href="#"><i><img src="<%= image_path('octicons/milestone-24.svg') %>" style="height: 20px;"></i> Dashboard</a></li>
+    <li class="active"><i><img src="<%= image_path('octicons/law-24.svg') %>" style="height: 20px;"></i> 交易权重</li>
   </ol>
 </section>
 <section class="content">
   <div class="box box-primary">
     <div class="box-header">
-      <a href="<%= new_backend_regulate_path %>" class="btn bg-primary btn-flat"><i class="fa fa-plus"></i> 添加风控</a>
+      <a href="<%= new_backend_regulate_path %>" class="btn bg-primary btn-flat"><i><img src="<%= image_path('octicons/plus-circle-24.svg') %>" style="height: 20px;"></i> 添加风控</a>
     </div>
     <div class="box-body">
       <div class="row">
@@ -85,10 +85,10 @@
                 </td>
                 <td><br>
                   <a href="<%= edit_backend_regulate_path(item) %>" class="btn bg-orange btn-flat">
-                    <i class="fa fa-edit"></i>
-                  </a>
+                    <i><img src="<%= image_path('octicons/tools-24.svg') %>" style="height: 18px;"></i>
+                  </a><br><br>
                   <a href="<%= backend_regulate_path(item) %>" class="btn bg-red btn-flat" data-method="delete" data-confirm="确定删除吗？">
-                    <i class="fa fa-trash"></i>
+                    <i><img src="<%= image_path('octicons/trash-24.svg') %>" style="height: 18px;"></i>
                   </a>
                 </td>
               </tr>

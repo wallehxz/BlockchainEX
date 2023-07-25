@@ -3,39 +3,27 @@
   <div class="col-md-5">
     <div class="form-group has-warning">
       <label>交易所</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-cube"></i>
-        </div>
+      <div class="input-group  col-md-12">
         <%= f.select(:source, [['BINANCE','binance'],['Future','future']], {prompt:'选择交易所'}, {:class => 'form-control'}) %>
       </div>
       <%= model_errors(@market,'source') %>
     </div>
     <div class="form-group has-success">
       <label>排序</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-sort-numeric-asc"></i>
-        </div>
+      <div class="input-group  col-md-12">
         <%= f.text_field :sequence, class:'form-control', placeholder:'（必填* 展示排列顺序）' %>
       </div>
     </div>
     <div class="form-group has-success">
       <label>货币</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-btc"></i>
-        </div>
+      <div class="input-group  col-md-12">
         <%= f.text_field :quote_unit, class:'form-control', placeholder:'（必填* 市场货币 BTC）' %>
       </div>
       <%= model_errors(@market,'quote_unit') %>
     </div>
     <div class="form-group has-success">
       <label>对标币</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-money"></i>
-        </div>
+      <div class="input-group col-md-12">
         <%= f.text_field :base_unit, class:'form-control', placeholder:'（必填* 标的货币 USDT）' %>
       </div>
       <%= model_errors(@market,'quote_unit') %>

@@ -1,3 +1,8 @@
 <% Market.seq.each do |item| %>
-  <li style="text-align: left;white-space: nowrap;"><a href="<%= market_quote_path(item.symbols) %>"><i class="fa fa-globe"></i>&nbsp;&nbsp;<%= item.symbols %></a></li>
+  <li style="text-align: left;white-space: nowrap;">
+    <a href="<%= market_quote_path(item.symbols) %>">
+      <i><img src="<%= image_path('octicons/mention-24.svg') %>" style="height: 20px;background-color: white;"></i>
+      &nbsp;&nbsp;<%= item.symbols %>
+    </a>
+  </li>
 <% end %>

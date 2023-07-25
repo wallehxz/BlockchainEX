@@ -3,8 +3,8 @@
     市场 <small>信息预览</small>
   </h1>
   <ol class="breadcrumb">
-    <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-    <li class="active"><i class="fa fa-exchange"></i> 市场列表</li>
+    <li><a href="#"><i><img src="<%= image_path('octicons/milestone-24.svg') %>" style="height: 20px;"></i> Dashboard</a></li>
+    <li class="active"><i><img src="<%= image_path('octicons/graph-24.svg') %>" style="height: 20px;"></i> 市场行情</li>
   </ol>
 </section>
 <section class="content">
@@ -29,7 +29,7 @@
                 <td><%= item.short_date %>
                   &nbsp;&nbsp;
                   <a href="<%= backend_market_candle_path(@market,item) %>" data-method="delete" data-confirm="确定删除该条行情吗？">
-                    <i class="fa fa-close"></i>
+                    <i><img src="<%= image_path('octicons/trash-24.svg') %>" style="height: 18px;"></i>
                   </a>
                 </td>
                 <td><%= item.o %></td>

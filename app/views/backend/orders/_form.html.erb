@@ -1,85 +1,58 @@
 <%= form_for(['backend',@order]) do |f| %>
 <div class="box-body">
-  <div class="col-md-5">
+  <div>
     <div class="form-group has-error">
       <label>市场</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-btc"></i>
-        </div>
+      <div class="input-group col-md-4">
         <%= f.select(:market_id, Market.seq.map{ |x| [x.full_name,x.id] }, {prompt:'请选择市场'}, {:class => 'form-control'}) %>
       </div>
     </div>
     <div class="form-group has-error">
       <label>交易</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-thermometer-half"></i>
-        </div>
+      <div class="input-group col-md-4">
         <%= f.select(:type, [['买入', 'OrderBid'],['卖出', 'OrderAsk']], {prompt:'请选择属性'}, {:class => 'form-control'}) %>
       </div>
     </div>
     <div class="form-group has-error">
       <label>头寸</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-hourglass-1"></i>
-        </div>
+      <div class="input-group col-md-4">
         <%= f.select(:position, [['做多', 'LONG'],['做空', 'SHORT']], {prompt:'请选择价格'}, {:class => 'form-control'}) %>
       </div>
     </div>
     <div class="form-group has-error">
       <label>类别</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-thermometer-half"></i>
-        </div>
+      <div class="input-group col-md-4">
         <%= f.select(:category, [['限价', 'limit'],['市价', 'market'],['阶梯价', 'step']], {prompt:'请选择价格'}, {:class => 'form-control'}) %>
       </div>
     </div>
     <div class="form-group has-success">
       <label>数量</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-book"></i>
-        </div>
+      <div class="input-group col-md-4">
         <%= f.text_field :amount, class:'form-control', placeholder:'（必填* 交易数量）' %>
       </div>
     </div>
     <div class="form-group has-success">
       <label>价格</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-money"></i>
-        </div>
+      <div class="input-group col-md-4">
         <%= f.text_field :price, class:'form-control', placeholder:'（必填* 交易价格）' %>
       </div>
     </div>
     <% if action_name == 'edit' %>
       <div class="form-group has-success">
         <label>总数</label>
-        <div class="input-group">
-          <div class="input-group-addon">
-            <i class="fa fa-book"></i>
-          </div>
+        <div class="input-group col-md-4">
           <%= f.text_field :total, class:'form-control' %>
         </div>
       </div>
       <div class="form-group has-warning">
         <label>交易状态</label>
-        <div class="input-group">
-          <div class="input-group-addon">
-            <i class="fa fa-thermometer-half"></i>
-          </div>
+        <div class="input-group col-md-4">
           <%= f.select(:state, [['init', 'init'],['succ', 'succ'],['cancel', 'cancel'],['fail', 'fail'],['rescue', 'rescue']], {prompt:'请选择交易'},{:class => 'form-control'}) %>
         </div>
       </div>
       <div class="form-group has-warning">
         <label>失败原因</label>
-        <div class="input-group">
-          <div class="input-group-addon">
-            <i class="fa fa-book"></i>
-          </div>
+        <div class="input-group col-md-4">
           <%= f.text_field :cause, class:'form-control' %>
         </div>
       </div>

@@ -1,93 +1,63 @@
 <%= form_for(['backend',@regulate]) do |f| %>
 <div class="box-body">
-  <div class="col-md-5">
+  <div>
     <div class="form-group has-error">
       <label>货币市场</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-btc"></i>
-        </div>
+      <div class="input-group col-md-4">
         <%= f.select(:market_id, Market.all.map{|x| [x.full_name,x.id]}, {prompt:'请选择市场'},{:class => 'form-control'}) %>
       </div>
     </div>
     <div class="form-group has-error">
       <label>数量精度</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-dot-circle-o"></i>
-        </div>
+      <div class="input-group col-md-4">
         <%= f.text_field :amount_precision, class:'form-control', placeholder:'（必填* 交易数量精度）' %>
       </div>
     </div>
     <div class="form-group has-error">
       <label>价格精度</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-dot-circle-o"></i>
-        </div>
+      <div class="input-group col-md-4">
         <%= f.text_field :price_precision, class:'form-control', placeholder:'（必填* 交易价格精度）' %>
       </div>
     </div>
     <div class="form-group has-error">
       <label>亏损成本</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-fire"></i>
-        </div>
+      <div class="input-group col-md-4">
         <%= f.text_field :support, class:'form-control', placeholder:'（必填* 亏损成本）' %>
       </div>
     </div>
     <div class="form-group has-error">
       <label>交易数量</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-money"></i>
-        </div>
+      <div class="input-group col-md-4">
         <%= f.text_field :fast_cash, class:'form-control', placeholder:'（必填* 交易数量）' %>
       </div>
     </div>
     <div class="form-group has-success">
       <label>最大头寸</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-battery-4"></i>
-        </div>
+      <div class="input-group col-md-4">
         <%= f.text_field :retain, class:'form-control', placeholder:'（必填* 最大持有币种数量）' %>
       </div>
     </div>
     <div class="form-group has-success">
       <label>浮动收益</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-money"></i>
-        </div>
+      <div class="input-group col-md-4">
         <%= f.text_field :cash_profit, class:'form-control', placeholder:'（必填* 价格浮动收益）' %>
       </div>
     </div>
     <div class="form-group has-success">
       <label>建仓价位</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-level-up"></i>
-        </div>
+      <div class="input-group col-md-4">
         <%= f.text_field :cost, class:'form-control', placeholder:'（必填* 建仓价位）' %>
       </div>
     </div>
     <div class="form-group has-success">
       <label>压力价位</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-level-down"></i>
-        </div>
+      <div class="input-group col-md-4">
         <%= f.text_field :resistance, class:'form-control', placeholder:'（必填* 压力价位）' %>
       </div>
     </div>
     <div class="form-group has-success">
       <label>长期收益</label>
-      <div class="input-group">
-        <div class="input-group-addon">
-          <i class="fa fa-gift"></i>
-        </div>
+      <div class="input-group col-md-4">
         <%= f.text_field :range_profit, class:'form-control', placeholder:'（必填* 长期收益）' %>
       </div>
     </div>

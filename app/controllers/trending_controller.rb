@@ -58,7 +58,7 @@ class TrendingController < ApplicationController
     market_lists = Market.market_list
     market = Market.find(market_lists[params[:symbol]])
     to_time = params[:to].to_i > Time.now.to_i ? Time.now.to_i : params[:to].to_i - 300
-    orders = market.all_orders(params[:from].to_i * 1000, to_time * 1000).select {|x| x['status']=='FILLED'}
+    orders = market.all_orders(params[:from].to_i * 1000, to_time * 1000).select {|x| x['status']=='FILLED'} rescue []
     orders.each do |order|
       mark = {}
       mark[:id] = order['orderId']

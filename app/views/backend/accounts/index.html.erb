@@ -4,14 +4,14 @@
     账户资金 <small>信息预览</small>
   </h1>
   <ol class="breadcrumb">
-    <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-    <li class="active"><i class="fa fa-money"></i> 账户资金</li>
+    <li><a href="#"><i><img src="<%= image_path('octicons/milestone-24.svg') %>" style="height: 20px;"></i> Dashboard</a></li>
+    <li class="active"><i><img src="<%= image_path('octicons/diamond-24.svg') %>" style="height: 20px;"></i> 账户资金</li>
   </ol>
 </section>
 <section class="content">
   <div class="box box-primary">
     <div class="box-header">
-      <a href="<%= sync_balance_backend_accounts_path %>" class="btn bg-primary btn-flat"><i class="fa fa-check-square-o"></i> 同步账户</a>
+      <a href="<%= sync_balance_backend_accounts_path %>" class="btn bg-primary btn-flat"><i><img src="<%= image_path('octicons/issue-reopened-24.svg') %>"></i> 同步账户</a>
     </div>
     <div class="box-body">
       <div class="row">
@@ -35,7 +35,7 @@
                 <td><%= item.total %></td>
                 <td>
                   <a href="<%= backend_account_path(item) %>" class="btn bg-red btn-flat" data-method="delete" data-confirm="确定删除吗？">
-                    <i class="fa fa-trash"></i>
+                    <i><img src="<%= image_path('octicons/search-24.svg') %>" style="height: 18px;"></i>
                   </a>
                 </td>
               </tr>

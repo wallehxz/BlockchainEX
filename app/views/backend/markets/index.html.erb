@@ -5,14 +5,15 @@
     市场 <small>信息预览</small>
   </h1>
   <ol class="breadcrumb">
-    <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-    <li class="active"><i class="fa fa-exchange"></i> 市场列表</li>
+    <li><a href="#"><i><img src="<%= image_path('octicons/milestone-24.svg') %>" style="height: 20px;"></i> Dashboard</a></li>
+    <li class="active"><i><img src="<%= image_path('octicons/graph-24.svg') %>" style="height: 20px;"></i> 市场列表</li>
   </ol>
 </section>
 <section class="content">
   <div class="box box-primary">
     <div class="box-header">
-      <a href="<%= new_backend_market_path %>" class="btn bg-primary btn-flat"><i class="fa fa-plus"></i> 添加市场</a>
+      <a href="<%= new_backend_market_path %>" class="btn bg-primary btn-flat">
+        <i><img src="<%= image_path('octicons/plus-circle-24.svg') %>" style="height: 20px;"></i> 添加市场</a>
     </div>
     <div class="box-body">
       <div class="row">
@@ -33,14 +34,16 @@
               <tr style="text-align: center">
                 <td><br>
                   <label class="btn bg-black btn-flat" style="font-size: 16px">
-                    <i class="fa fa-cc-mastercard"></i>
+                    <i><img src="<%= image_path('octicons/cpu-24.svg') %>" style="background-color: white;height: 20px;"></i>
                     <%= item.source.camelize %>
                     <%= item.sequence %>
                   </label>
                 </td>
                 <td><br>
                   <label class="btn bg-black btn-flat" style="font-size: 16px;min-width: 100px">
-                    <i class="fa fa-dot-circle-o" style="float: left;"></i>
+                    <i style="float: left;">
+                      <img src="<%= image_path('octicons/info-24.svg') %>" style="background-color: white;height: 20px;">
+                    </i>&nbsp;
                     <%= item.full_name %>
                   </label>
                 </td>
@@ -61,23 +64,23 @@
                 </td>
                 <td style="text-align: left">
                   <a href="<%= edit_backend_market_path(item) %>" class="btn bg-orange btn-flat">
-                    <i class="fa fa-edit"></i>
+                    <i><img src="<%= image_path('octicons/tools-24.svg') %>" style="height: 18px;"></i>
                   </a>
                   <a href="<%= backend_market_path(item) %>" class="btn bg-red btn-flat" data-method="delete" data-confirm="确定删除吗？">
-                    <i class="fa fa-trash"></i>
+                    <i><img src="<%= image_path('octicons/trash-24.svg') %>" style="height: 18px;"></i>
                   </a>
                   <br><br>
                   <a href="<%= backend_market_candles_path(item) %>" class="btn bg-fuchsia btn-flat" title="行情列表">
-                    <i class="fa fa-area-chart"></i>
+                    <i><img src="<%= image_path('octicons/book-24.svg') %>" style="height: 18px;"></i>
                   </a>
                   <a href="<%= sync_balance_backend_market_path(item) %>" class="btn bg-yellow btn-flat" title="同步资金">
-                    <i class="fa fa-money"></i>
+                    <i><img src="<%= image_path('octicons/sync-24.svg') %>" style="height: 18px;"></i>
                   </a>
                   <a href="<%= sync_candles_backend_market_path(item) %>" class="btn bg-purple btn-flat" data-confirm="确定同步最新情数据吗？" title="同步行情">
-                    <i class="fa fa-chain"></i>
+                    <i><img src="<%= image_path('octicons/sort-desc-24.svg') %>" style="height: 18px;"></i>
                   </a>
-                  <a href="<%= clear_candles_backend_market_path(item) %>" class="btn bg-navy btn-flat" data-confirm="确定清空行情数据吗？" title="清空行情">
-                    <i class="fa fa-unlink"></i>
+                  <a href="<%= clear_candles_backend_market_path(item) %>" class="btn bg-red btn-flat" data-confirm="确定清空行情数据吗？" title="清空行情">
+                    <i><img src="<%= image_path('octicons/x-circle-fill-24.svg') %>" style="height: 18px;"></i>
                   </a>
                 </td>
               </tr>

@@ -14,7 +14,8 @@
           <div class="collapse navbar-collapse navbar-right" id="myNavbar">
             <ul class="nav navbar-nav pc_menu">
               <li class="user_menu">
-                <a style="min-width: 160px">&nbsp;<i class="fa fa-bar-chart"></i>&nbsp;市场</a>
+                <a style="min-width: 160px">
+                  &nbsp;<i><img src="<%= image_path('octicons/goal-24.svg') %>"></i>&nbsp;市场</a>
                 <div class="menus">
                   <ul style="margin: auto;">
                     <%= render partial:'shared/market_list' %>
@@ -24,7 +25,7 @@
               <% if current_user %>
                 <li class="user_menu">
                   <a class="herd_user_info" style="min-width: 158px">
-                    <img src="<%= image_path('smile.png') %>">
+                    <img src="<%= image_path('favicon.png') %>">
                     <span><%= current_user.email.split('@')[0]&.capitalize %></span>
                   </a>
                   <div class="menus">
@@ -34,15 +35,19 @@
                   </div>
                 </li>
               <% else %>
-                <li><a href="<%= sign_up_path %>"><i class="fa fa-user-plus"></i>&nbsp;注册</a></li>
-                <li><a href="<%= sign_in_path %>"><i class="fa fa-sign-in"></i>&nbsp;登录</a></li>
+                <li><a href="<%= sign_up_path %>">
+                  <i><img src="<%= image_path('octicons/person-add-24.svg') %>"></i>
+                &nbsp;注册</a></li>
+                <li><a href="<%= sign_in_path %>">
+                  <i><img src="<%= image_path('octicons/copilot-24.svg') %>"></i>
+                &nbsp;登录</a></li>
               <% end %>
             </ul>
             <ul class="nav navbar-nav mobile_menu">
               <% if current_user %>
                 <%= render partial:'shared/user_link' %>
               <% else %>
-                <li><a href="<%= sign_in_path %>"><i class="fa fa-vcard"></i>&nbsp;&nbsp;注册登录</a></li>
+                <li><a href="<%= sign_in_path %>"><i><img src="<%= image_path('octicons/copilot-24.svg') %>"></i>&nbsp;&nbsp;注册登录</a></li>
               <% end%>
               <%= render partial:'shared/market_list' %>
             </ul>

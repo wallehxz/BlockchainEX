@@ -5,8 +5,8 @@
     <%= @market&.full_name %>行情  <small>信息预览</small>
   </h1>
   <ol class="breadcrumb">
-    <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-    <li class="active"><i class="fa fa-line-chart"></i> 每刻行情 </li>
+    <li><a href="#"><i><img src="<%= image_path('octicons/milestone-24.svg') %>" style="height: 20px;"></i> Dashboard</a></li>
+    <li class="active"><i><img src="<%= image_path('octicons/graph-24.svg') %>" style="height: 20px;"></i> 市场行情</li>
   </ol>
 </section>
 <section class="content">
@@ -29,7 +29,9 @@
                   <input id='start' type="text" name="start" value="<%= params[:start] || (Date.current - 1.days).to_s %>" class="form-control" placeholder="起始日期">
                   <input type="hidden" name="market" value="<%= params[:market] || Market.seq.first.id rescue nil %>">
                   <span class="input-group-btn">
-                    <button class="btn btn-default btn-flat" type="submit"><i class="fa fa-search"></i></button>
+                    <button class="btn btn-default btn-flat" type="submit">
+                      <i><img src="<%= image_path('octicons/search-24.svg') %>" style="height: 18px;"></i>
+                    </button>
                   </span>
                 </div>
               </div>

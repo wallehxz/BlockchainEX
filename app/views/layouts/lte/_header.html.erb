@@ -1,6 +1,6 @@
 <a href="/" class="logo">
   <span class="logo-mini">
-    <img src="<%= image_path('favicon.png')%>" style="width: 35px;">
+    <img src="<%= image_path('octicons/home-24.svg')%>" style="width: 35px;">
   </span>
   <span class="logo-lg"><b>数字期货</b></span>
 </a>
@@ -15,13 +15,13 @@
       <!-- User Account: style can be found in dropdown.less -->
       <li class="dropdown user user-menu">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-          <img src="<%= image_path('smile.png')%>" class="user-image" alt="User Image">
+          <img src="<%= image_path('octicons/hubot-24.svg')%>" class="user-image" alt="User Image">
           <span class="hidden-xs"><%= current_user.email.split('@')[0]&.capitalize %></span>
         </a>
         <ul class="dropdown-menu">
           <!-- User image -->
           <li class="user-header">
-            <img src="<%= image_path('smile.png')%>" class="img-circle" alt="User Image">
+            <img src="<%= image_path('favicon.png')%>" class="img-circle" alt="User Image">
             <p>
               <%= current_user.email.split('@')[0] %>
               <small><%= Time.now.strftime('%Y-%m-%d') %></small>
@@ -54,7 +54,7 @@
         </ul>
       </li>
       <li>
-        <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+        <a href="#" data-toggle="control-sidebar"><i><img src="<%= image_path('octicons/gear-24.svg')%>"></i></a>
       </li>
     </ul>
   </div>
