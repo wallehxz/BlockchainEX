@@ -8,13 +8,9 @@
 
 ### 配置参数
 
-    修改配置文件 config/settings.yml.example
-    更名为      config/settings.yml
+  修改配置文件 config/settings.yml.example
+  更名为      config/settings.yml
 
 ### 定时任务
 
     bundle exec whenever --update-crontab
-
-  */5 * * * * curl http://example.com/api/tickers/fetch &>/dev/null
-
-  0 * * * * curl http://example.com/api/tickers/daemon_launch &>/dev/null
