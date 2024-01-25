@@ -8,7 +8,8 @@
 
 ### 配置参数
 
-  完善 config/settings.yml.example 相应的信息，变更为 config/settings.yml
+    修改配置文件 config/settings.yml.example
+    更名为      config/settings.yml
 
 ### 定时任务
 
