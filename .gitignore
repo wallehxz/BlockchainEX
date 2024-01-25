@@ -24,3 +24,4 @@
 /public/assets
 /db/development.sqlite3
 /db/test.sqlite3
+/config/deploy/*

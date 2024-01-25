@@ -3,7 +3,7 @@
 
 set :application, 'trading'
 set :repo_url, 'https://github.com/wallehxz/BlockchainEX.git'
-set :ssh_options, { keys: %w{~/.ssh/id_rsa}, forward_agent: true, auth_methods: %w(publickey) }
+set :ssh_options, { keys: %w{~/.ssh/id_rsa}, forward_agent: true, auth_methods: %w(publickey), verbose: :debug }
 # set :format, :pretty
 set :log_level, :debug
 set :keep_assets, 2

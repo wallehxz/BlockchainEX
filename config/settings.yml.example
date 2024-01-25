@@ -1,32 +1,25 @@
-#[development,production]
-
-env: 'development'
-host: 'http://tt.tt'
-receive_email: '*****@qq.com'
-email_account: '*****@qq.com'
-email_password: '*****'
+host: 'https://www.example.com'
 email_stmp_address: 'smtp.xx.com'
 email_stmp_port: '587'
+email_account: '*****@qq.com'
+email_password: '*****'
 
-pop_host: 'pop.gmail.com'
-pop_username: 'xxxxxxxx@gmail.com'
-pop_password: 'xxxxxxxxx'
-
-#消息通知
+#消息云片短信通知
+yunpian_key: 'xxxxxxxx'
+yunpian_tpl: '123456'
 default_mobile: '13812345678'
-#http://pushbear.ftqq.com
-wechat_group_key: 'xxxxxxxx'
+
+#钉钉通知
 #https://open-doc.dingtalk.com/docs/doc.htm?treeId=257&articleId=105735&docType=1
 dingding_bot: 'xxxxxxxx'
 trading_bot: 'xxxxxxx'
 wc_bot: 'xxxxxxx'
-yunpian_key: 'xxxxxxxx'
-yunpian_tpl: '123456'
 
-#交易所接口
+#Biance 现货接口
 binance_key: "xxxxxx"
 binance_secret: "xxxxxxx"
 
+#Biance 期货接口
 future_key: "xxxxxx"
 future_secret: "xxxxxx"
 
