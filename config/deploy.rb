@@ -19,6 +19,7 @@ set :linked_files, %w{
   config/database.yml
   config/secrets.yml
   config/settings.yml
+  config/production.sqlite3
 }
 
 set :linked_dirs, %w{
@@ -90,7 +91,7 @@ end
 
 
 # 跳过 precompile
-Rake::Task['deploy:assets:precompile'].clear_actions
+# Rake::Task['deploy:assets:precompile'].clear_actions
 # after 'bundler:install', 'deploy:local_compile_upload'
 # Rake::Task['whenever:update_crontab'].clear_actions
 

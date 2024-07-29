@@ -9,6 +9,7 @@
 
 # Ignore all logfiles and tempfiles.
 .DS_Store
+.tool-versions
 */.DS_Store
 /log/*
 !/log/.keep

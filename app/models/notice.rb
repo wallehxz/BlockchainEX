@@ -8,7 +8,7 @@ class Notice
       params[:tpl_id] = Setting.yunpian_tpl
       params[:mobile] = mobile
       params[:tpl_value] = URI::escape('#report#') + '='+ URI::escape(content)
-      Faraday.send(:post,yunpian, params)
+      Faraday.send(:post, yunpian, params)
     end
 
     def sms_batch(mobiles,content = '内容')

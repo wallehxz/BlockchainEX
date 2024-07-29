@@ -33,7 +33,6 @@ class TrendingController < ApplicationController
   def history
     market_lists = Market.market_list
     market = Market.find(market_lists[params[:symbol]])
-    # tickers = Candle.where(market_id: market_lists[params[:symbol]]).where("t >= ? and t < ?",params[:from],params[:to])
     tickers = market.get_ticker("5m", 1000, params[:from].to_i * 1000, params[:to].to_i * 1000)
     tickers.reverse
     markets_body = {}

@@ -2,7 +2,7 @@ source 'https://gems.ruby-china.com/'  #Ruby-China源
 # source 'https://rubygems.org/'  #官方源
 
 gem 'rails', '4.2.11.3'
-gem 'nokogiri', '1.10.10'
+gem 'nokogiri'
 gem 'sass-rails', '5.0.6' # Use SCSS for stylesheets
 gem "font-awesome-rails", '4.7.0.8'
 gem 'uglifier', '3.0.2' # Use Uglifier as compressor for JavaScript assets
@@ -18,15 +18,15 @@ gem 'will_paginate'#, '3.1.0' #数据分页
 # gem 'qiniu', '6.8.0' #http://developer.qiniu.com/code/v6/sdk/ruby.html file upload cdn
 gem 'puma' #, '3.6.0' #Server
 gem 'bcrypt' #, '3.1.10'# Use ActiveModel has_secure_password
-gem 'cancancan' #, '1.15.0' # User authorization
+gem 'cancancan', '3.3.0' # User authorization
 gem 'devise' #,'3.4.0' # User authentication
-# gem 'nokogiri' #, '1.8.0' # HTML 解析
+gem 'loofah', '2.12.0'
 # gem 'daemons-rails' #, '1.2.1' #进程管理
 gem 'enumerize' #, '2.2.2' # 多标签选项
 gem 'aasm' #, '5.0.1' #状态管理
 # gem 'pg', '0.20.0'
 gem 'sqlite3', '~> 1.3.6'
-gem 'mail' #, '2.7.1' #邮件管理
+# gem 'mail' #, '2.7.1' #邮件管理
 gem 'pry-rails' #, '0.3.4'
 gem 'whenever', require: false # https://github.com/javan/whenever
 # gem 'descendants_tracker' # Track descendants of a class

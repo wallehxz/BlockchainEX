@@ -9,14 +9,15 @@ body {
 }
 
 @font-face {
-  font-family: 'FZZY';
-  src: asset_url('lte/fonts/FZZY.ttf') format('truetype');
+  font-family: 'HYWL';
+  src: asset_url('lte/fonts/hywl/mini.woff2') format('truetype'),
+  asset_url('lte/fonts/hywl/mini.ttf') format('woff2');
   font-weight: normal;
   font-style: normal;
 }
 
 body {
- font-family: 'FZZY' !important;
+ font-family: 'HYWL' !important;
  line-height: 20px;
  color: #999999;
  font-size: 300;
