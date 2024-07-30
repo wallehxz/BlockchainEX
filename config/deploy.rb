@@ -19,7 +19,6 @@ set :linked_files, %w{
   config/database.yml
   config/secrets.yml
   config/settings.yml
-  config/production.sqlite3
 }
 
 set :linked_dirs, %w{
@@ -83,7 +82,7 @@ namespace :deploy do
       info "编译本地项目样式文件..."
       execute 'rake assets:precompile RAILS_ENV=production'
       info '上传本地编译文件至服务器...'
-      execute "rsync -avz public/assets zalle@block.xfgll.xyz:#{shared_path}/public"
+      execute "rsync -avz public/assets deploy@107.148.1.177:#{shared_path}/public"
     end
   end
 

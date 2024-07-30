@@ -21,7 +21,7 @@ require 'capistrano/puma'
 require "capistrano/scm/git"
 require "whenever/capistrano"
 install_plugin Capistrano::SCM::Git
-install_plugin Capistrano::Puma
+# install_plugin Capistrano::Puma
 # install_plugin Capistrano::Puma::Daemon
 
 # Load custom tasks from `lib/capistrano/tasks` if you have any defined

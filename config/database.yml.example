@@ -19,8 +19,6 @@ production:
   <<: *defaults
   database: bcwallet_development
 
-
-
 default: &defaults
   adapter: postgresql
   encoding: utf8

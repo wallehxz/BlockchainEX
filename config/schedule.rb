@@ -32,9 +32,13 @@
 
 # 获取期货涨跌排行
 
-# every '0,30 * * * *' do
-#   runner "Fluctuation.start"
-# end
+every '0,30 * * * *' do
+  runner "Fluctuation.start"
+end
+
+every '1 * * * *' do
+  runner "Fluctuation.binance_usdt_volume"
+end
 
 # 止盈止损
 every '* * * * *' do
@@ -47,3 +51,7 @@ end
 every '*/5 * * * *' do
   runner "Ticker.start"
 end
+
+# Learn more: http://github.com/javan/whenever
+
+# whenever --update-crontab -s 'environment=development'
