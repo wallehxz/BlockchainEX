@@ -1,0 +1,69 @@
+<%= content_for(:title,  '大宗订单 | Exchange') %>
+<section class="content-header">
+  <h1>
+    大宗订单  <small>信息预览</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i><img src="<%= image_path('octicons/milestone-24.svg') %>" style="height: 20px;"></i> Dashboard</a></li>
+    <li class="active"><i><img src="<%= image_path('octicons/gift-24.svg') %>" style="height: 20px;"></i> 市场行情</li>
+  </ol>
+</section>
+<section class="content">
+  <div class="box box-primary">
+    <div class="box-header">
+      <div class="row">
+        <form action="<%= backend_bulks_path %>" method="get">
+          <div class="col-sm-3">
+            <div class="form-group has-feedback">
+              <input type="text" name="currency" value="<%= params[:currency] %>" class="form-control" placeholder="币种">
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="form-group has-feedback">
+              <div class="input-group">
+                <input type="text" name="volumes" value="<%= params[:volumes] %>" class="form-control" placeholder="过滤数量">
+                <span class="input-group-btn">
+                  <button class="btn btn-default btn-flat" type="submit">
+                    <i><img src="<%= image_path('octicons/search-24.svg') %>" style="height: 18px;"></i>
+                  </button>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-3"> 检索结果：<%= @bulks&.size %> 条</div>
+        </form>
+      </div>
+    </div>
+    <div class="box-body">
+        <div class="row">
+          <div class="col-sm-12">
+            <table class="table table-bordered table-striped dataTable">
+              <thead>
+                <tr>
+                  <th style="text-align: center">时间</th>
+                  <th style="text-align: center">市场</th>
+                  <th style="text-align: center">方式</th>
+                  <th style="text-align: center">数量</th>
+                  <th style="text-align: center">价格</th>
+                  <th style="text-align: center">总计</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @bulks&.each do |item| %>
+                  <tr style="text-align: center">
+                    <td><%= item['time'] %></td>
+                    <td><%= item['market'] %></td>
+                    <td><%= item['type'] %></td>
+                    <td><%= item['qty'] %></td>
+                    <td><%= item['price'] %></td>
+                    <td><%= item['quote_qty'] %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>

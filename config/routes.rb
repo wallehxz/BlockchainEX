@@ -33,6 +33,7 @@ Rails.application.routes.draw do
   end
   namespace :backend do
     get 'quote', to:'dashboard#index', as: :quote
+    get 'bulks', to:'dashboard#bulks', as: :bulks
     resources :markets do
       get :sync_balance, on: :member
       get :clear_candles, on: :member

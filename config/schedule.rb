@@ -5,7 +5,10 @@
 
 # Example:
 #
-# set :output, "/path/to/my/cron_log.log"
+
+# set :bundle_command, '/root/.asdf/shims/bundle exec'
+# set :output, '/root/cron-ruby.log'
+
 #
 # every 2.hours do
 #   command "/usr/bin/some_great_command"
@@ -36,16 +39,16 @@ every '0,30 * * * *' do
   runner "Fluctuation.start"
 end
 
-every '1 * * * *' do
+every '15,30,45,59 * * * *' do
   runner "Fluctuation.binance_usdt_volume"
 end
 
 # 止盈止损
-every '* * * * *' do
-  runner "Stoploss.start"
-  runner "Takeprofit.start"
-  runner "Chasedown.start"
-end
+# every '* * * * *' do
+#   runner "Stoploss.start"
+#   runner "Takeprofit.start"
+#   runner "Chasedown.start"
+# end
 
 #同步行情数据
 every '*/5 * * * *' do
@@ -54,4 +57,4 @@ end
 
 # Learn more: http://github.com/javan/whenever
 
-# whenever --update-crontab -s 'environment=development'
+# bundle exec whenever --update-crontab -s 'environment=development'

@@ -61,5 +61,10 @@
         <i><img src="<%= image_path('octicons/stack-24.svg') %>"></i> <span> 复合指标 </span>
       </a>
     </li>
+    <li class="treeview <%= 'active' if controller_name == 'dashboard' && action_name == 'bulks' %>">
+      <a href="<%= backend_bulks_path %>" target="_self">
+        <i><img src="<%= image_path('octicons/gift-24.svg') %>"></i> <span> 大宗订单 </span>
+      </a>
+    </li>
   </ul>
 </section>
