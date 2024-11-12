@@ -10,6 +10,7 @@
 //= require lte/js/moment.min
 //= require lte/js/daterangepicker
 //= require lte/js/bootstrap-datepicker
+//= require lte/js/flatpickr
 //= require lte/js/bootstrap3-wysihtml5.all.min
 //= require lte/js/jquery.slimscroll.min
 //= require lte/js/fastclick
@@ -31,6 +32,11 @@
 $('#start').datepicker({
   autoclose: true,
   todayHighlight: true
+});
+
+flatpickr("#start_time", {
+  enableTime: true,
+  dateFormat: "Y-m-d H:i",
 });
 
 $('#end').datepicker({

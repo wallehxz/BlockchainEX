@@ -19,6 +19,9 @@
             </div>
           </div>
           <div class="col-sm-3">
+            <input id='start_time' type="text" name="start" value="<%= params[:start] || (Time.now - 30.minute).strftime('%Y-%m-%d %H:%M') %>" class="form-control" placeholder="起始时间">
+          </div>
+          <div class="col-sm-3">
             <div class="form-group has-feedback">
               <div class="input-group">
                 <input type="text" name="volumes" value="<%= params[:volumes] %>" class="form-control" placeholder="过滤数量">
@@ -30,7 +33,6 @@
               </div>
             </div>
           </div>
-
           <div class="col-sm-3"> 检索结果：<%= @bulks&.size %> 条</div>
         </form>
       </div>
@@ -45,7 +47,7 @@
                   <th style="text-align: center">市场</th>
                   <th style="text-align: center">方式</th>
                   <th style="text-align: center">数量</th>
-                  <th style="text-align: center">价格</th>
+                  <th style="text-align: center">笔数</th>
                   <th style="text-align: center">总计</th>
                 </tr>
               </thead>
@@ -56,7 +58,7 @@
                     <td><%= item['market'] %></td>
                     <td><%= item['type'] %></td>
                     <td><%= item['qty'] %></td>
-                    <td><%= item['price'] %></td>
+                    <td><%= item['count'] %></td>
                     <td><%= item['quote_qty'] %></td>
                   </tr>
                 <% end %>
