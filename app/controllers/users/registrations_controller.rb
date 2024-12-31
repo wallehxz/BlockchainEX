@@ -4,7 +4,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 # before_filter :configure_sign_up_params, only: [:create]
 # before_filter :configure_account_update_params, only: [:update]
   def invitation
-    if params[:code] != 'jiubugaoshuni'
+    if params[:code] != Setting.register_code
       flash[:notice] = '请填写正确的邀请码'
       redirect_to sign_up_path
     end

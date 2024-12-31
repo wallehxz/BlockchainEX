@@ -20,6 +20,10 @@ wechat_group_key: 'xxxxxxxx'
 dingding_bot: 'xxxxxxxx'
 trading_bot: 'xxxxxxx'
 wc_bot: 'xxxxxxx'
+
+#注册邀请码
+register_code: '123456'
+
 yunpian_key: 'xxxxxxxx'
 yunpian_tpl: '123456'
 
