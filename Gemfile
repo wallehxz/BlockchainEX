@@ -8,26 +8,26 @@ gem "font-awesome-rails", '4.7.0.8'
 gem 'uglifier', '3.0.2' # Use Uglifier as compressor for JavaScript assets
 gem 'coffee-rails', '4.2.1' # Use CoffeeScript for .coffee assets and views
 gem 'therubyracer', platforms: :ruby
-gem 'faraday'#, '0.9.2' # http get post
-gem 'jquery-rails'#,'4.2.0' # Use jquery as the JavaScript library
-gem 'turbolinks'#,'5.0.0' # Turbolinks makes following links in your web application faster
-gem 'jbuilder'#, '2.6.0' # Build JSON APIs with ease
-gem 'fume-settable'#, '0.0.3' #settings plugin for read on yaml, ruby, database, etc
-gem 'will_paginate'#, '3.1.0' #数据分页
+gem 'faraday', '0.9.2' # http get post
+gem 'jquery-rails','4.2.0' # Use jquery as the JavaScript library
+gem 'turbolinks','5.0.0' # Turbolinks makes following links in your web application faster
+gem 'jbuilder', '2.6.0' # Build JSON APIs with ease
+gem 'fume-settable', '0.0.3' #settings plugin for read on yaml, ruby, database, etc
+gem 'will_paginate', '3.1.0' #数据分页
 # gem 'to_xls-rails', '1.3.1' # export xls data
 # gem 'qiniu', '6.8.0' #http://developer.qiniu.com/code/v6/sdk/ruby.html file upload cdn
-gem 'puma' #, '3.6.0' #Server
-gem 'bcrypt' #, '3.1.10'# Use ActiveModel has_secure_password
+gem 'puma', '6.4.2' #Server
+gem 'bcrypt', '3.1.10'# Use ActiveModel has_secure_password
 gem 'cancancan', '3.3.0' # User authorization
-gem 'devise' #,'3.4.0' # User authentication
+gem 'devise','3.4.0' # User authentication
 gem 'loofah', '2.12.0'
 # gem 'daemons-rails' #, '1.2.1' #进程管理
-gem 'enumerize' #, '2.2.2' # 多标签选项
-gem 'aasm' #, '5.0.1' #状态管理
-# gem 'pg', '0.20.0'
+gem 'enumerize', '2.2.2' # 多标签选项
+gem 'aasm', '5.0.1' #状态管理
+gem 'pg', '0.20.0'
 gem 'sqlite3', '~> 1.3.6'
 # gem 'mail' #, '2.7.1' #邮件管理
-gem 'pry-rails' #, '0.3.4'
+gem 'pry-rails', '0.3.4'
 gem 'whenever', require: false # https://github.com/javan/whenever
 # gem 'descendants_tracker' # Track descendants of a class
 # gem 'mysql2', '0.4.5' # Use mysql as the database for Active Record
@@ -35,13 +35,13 @@ gem 'whenever', require: false # https://github.com/javan/whenever
 group :development do
   gem 'annotate' # 数据表字段注释 annotate --models
   gem 'spring' , '2.0.0' # bin/bundle exec spring binstub --all
-  gem 'capsum' #, '1.0.4' #, require: false #collect gems and recipes for capistrano
-  gem 'capistrano-rails' #, '1.1.7' #https://github.com/capistrano/capistrano#capify-your-project
-  gem 'capistrano-rvm' #, '0.1.2'
-  gem 'capistrano-bundler' #, '1.1.4'
-  gem 'capistrano3-puma' #,'1.2.1'
-  gem 'pry-byebug' #, '3.3.0'
-  gem 'guard-livereload' #, '2.5.2' #automatically reloads your browser when 'view' files are modified
+  gem 'capsum', '1.0.4' #, require: false #collect gems and recipes for capistrano
+  gem 'capistrano-rails', '1.1.7' #https://github.com/capistrano/capistrano#capify-your-project
+  gem 'capistrano-rvm', '0.1.2'
+  gem 'capistrano-bundler', '1.1.4'
+  gem 'capistrano3-puma','1.2.1'
+  gem 'pry-byebug', '3.3.0'
+  gem 'guard-livereload', '2.5.2' #automatically reloads your browser when 'view' files are modified
 end
 
 # group :test do

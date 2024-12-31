@@ -30,6 +30,7 @@ private
     list.each do |symbol|
       puts "Loading #{symbol} trades..."
       symbol_orders = historical_trades(symbol)
+      next if symbol_orders.blank?
       symbol_first_time = Time.at(symbol_orders[0]['time'] / 1000)
       from_id = symbol_orders[0]['id'] - 1000
       get_count = 1
